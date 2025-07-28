@@ -355,6 +355,10 @@ Vision is our best attempt at solving a problem we've faced repeatedly: **how do
 
 If you're building Node.js applications that need to work reliably in production, give Vision a try. Start small — wrap a few critical operations, add an exporter, see what insights you get. We think you'll find it makes debugging and understanding your systems significantly easier.
 
+## 🙏 Acknowledgments
+
+Special thanks to [Ryan McGrath](https://github.com/zoltrain), the brilliant Go-savvy engineer who first introduced me to the power of propagating structured context across services. This project is a direct descendant of those conversations — just ported to a new ecosystem with the same care for clarity, pragmatism and the value of sharing good ideas.
+
 ## Get Started (Seriously, It's This Easy)
 
 For Express apps (most common):

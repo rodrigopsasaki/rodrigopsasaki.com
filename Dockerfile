@@ -46,6 +46,11 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    location ~* \.html$ {
+        expires 5m;
+        add_header Cache-Control "public, max-age=300";
+    }
+
     # Handle Astro's static files
     location / {
         # First try the exact file, then try as directory with index.html

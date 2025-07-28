@@ -16,7 +16,7 @@ export const siteConfig = {
   i18n: {
     // Available options: 'en', 'pt-BR'
     // To add more languages, update the languages object in i18n/config.ts first
-    enabledLanguages: ['en', 'pt-BR'] as Language[],
+    enabledLanguages: ['en'] as Language[],
     
     // Set to true to show language codes in URLs for all languages (including default)
     // Set to false to show clean URLs for the default language

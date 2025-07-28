@@ -46,19 +46,19 @@ export default {
           900: '#5d4f43',
           950: '#302822',
         },
-        // Actually light colors!
+        // Extra soft, gentle light colors 
         gray: {
-          50: '#fefefe',   // Nearly pure white
-          100: '#fdfdfd',  // Very light gray
-          200: '#f8f9fa',  // Light gray
-          300: '#e9ecef',  // Medium light gray
-          400: '#ced4da',  // Medium gray
-          500: '#adb5bd',  // Medium gray
-          600: '#6c757d',  // Darker gray
-          700: '#495057',  // Dark gray
-          800: '#343a40',  // Very dark gray
-          900: '#212529',  // Nearly black
-          950: '#000000',  // Black
+          50: '#f6f4f1',   // Gentle cream
+          100: '#ede9e3',  // Soft beige
+          200: '#e3ddd4',  // Muted beige
+          300: '#d8d0c5',  // Warm beige
+          400: '#c9bfb3',  // Medium beige
+          500: '#b5a898',  // Medium beige
+          600: '#9a8b7a',  // Darker beige
+          700: '#7d6f60',  // Brown beige
+          800: '#655851',  // Dark brown
+          900: '#524942',  // Very dark brown
+          950: '#2f2a24',  // Nearly black brown
         },
         // Dark mode monokai colors
         monokai: {

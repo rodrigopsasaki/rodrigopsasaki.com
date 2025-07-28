@@ -44,7 +44,7 @@ const sortedPosts = posts.sort((a, b) =>
         </div>
       ) : (
         sortedPosts.map((post, index) => (
-          <article class={`group relative bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300 overflow-hidden ${index === 0 ? 'md:col-span-2' : ''}`}>
+          <article class={`group relative bg-gray-200 dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300 overflow-hidden ${index === 0 ? 'md:col-span-2' : ''}`}>
             <div class="p-8">
               <!-- Post metadata -->
               <div class="flex items-center gap-4 mb-4">

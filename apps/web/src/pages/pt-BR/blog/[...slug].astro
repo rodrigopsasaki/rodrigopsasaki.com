@@ -6,7 +6,7 @@ import { getLocalizedCollection } from '../../../i18n/content';
 export async function getStaticPaths() {
   const posts = await getLocalizedCollection('blog', 'pt-BR');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: post,
   }));
 }

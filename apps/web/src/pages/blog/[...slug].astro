@@ -1,15 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getLocalizedCollection } from '../../i18n/content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getLocalizedCollection('blog', 'en');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: post,
   }));
 }
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 const post = Astro.props;
 const { Content } = await post.render();
 ---
@@ -129,11 +132,11 @@ const { Content } = await post.render();
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function(): void {
     // Make all links in blog content open in new tabs
     const contentLinks = document.querySelectorAll('.prose a');
     
-    contentLinks.forEach(link => {
+    contentLinks.forEach((link: Element): void => {
       // Skip if it's already configured or is an anchor link
       if (link.hasAttribute('target') || link.getAttribute('href')?.startsWith('#')) {
         return;

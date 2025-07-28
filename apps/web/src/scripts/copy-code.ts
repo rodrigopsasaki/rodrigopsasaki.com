@@ -1,8 +1,8 @@
-export function initCopyCodeButtons() {
+export function initCopyCodeButtons(): void {
   // Find all pre elements (code blocks)
   const preElements = document.querySelectorAll('pre');
   
-  preElements.forEach((pre) => {
+  preElements.forEach((pre: Element) => {
     // Skip if already processed
     if (pre.parentElement?.classList.contains('code-block-wrapper')) {
       return;
@@ -16,7 +16,10 @@ export function initCopyCodeButtons() {
     wrapper.className = 'code-block-wrapper group';
     
     // Insert wrapper before pre element
-    pre.parentNode?.insertBefore(wrapper, pre);
+    const parentNode = pre.parentNode;
+    if (parentNode) {
+      parentNode.insertBefore(wrapper, pre);
+    }
     
     // Move pre element into wrapper
     wrapper.appendChild(pre);
@@ -52,7 +55,7 @@ export function initCopyCodeButtons() {
             Copy
           `;
         }, 2000);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Failed to copy code:', err);
         copyButton.textContent = 'Failed';
         setTimeout(() => {

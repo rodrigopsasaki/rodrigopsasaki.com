@@ -6,7 +6,7 @@ import { getLocalizedCollection } from '../../../i18n/content';
 export async function getStaticPaths() {
   const projects = await getLocalizedCollection('projects', 'pt-BR');
   return projects.map((project) => ({
-    params: { slug: project.slug },
+    params: { slug: project.id },
     props: project,
   }));
 }
@@ -133,9 +133,9 @@ const { Content } = await project.render();
 
   <!-- JavaScript for ToC generation and functionality -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function(): void {
       // Generate Table of Contents
-      function generateTOC() {
+      function generateTOC(): void {
         const content = document.getElementById('main-content');
         const tocNav = document.getElementById('toc-nav');
         const mobileTocNav = document.getElementById('mobile-toc-nav');
@@ -148,7 +148,7 @@ const { Content } = await project.render();
         
         let tocHTML = '';
         
-        headings.forEach((heading) => {
+        headings.forEach((heading: Element): void => {
           // Create unique ID for each heading
           const textContent = heading.textContent;
           if (!textContent) return;
@@ -192,8 +192,8 @@ const { Content } = await project.render();
       }
       
       // Smooth scroll for ToC links
-      function setupSmoothScroll() {
-        document.addEventListener('click', function(e) {
+      function setupSmoothScroll(): void {
+        document.addEventListener('click', function(e: Event): void {
           const target = e.target as HTMLElement;
           if (target && target.matches && target.matches('a[href^="#"]')) {
             e.preventDefault();
@@ -204,7 +204,7 @@ const { Content } = await project.render();
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
-              const offsetTop = (targetElement as HTMLElement).offsetTop - 100; // Account for sticky header
+              const offsetTop = targetElement.offsetTop - 100; // Account for sticky header
               window.scrollTo({
                 top: offsetTop,
                 behavior: 'smooth'
@@ -224,24 +224,24 @@ const { Content } = await project.render();
       }
       
       // Highlight active section in ToC
-      function updateActiveHeading(activeId: string) {
+      function updateActiveHeading(activeId: string): void {
         // Remove active state from all links
-        document.querySelectorAll('[data-heading-id]').forEach(link => {
+        document.querySelectorAll('[data-heading-id]').forEach((link: Element): void => {
           link.classList.remove('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
         });
         
         // Add active state to current link
-        document.querySelectorAll(`[data-heading-id="${activeId}"]`).forEach(link => {
+        document.querySelectorAll(`[data-heading-id="${activeId}"]`).forEach((link: Element): void => {
           link.classList.add('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
         });
       }
       
       // Track scroll position and update active heading
-      function setupScrollSpy() {
+      function setupScrollSpy(): void {
         const headings = document.querySelectorAll('#main-content h2, #main-content h3, #main-content h4');
         let currentActive = '';
         
-        function updateActiveOnScroll() {
+        function updateActiveOnScroll(): void {
           const scrollPosition = window.scrollY + 150; // Offset for better UX
           
           for (let i = headings.length - 1; i >= 0; i--) {
@@ -262,12 +262,12 @@ const { Content } = await project.render();
       }
       
       // Mobile ToC toggle
-      function setupMobileToggle() {
+      function setupMobileToggle(): void {
         const toggleButton = document.getElementById('mobile-toc-toggle');
         const mobileMenu = document.getElementById('mobile-toc');
         
         if (toggleButton && mobileMenu) {
-          toggleButton.addEventListener('click', function() {
+          toggleButton.addEventListener('click', function(): void {
             mobileMenu.classList.toggle('hidden');
           });
         }

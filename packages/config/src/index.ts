@@ -1,5 +1,5 @@
-export * from './schemas.js';
-export * from './tags.js';
+export * from './schemas';
+export * from './tags';
 
 // Site configuration
 export const siteConfig = {

@@ -1,3 +1,5 @@
+import { enabledLanguages, defaultLanguage, isMultiLanguage } from '../config/site';
+
 export const languages = {
   en: {
     label: 'English',
@@ -10,8 +12,9 @@ export const languages = {
 } as const;
 
 export type Language = keyof typeof languages;
-export const defaultLang: Language = 'en';
-export const supportedLanguages = Object.keys(languages) as Language[];
+export const defaultLang: Language = defaultLanguage;
+export const supportedLanguages = enabledLanguages;
+export { isMultiLanguage };
 
 // Content collection mapping
 export const getCollectionName = (collection: string, lang: Language): string => {
@@ -21,15 +24,21 @@ export const getCollectionName = (collection: string, lang: Language): string =>
 // Path utilities
 export function getLangFromUrl(url: URL): Language {
   const [, lang] = url.pathname.split('/');
-  if (lang in languages) return lang as Language;
+  if (lang && supportedLanguages.includes(lang as Language)) {
+    return lang as Language;
+  }
   return defaultLang;
 }
 
 export function getLocalizedPath(path: string, lang: Language): string {
-  // Remove any existing language prefix
-  const cleanPath = path.replace(/^\/(en|pt-BR)/, '');
+  // Create regex to match any enabled language prefix
+  const langPattern = supportedLanguages.join('|');
+  const langRegex = new RegExp(`^\\/(${langPattern})`);
   
-  // For default language (en), don't add prefix
+  // Remove any existing language prefix
+  const cleanPath = path.replace(langRegex, '');
+  
+  // For default language, don't add prefix
   if (lang === defaultLang) {
     return cleanPath || '/';
   }
@@ -44,8 +53,12 @@ export function getLocalizedPath(path: string, lang: Language): string {
 }
 
 export function getAlternateLanguageLinks(currentPath: string): Array<{ lang: Language; href: string; label: string }> {
+  // Create regex to match any enabled language prefix
+  const langPattern = supportedLanguages.join('|');
+  const langRegex = new RegExp(`^\\/(${langPattern})`);
+  
   // Remove any existing language prefix to get the base path
-  const basePath = currentPath.replace(/^\/(en|pt-BR)/, '');
+  const basePath = currentPath.replace(langRegex, '');
   
   return supportedLanguages.map((lang) => ({
     lang,

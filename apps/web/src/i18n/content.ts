@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
 import type { Language } from './config';
-import { getCollectionName, defaultLang } from './config';
+import { getCollectionName, defaultLang, supportedLanguages } from './config';
 
 export async function getLocalizedCollection(collection: string, lang: Language) {
   try {
@@ -32,9 +32,7 @@ export async function getLocalizedEntry(collection: string, slug: string, lang: 
 export async function getAvailableLanguagesForContent(collection: string, slug: string): Promise<Language[]> {
   const availableLanguages: Language[] = [];
   
-  const languages: Language[] = ['en', 'pt-BR']; // This could be imported from config
-  
-  for (const lang of languages) {
+  for (const lang of supportedLanguages) {
     try {
       const collectionName = getCollectionName(collection, lang);
       const entries = await getCollection(collectionName as any);

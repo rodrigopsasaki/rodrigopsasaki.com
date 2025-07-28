@@ -1,5 +1,10 @@
 ---
-import { getLangFromUrl, getAlternateLanguageLinks, useTranslations } from '../i18n';
+import { getLangFromUrl, getAlternateLanguageLinks, useTranslations, isMultiLanguage } from '../i18n';
+
+// Don't render anything if only one language is enabled
+if (!isMultiLanguage) {
+  return null;
+}
 
 const currentLang = getLangFromUrl(Astro.url);
 const t = useTranslations(currentLang);

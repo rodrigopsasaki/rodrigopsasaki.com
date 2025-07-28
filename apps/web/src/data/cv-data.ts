@@ -4,8 +4,6 @@
 export const personalInfo = {
   name: "Rodrigo Sasaki",
   location: "São Paulo, Brazil",
-  email: "rodrigopsasaki@gmail.com",
-  phone: "+5511999484555",
   linkedin: "https://www.linkedin.com/in/rodrigopsasaki",
   github: "https://github.com/rodrigopsasaki",
 };

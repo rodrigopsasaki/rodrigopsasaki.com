@@ -38,7 +38,13 @@ server {
 
     # Handle Astro's static files
     location / {
-        try_files \$uri \$uri/ \$uri.html /index.html;
+        # First try the exact file, then try as directory with index.html
+        try_files \$uri \$uri/ \$uri/index.html @fallback;
+    }
+    
+    # Fallback for routes that don't exist as files
+    location @fallback {
+        try_files /404.html =404;
     }
 
     # Security headers

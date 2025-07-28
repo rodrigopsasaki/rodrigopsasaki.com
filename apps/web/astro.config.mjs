@@ -7,4 +7,7 @@ export default defineConfig({
   integrations: [tailwind()],
   output: 'static',
   trailingSlash: 'never',
+  build: {
+    format: 'directory'
+  },
 });

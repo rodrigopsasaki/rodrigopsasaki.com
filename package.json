@@ -8,7 +8,10 @@
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",
-    "clean": "pnpm -r run clean"
+    "clean": "pnpm -r run clean",
+    "deploy": "fly deploy",
+    "logs": "fly logs",
+    "status": "fly status"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",

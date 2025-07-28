@@ -35,7 +35,12 @@ export function getLocalizedPath(path: string, lang: Language): string {
   }
   
   // For other languages, add the prefix
-  return `/${lang}${cleanPath || ''}`;
+  // If cleanPath is empty, return just the lang prefix without trailing slash
+  if (!cleanPath || cleanPath === '/') {
+    return `/${lang}`;
+  }
+  
+  return `/${lang}${cleanPath}`;
 }
 
 export function getAlternateLanguageLinks(currentPath: string): Array<{ lang: Language; href: string; label: string }> {

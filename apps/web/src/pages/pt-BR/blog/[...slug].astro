@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../../i18n';
+import { getLocalizedCollection } from '../../../i18n/content';
+
+export async function getStaticPaths() {
+  const posts = await getLocalizedCollection('blog', 'pt-BR');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+const lang = 'pt-BR';
+const t = useTranslations(lang);
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article>
+        <!-- Header -->
+        <header class="mb-12">
+          <div class="mb-6">
+            <a href="/pt-BR/blog" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-200">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              {t.blog.backToBlog}
+            </a>
+          </div>
+          
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
+            {post.data.title}
+          </h1>
+          
+          <div class="flex items-center gap-4 mb-6">
+            <time class="text-gray-500 dark:text-gray-400">
+              {new Date(post.data.date).toLocaleDateString('pt-BR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+            <div class="flex gap-2">
+              {post.data.tags.map((tag) => (
+                <span class="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full font-medium">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+          
+          {post.data.description && (
+            <p class="text-xl text-gray-600 dark:text-monokai-muted leading-relaxed">
+              {post.data.description}
+            </p>
+          )}
+        </header>
+
+        <!-- Content -->
+        <div class="prose prose-lg prose-gray dark:prose-invert max-w-none 
+                    prose-headings:text-gray-800 dark:prose-headings:text-monokai-text
+                    prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-monokai-border prose-h2:pb-2
+                    prose-h3:text-primary-700 dark:prose-h3:text-monokai-yellow
+                    prose-h4:text-primary-600 dark:prose-h4:text-monokai-orange
+                    prose-a:text-primary-600 dark:prose-a:text-monokai-blue 
+                    prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-gray-800 dark:prose-strong:text-monokai-text
+                    prose-code:bg-gray-100 dark:prose-code:bg-monokai-surface 
+                    prose-code:text-gray-800 dark:prose-code:text-monokai-green
+                    prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm
+                    prose-blockquote:border-l-primary-600 dark:prose-blockquote:border-l-monokai-orange
+                    prose-blockquote:text-gray-600 dark:prose-blockquote:text-monokai-muted
+                    prose-th:bg-gray-100 dark:prose-th:bg-monokai-surface
+                    prose-th:text-gray-800 dark:prose-th:text-monokai-text
+                    prose-td:border-gray-300 dark:prose-td:border-monokai-border
+                    prose-hr:border-gray-300 dark:prose-hr:border-monokai-border">
+          <Content />
+        </div>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Fix code block rendering issues */
+  .prose :global(pre) {
+    @apply bg-gray-100 dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-4 overflow-x-auto my-6;
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    line-height: 1.5 !important;
+    white-space: pre !important;
+  }
+  
+  .prose :global(pre code) {
+    @apply bg-transparent text-gray-800 dark:text-monokai-text px-0 py-0 rounded-none;
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    line-height: inherit !important;
+    white-space: inherit !important;
+  }
+</style>

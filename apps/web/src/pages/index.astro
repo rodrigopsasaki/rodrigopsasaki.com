@@ -122,7 +122,7 @@ const t = useTranslations(lang);
       </div>
 
       <div class="grid md:grid-cols-2 gap-8">
-        <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300">
+        <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/blog', lang)}'`}>
           <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
           <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
             Deep dives into architecture, and developer experience. Or some scattered random thoughts.
@@ -138,7 +138,7 @@ const t = useTranslations(lang);
           </a>
         </div>
 
-        <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300">
+        <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/projects', lang)}'`}>
           <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
           <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
             Open source tools and side projects

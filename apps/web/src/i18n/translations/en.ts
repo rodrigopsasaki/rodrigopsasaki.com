@@ -1,4 +1,4 @@
-export const en = {
+export default {
   meta: {
     title: 'Rodrigo Sasaki - Software Engineer',
     description: 'Senior Software Engineer specializing in TypeScript, Node.js, and cloud architecture. Building scalable systems with a focus on observability and developer experience.',

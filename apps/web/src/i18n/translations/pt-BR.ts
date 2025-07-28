@@ -1,4 +1,4 @@
-export const ptBR = {
+export default {
   meta: {
     title: 'Rodrigo Sasaki - Engenheiro de Software',
     description: 'Engenheiro de Software Sênior especializado em TypeScript, Node.js e arquitetura cloud. Construindo sistemas escaláveis com foco em observabilidade e experiência do desenvolvedor.',

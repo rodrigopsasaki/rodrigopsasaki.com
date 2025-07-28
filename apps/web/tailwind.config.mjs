@@ -46,19 +46,19 @@ export default {
           900: '#5d4f43',
           950: '#302822',
         },
-        // Warmer grays with beige undertones
+        // Actually light colors!
         gray: {
-          50: '#faf9f7',
-          100: '#f3f1ed',
-          200: '#e8e4dd',
-          300: '#d9d2c7',
-          400: '#c4b8a9',
-          500: '#a69c8a',
-          600: '#8d8170',
-          700: '#736a5c',
-          800: '#5f564d',
-          900: '#4e453f',
-          950: '#2a2420',
+          50: '#fefefe',   // Nearly pure white
+          100: '#fdfdfd',  // Very light gray
+          200: '#f8f9fa',  // Light gray
+          300: '#e9ecef',  // Medium light gray
+          400: '#ced4da',  // Medium gray
+          500: '#adb5bd',  // Medium gray
+          600: '#6c757d',  // Darker gray
+          700: '#495057',  // Dark gray
+          800: '#343a40',  // Very dark gray
+          900: '#212529',  // Nearly black
+          950: '#000000',  // Black
         },
         // Dark mode monokai colors
         monokai: {
@@ -105,5 +105,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };

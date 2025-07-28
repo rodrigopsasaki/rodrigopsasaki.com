@@ -15,28 +15,404 @@ const { Content } = await project.render();
 ---
 
 <BaseLayout title={project.data.title} description={project.data.description}>
-  <article class="prose prose-gray max-w-none">
-    <h1 class="text-4xl font-bold mb-4">{project.data.title}</h1>
-    <p class="text-xl text-gray-600 mb-6">{project.data.description}</p>
-    <div class="flex gap-2 mb-4">
-      {project.data.tags.map((tag) => (
-        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">
-          {tag}
-        </span>
-      ))}
+  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex gap-8 lg:gap-12">
+      <!-- Table of Contents Sidebar -->
+      <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
+        <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
+          <div class="bg-white dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+              Table of Contents
+            </h3>
+            <nav class="space-y-1" id="toc-nav">
+              <!-- ToC will be populated by JavaScript -->
+            </nav>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="flex-1 min-w-0">
+        <article class="max-w-4xl">
+          <!-- Header Section -->
+          <header class="mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
+              {project.data.title}
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted mb-6 leading-relaxed">
+              {project.data.description}
+            </p>
+            
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              {project.data.tags.map((tag) => (
+                <span class="text-xs px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full font-medium">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            
+            <!-- Links -->
+            <div class="flex flex-wrap gap-4">
+              {project.data.github && (
+                <a 
+                  href={project.data.github} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-monokai-border text-white dark:text-monokai-text rounded-lg hover:bg-gray-700 dark:hover:bg-monokai-surface transition-colors duration-200 font-medium"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                  View on GitHub
+                </a>
+              )}
+              {project.data.demo && (
+                <a 
+                  href={project.data.demo} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 dark:bg-monokai-orange text-white rounded-lg hover:bg-primary-700 dark:hover:bg-monokai-red transition-colors duration-200 font-medium"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  Live Demo
+                </a>
+              )}
+            </div>
+          </header>
+
+          <!-- Mobile ToC Toggle -->
+          <div class="lg:hidden mb-6">
+            <button 
+              id="mobile-toc-toggle"
+              class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg text-gray-700 dark:text-monokai-text hover:bg-gray-200 dark:hover:bg-monokai-border transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+              Table of Contents
+            </button>
+            <div id="mobile-toc" class="hidden mt-4 p-4 bg-white dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg">
+              <nav class="space-y-1" id="mobile-toc-nav">
+                <!-- Mobile ToC will be populated by JavaScript -->
+              </nav>
+            </div>
+          </div>
+
+          <!-- Content Section with Tailwind Typography -->
+          <div id="main-content" class="prose prose-lg prose-gray dark:prose-invert max-w-none 
+                      prose-headings:text-gray-800 dark:prose-headings:text-monokai-text
+                      prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-monokai-border prose-h2:pb-2
+                      prose-h3:text-primary-700 dark:prose-h3:text-monokai-yellow
+                      prose-h4:text-primary-600 dark:prose-h4:text-monokai-orange
+                      prose-a:text-primary-600 dark:prose-a:text-monokai-blue 
+                      prose-a:no-underline hover:prose-a:underline
+                      prose-strong:text-gray-800 dark:prose-strong:text-monokai-text
+                      prose-code:bg-gray-100 dark:prose-code:bg-monokai-surface 
+                      prose-code:text-gray-800 dark:prose-code:text-monokai-green
+                      prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm
+                      prose-blockquote:border-l-primary-600 dark:prose-blockquote:border-l-monokai-orange
+                      prose-blockquote:text-gray-600 dark:prose-blockquote:text-monokai-muted
+                      prose-th:bg-gray-100 dark:prose-th:bg-monokai-surface
+                      prose-th:text-gray-800 dark:prose-th:text-monokai-text
+                      prose-td:border-gray-300 dark:prose-td:border-monokai-border
+                      prose-hr:border-gray-300 dark:prose-hr:border-monokai-border">
+            <Content />
+          </div>
+        </article>
+      </div>
     </div>
-    <div class="flex gap-4 mb-8">
-      {project.data.github && (
-        <a href={project.data.github} class="text-blue-600 hover:underline">
-          View on GitHub →
-        </a>
-      )}
-      {project.data.demo && (
-        <a href={project.data.demo} class="text-blue-600 hover:underline">
-          Live Demo →
-        </a>
-      )}
     </div>
-    <Content />
-  </article>
+  </div>
+
+  <!-- JavaScript for ToC generation and functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Generate Table of Contents
+      function generateTOC() {
+        const content = document.getElementById('main-content');
+        const tocNav = document.getElementById('toc-nav');
+        const mobileTocNav = document.getElementById('mobile-toc-nav');
+        const headings = content.querySelectorAll('h2, h3, h4');
+        
+        if (headings.length === 0) return;
+        
+        let tocHTML = '';
+        
+        headings.forEach((heading, index) => {
+          // Create unique ID for each heading
+          const id = heading.textContent.toLowerCase()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/--+/g, '-') // Replace multiple hyphens with single
+            .trim();
+          
+          heading.id = id;
+          
+          const level = parseInt(heading.tagName.substring(1));
+          const text = heading.textContent;
+          
+          let linkClass = 'block py-1 px-2 rounded text-sm transition-colors duration-200 ';
+          let indentClass = '';
+          
+          if (level === 2) {
+            linkClass += 'text-gray-700 dark:text-monokai-text hover:bg-primary-50 dark:hover:bg-monokai-border font-medium';
+            indentClass = '';
+          } else if (level === 3) {
+            linkClass += 'text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border';
+            indentClass = 'ml-3';
+          } else if (level === 4) {
+            linkClass += 'text-gray-500 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border text-xs';
+            indentClass = 'ml-6';
+          }
+          
+          tocHTML += `
+            <div class="${indentClass}">
+              <a href="#${id}" class="${linkClass}" data-heading-id="${id}">
+                ${text}
+              </a>
+            </div>
+          `;
+        });
+        
+        tocNav.innerHTML = tocHTML;
+        mobileTocNav.innerHTML = tocHTML;
+      }
+      
+      // Smooth scroll for ToC links
+      function setupSmoothScroll() {
+        document.addEventListener('click', function(e) {
+          if (e.target.matches('a[href^="#"]')) {
+            e.preventDefault();
+            const targetId = e.target.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              const offsetTop = targetElement.offsetTop - 100; // Account for sticky header
+              window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+              });
+              
+              // Update active state
+              updateActiveHeading(targetId);
+              
+              // Close mobile menu if open
+              const mobileMenu = document.getElementById('mobile-toc');
+              if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+              }
+            }
+          }
+        });
+      }
+      
+      // Highlight active section in ToC
+      function updateActiveHeading(activeId) {
+        // Remove active state from all links
+        document.querySelectorAll('[data-heading-id]').forEach(link => {
+          link.classList.remove('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
+        });
+        
+        // Add active state to current link
+        document.querySelectorAll(`[data-heading-id="${activeId}"]`).forEach(link => {
+          link.classList.add('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
+        });
+      }
+      
+      // Track scroll position and update active heading
+      function setupScrollSpy() {
+        const headings = document.querySelectorAll('#main-content h2, #main-content h3, #main-content h4');
+        let currentActive = '';
+        
+        function updateActiveOnScroll() {
+          const scrollPosition = window.scrollY + 150; // Offset for better UX
+          
+          for (let i = headings.length - 1; i >= 0; i--) {
+            const heading = headings[i];
+            if (heading.offsetTop <= scrollPosition) {
+              const newActive = heading.id;
+              if (newActive !== currentActive) {
+                currentActive = newActive;
+                updateActiveHeading(currentActive);
+              }
+              break;
+            }
+          }
+        }
+        
+        window.addEventListener('scroll', updateActiveOnScroll);
+        updateActiveOnScroll(); // Initial call
+      }
+      
+      // Mobile ToC toggle
+      function setupMobileToggle() {
+        const toggleButton = document.getElementById('mobile-toc-toggle');
+        const mobileMenu = document.getElementById('mobile-toc');
+        
+        if (toggleButton && mobileMenu) {
+          toggleButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+      }
+      
+      // Initialize everything
+      generateTOC();
+      setupSmoothScroll();
+      setupScrollSpy();
+      setupMobileToggle();
+    });
+  </script>
 </BaseLayout>
+
+<style>
+  /* Fix code block rendering issues */
+  .prose :global(pre) {
+    @apply bg-gray-100 dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-4 overflow-x-auto my-6;
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    line-height: 1.5 !important;
+    white-space: pre !important;
+    transform: none !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+  
+  .prose :global(pre code) {
+    @apply bg-transparent text-gray-800 dark:text-monokai-text px-0 py-0 rounded-none;
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    line-height: inherit !important;
+    white-space: inherit !important;
+    transform: none !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  
+  /* Ensure proper code rendering */
+  .prose :global(code) {
+    font-variant-ligatures: none !important;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-feature-settings: normal !important;
+    font-feature-settings: normal !important;
+  }
+  
+  /* Fix any potential transform issues */
+  .prose :global(pre),
+  .prose :global(pre code),
+  .prose :global(code) {
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Active ToC item indicator */
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4) {
+    scroll-margin-top: 120px; /* Account for sticky header */
+  }
+
+  /* Custom Scrollbar Styling */
+  /* For Webkit browsers (Chrome, Safari, Edge) */
+  #toc-nav::-webkit-scrollbar,
+  #mobile-toc-nav::-webkit-scrollbar,
+  .sticky::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #toc-nav::-webkit-scrollbar-track,
+  #mobile-toc-nav::-webkit-scrollbar-track,
+  .sticky::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  #toc-nav::-webkit-scrollbar-thumb,
+  #mobile-toc-nav::-webkit-scrollbar-thumb,
+  .sticky::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-monokai-border rounded-full;
+    transition: background-color 0.2s ease;
+  }
+
+  #toc-nav::-webkit-scrollbar-thumb:hover,
+  #mobile-toc-nav::-webkit-scrollbar-thumb:hover,
+  .sticky::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-monokai-muted;
+  }
+
+  /* For Firefox */
+  #toc-nav,
+  #mobile-toc-nav,
+  .sticky > div {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+
+  :global(.dark) #toc-nav,
+  :global(.dark) #mobile-toc-nav,
+  :global(.dark) .sticky > div {
+    scrollbar-color: theme('colors.monokai.border') transparent;
+  }
+
+  /* Hide scrollbar by default, show on hover for cleaner look */
+  @media (min-width: 1024px) {
+    .sticky > div {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    .sticky > div::-webkit-scrollbar {
+      width: 0;
+      transition: width 0.2s ease;
+    }
+    
+    .sticky > div:hover::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    /* Firefox - always show thin scrollbar since we can't do hover effect */
+    .sticky > div {
+      scrollbar-width: thin;
+    }
+  }
+
+  /* Global scrollbar styling for main page */
+  :global(html)::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  :global(html)::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-monokai-bg;
+  }
+
+  :global(html)::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-monokai-border rounded-full;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+
+  :global(html)::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-monokai-muted;
+  }
+
+  /* Firefox global scrollbar */
+  :global(html) {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.400') theme('colors.gray.100');
+  }
+
+  :global(html.dark) {
+    scrollbar-color: theme('colors.monokai.border') theme('colors.monokai.bg');
+  }
+</style>

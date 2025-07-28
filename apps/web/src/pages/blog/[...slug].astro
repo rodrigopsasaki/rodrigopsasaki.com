@@ -15,22 +15,133 @@ const { Content } = await post.render();
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="prose prose-gray max-w-none">
-    <h1 class="text-4xl font-bold mb-4">{post.data.title}</h1>
-    <p class="text-gray-500 mb-6">
-      {new Date(post.data.date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })}
-    </p>
-    <div class="flex gap-2 mb-8">
-      {post.data.tags.map((tag) => (
-        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">
-          {tag}
-        </span>
-      ))}
+  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <article>
+      <!-- Header Section -->
+      <header class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
+          {post.data.title}
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted mb-6 leading-relaxed">
+          {post.data.description}
+        </p>
+        
+        <!-- Date and Tags -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+          <time class="text-gray-500 dark:text-monokai-muted">
+            {new Date(post.data.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
+          
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <span class="text-xs px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full font-medium">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Section with Tailwind Typography -->
+      <div class="prose prose-lg prose-gray dark:prose-invert max-w-none 
+                  prose-headings:text-gray-800 dark:prose-headings:text-monokai-text
+                  prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-monokai-border prose-h2:pb-2
+                  prose-h3:text-primary-700 dark:prose-h3:text-monokai-yellow
+                  prose-h4:text-primary-600 dark:prose-h4:text-monokai-orange
+                  prose-a:text-primary-600 dark:prose-a:text-monokai-blue 
+                  prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-gray-800 dark:prose-strong:text-monokai-text
+                  prose-code:bg-gray-100 dark:prose-code:bg-monokai-surface 
+                  prose-code:text-gray-800 dark:prose-code:text-monokai-green
+                  prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm
+                  prose-blockquote:border-l-primary-600 dark:prose-blockquote:border-l-monokai-orange
+                  prose-blockquote:text-gray-600 dark:prose-blockquote:text-monokai-muted
+                  prose-th:bg-gray-100 dark:prose-th:bg-monokai-surface
+                  prose-th:text-gray-800 dark:prose-th:text-monokai-text
+                  prose-td:border-gray-300 dark:prose-td:border-monokai-border
+                  prose-hr:border-gray-300 dark:prose-hr:border-monokai-border">
+        <Content />
+      </div>
+    </article>
     </div>
-    <Content />
-  </article>
+  </div>
 </BaseLayout>
+
+<style>
+  /* Fix code block rendering issues */
+  .prose :global(pre) {
+    @apply bg-gray-100 dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-4 overflow-x-auto my-6;
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    line-height: 1.5 !important;
+    white-space: pre !important;
+    transform: none !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+  
+  .prose :global(pre code) {
+    @apply bg-transparent text-gray-800 dark:text-monokai-text px-0 py-0 rounded-none;
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    line-height: inherit !important;
+    white-space: inherit !important;
+    transform: none !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  
+  /* Ensure proper code rendering */
+  .prose :global(code) {
+    font-variant-ligatures: none !important;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-feature-settings: normal !important;
+    font-feature-settings: normal !important;
+  }
+  
+  /* Fix any potential transform issues */
+  .prose :global(pre),
+  .prose :global(pre code),
+  .prose :global(code) {
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Proper heading spacing */
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4) {
+    scroll-margin-top: 120px; /* Account for sticky header */
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Make all links in blog content open in new tabs
+    const contentLinks = document.querySelectorAll('.prose a');
+    
+    contentLinks.forEach(link => {
+      // Skip if it's already configured or is an anchor link
+      if (link.hasAttribute('target') || link.getAttribute('href')?.startsWith('#')) {
+        return;
+      }
+      
+      // Add target="_blank" and security attributes
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+</script>

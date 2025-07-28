@@ -43,6 +43,12 @@ const { title, description = t.meta.description } = Astro.props;
         }
       })();
     </script>
+    
+    <!-- Copy code functionality -->
+    <script>
+      import { initCopyCodeButtons } from '../scripts/copy-code';
+      initCopyCodeButtons();
+    </script>
   </head>
   <body class="min-h-screen bg-gray-100 dark:bg-monokai-bg text-gray-800 dark:text-monokai-text transition-colors duration-300">
     <!-- Subtle floating elements -->

@@ -85,11 +85,14 @@ options:
 ## Quick Start
 
 ### Installation
-```bash
-# One-liner (Recommended)
-curl -fsSL https://raw.githubusercontent.com/rodrigopsasaki/rodrigos-cli/main/install.sh | bash
 
-# Manual installation
+#### One-liner (Recommended)
+```bash
+curl -fsSL https://raw.githubusercontent.com/rodrigopsasaki/rodrigos-cli/main/install.sh | bash
+```
+
+#### Manual installation
+```bash
 git clone https://github.com/rodrigopsasaki/rodrigos-cli.git
 cd rodrigos-cli && ./install.sh
 ```

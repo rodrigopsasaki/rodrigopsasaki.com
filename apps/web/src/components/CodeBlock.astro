@@ -1,0 +1,25 @@
+---
+export interface Props {
+  code: string;
+  language?: string;
+}
+
+const { code, language = 'bash' } = Astro.props;
+---
+
+<div class="relative group">
+  <pre class="bg-gray-900 dark:bg-monokai-surface text-gray-100 dark:text-monokai-text p-4 rounded-lg overflow-x-auto font-mono text-sm"><code class={`language-${language}`}>{code}</code></pre>
+  <button
+    class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-gray-700 hover:bg-gray-600 dark:bg-monokai-border dark:hover:bg-monokai-muted text-white px-3 py-1 rounded text-xs transition-all duration-200 flex items-center gap-1"
+    onclick={`navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`).then(() => {
+      this.textContent = 'Copied!';
+      setTimeout(() => this.textContent = 'Copy', 2000);
+    })`}
+  >
+    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+      <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+    </svg>
+    Copy
+  </button>
+</div>

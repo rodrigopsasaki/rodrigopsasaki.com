@@ -34,8 +34,14 @@ server {
     listen 3000;
     server_name rodrigopsasaki.com www.rodrigopsasaki.com;
 
-    port_in_redirect false;
+    port_in_redirect off;
     proxy_redirect off;
+
+    # Prevent proxy headers from leaking port 3000
+    proxy_set_header Host rodrigopsasaki.com;
+    proxy_set_header X-Forwarded-Host "";
+    proxy_set_header X-Forwarded-Port "";
+    proxy_set_header X-Forwarded-Proto "";
 
     root /usr/share/nginx/html;
     index index.html;

@@ -1,0 +1,17 @@
+{
+  "name": "@rodrigopsasaki/api",
+  "version": "1.0.0",
+  "description": "API placeholder for future backend services",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'API placeholder - no dev server yet'",
+    "build": "echo 'API placeholder - no build yet'",
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier --check .",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "prettier": "^3.2.4"
+  }
+}

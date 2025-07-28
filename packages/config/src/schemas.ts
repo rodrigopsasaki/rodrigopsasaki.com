@@ -1,0 +1,22 @@
+import { z } from 'zod';
+
+export const blogPostSchema = z.object({
+  title: z.string(),
+  date: z.string(),
+  tags: z.array(z.string()),
+  description: z.string(),
+  draft: z.boolean().optional().default(false),
+});
+
+export const projectSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  tags: z.array(z.string()),
+  github: z.string().url().optional(),
+  demo: z.string().url().optional(),
+  featured: z.boolean().optional().default(false),
+  order: z.number().optional(),
+});
+
+export type BlogPost = z.infer<typeof blogPostSchema>;
+export type Project = z.infer<typeof projectSchema>;

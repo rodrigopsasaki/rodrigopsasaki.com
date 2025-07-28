@@ -1,0 +1,177 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '@rodrigopsasaki/config';
+---
+
+<BaseLayout title="Home">
+  <!-- Hero Section -->
+  <section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <!-- Main Content -->
+      <div class="space-y-8 animate-fade-in">
+        <!-- Greeting with animated typing effect -->
+        <div class="space-y-4">
+          {siteConfig.availableForWork && (
+            <div class="inline-flex items-center px-4 py-2 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-green rounded-full text-sm font-medium mb-6">
+              <span class="w-2 h-2 bg-green-500 dark:bg-monokai-green rounded-full mr-2 animate-pulse"></span>
+              Available for new opportunities
+            </div>
+          )}
+          
+          <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-gray-800 dark:text-monokai-text mb-4">
+            Hey, I'm <span class="text-primary-600 dark:text-monokai-yellow">Rodrigo</span>
+          </h1>
+          
+          <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted max-w-3xl mx-auto leading-relaxed">
+            I build
+            <span class="font-semibold text-primary-600 dark:text-monokai-orange">elegant digital experiences</span>
+            with TypeScript, clean architecture, and a healthy obsession with developer experience.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
+          <a href="/blog" 
+             class="group inline-flex items-center justify-center px-8 py-4 bg-primary-600 dark:bg-monokai-orange text-white font-semibold rounded-xl shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all duration-200">
+            <span>Read my thoughts</span>
+          </a>
+          
+          <a href="/projects" 
+             class="group inline-flex items-center justify-center px-8 py-4 bg-paper-200 dark:bg-monokai-surface text-gray-800 dark:text-monokai-text font-semibold rounded-xl border border-paper-300 dark:border-monokai-border hover:bg-paper-300 dark:hover:bg-monokai-border transform hover:-translate-y-1 transition-all duration-200">
+            <span>Explore my work</span>
+            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-16 max-w-2xl mx-auto">
+          <div class="text-center space-y-2">
+            <div class="text-2xl font-bold text-primary-600 dark:text-monokai-blue">5+</div>
+            <div class="text-sm text-gray-500 dark:text-monokai-muted">Years Experience</div>
+          </div>
+          <div class="text-center space-y-2">
+            <div class="text-2xl font-bold text-accent-600 dark:text-monokai-purple">50+</div>
+            <div class="text-sm text-gray-500 dark:text-monokai-muted">Projects Shipped</div>
+          </div>
+          <div class="text-center space-y-2">
+            <div class="text-2xl font-bold text-primary-600 dark:text-monokai-green">10k+</div>
+            <div class="text-sm text-gray-500 dark:text-monokai-muted">Lines of Code</div>
+          </div>
+          <div class="text-center space-y-2">
+            <div class="text-2xl font-bold text-accent-600 dark:text-monokai-yellow">∞</div>
+            <div class="text-sm text-gray-500 dark:text-monokai-muted">Coffee Consumed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-20 bg-paper-200/30 dark:bg-monokai-surface/30 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-monokai-text mb-4">
+          What I'm all about
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-monokai-muted max-w-2xl mx-auto">
+          I believe great software comes from the intersection of technical excellence and user empathy.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="group p-8 bg-paper-50 dark:bg-monokai-surface rounded-2xl shadow-sm border border-paper-300/30 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="w-12 h-12 bg-primary-600 dark:bg-monokai-green rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Clean Code</h3>
+          <p class="text-gray-600 dark:text-monokai-muted">
+            Writing code that's not just functional, but readable, maintainable, and a joy to work with.
+          </p>
+        </div>
+
+        <div class="group p-8 bg-paper-50 dark:bg-monokai-surface rounded-2xl shadow-sm border border-paper-300/30 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="w-12 h-12 bg-accent-600 dark:bg-monokai-purple rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Performance</h3>
+          <p class="text-gray-600 dark:text-monokai-muted">
+            Obsessing over the details that make applications fast, responsive, and delightful to use.
+          </p>
+        </div>
+
+        <div class="group p-8 bg-paper-50 dark:bg-monokai-surface rounded-2xl shadow-sm border border-paper-300/30 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="w-12 h-12 bg-primary-700 dark:bg-monokai-blue rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Collaboration</h3>
+          <p class="text-gray-600 dark:text-monokai-muted">
+            Building great teams and fostering environments where everyone can do their best work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Work Preview -->
+  <section class="py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          Recent work & thoughts
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400">
+          Coming soon - stay tuned for blog posts and project showcases!
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300">
+          <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            Deep dives into TypeScript, architecture, and developer experience
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Technical insights, lessons learned, and opinions on building better software.
+          </p>
+          <a href="/blog" class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+            Read more
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+
+        <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300">
+          <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            Open source tools and side projects
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            From developer tools to web applications, explore what I've been building.
+          </p>
+          <a href="/projects" class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+            Explore projects
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,106 @@
+---
+import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Rodrigo Sasaki's personal website and digital playground" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title === 'Home' ? 'Rodrigo Sasaki' : `${title} | Rodrigo Sasaki`}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Theme initialization script (runs before page renders) -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (theme === 'system' && systemDark);
+        
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-paper-100 bg-linen-texture dark:bg-monokai-bg dark:bg-dark-paper-texture text-gray-800 dark:text-monokai-text transition-colors duration-300">
+    <!-- Subtle floating elements -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+      <div class="absolute top-20 right-20 w-32 h-32 bg-primary-200/10 dark:bg-monokai-green/5 rounded-full blur-2xl animate-float"></div>
+      <div class="absolute bottom-40 left-20 w-24 h-24 bg-accent-200/10 dark:bg-monokai-orange/5 rounded-full blur-xl animate-float" style="animation-delay: 2s;"></div>
+    </div>
+
+    <nav class="sticky top-0 z-50 backdrop-blur-sm bg-paper-100/95 dark:bg-monokai-bg/90 border-b border-paper-300/30 dark:border-monokai-border/50">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="group flex items-center space-x-2">
+              <div class="w-8 h-8 bg-primary-600 dark:bg-monokai-orange rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                <span class="text-white font-bold text-sm">RS</span>
+              </div>
+              <span class="font-semibold text-lg text-gray-800 dark:text-monokai-text">
+                Rodrigo Sasaki
+              </span>
+            </a>
+          </div>
+          
+          <div class="flex items-center space-x-6">
+            <div class="hidden md:flex items-center space-x-6">
+              <a href="/blog" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
+                Blog
+              </a>
+              <a href="/projects" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
+                Projects
+              </a>
+              <a href="/cv" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
+                CV
+              </a>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="relative">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-paper-300/30 dark:border-monokai-border/50 bg-paper-200/30 dark:bg-monokai-surface/50 backdrop-blur-sm">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div class="text-gray-500 dark:text-monokai-muted">
+            © 2024 Rodrigo Sasaki. Built with Astro & TailwindCSS.
+          </div>
+          <div class="flex items-center space-x-6">
+            <a href="https://github.com/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+              GitHub
+            </a>
+            <a href="https://linkedin.com/in/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+              LinkedIn
+            </a>
+            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+              RSS
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

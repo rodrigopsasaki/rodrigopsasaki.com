@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="CV">
+  <div class="space-y-8">
+    <h1 class="text-4xl font-bold">Curriculum Vitae</h1>
+    
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Rodrigo Sasaki</h2>
+      <p class="text-xl text-gray-600 mb-4">Senior Software Engineer</p>
+      
+      <div class="prose prose-gray max-w-none">
+        <p>
+          Experienced software engineer specializing in TypeScript, Node.js, and modern web technologies.
+          Passionate about clean architecture, maintainable code, and building elegant solutions to complex problems.
+        </p>
+        
+        <h3>Skills</h3>
+        <ul>
+          <li>Languages: TypeScript, JavaScript, Java, Go</li>
+          <li>Frontend: React, Next.js, Astro, Vue.js</li>
+          <li>Backend: Node.js, NestJS, Express, Spring Boot</li>
+          <li>Databases: PostgreSQL, MongoDB, Redis</li>
+          <li>Tools: Docker, Kubernetes, AWS, Git</li>
+        </ul>
+        
+        <h3>Experience</h3>
+        <p class="text-gray-600">Details coming soon...</p>
+        
+        <h3>Education</h3>
+        <p class="text-gray-600">Details coming soon...</p>
+        
+        <div class="mt-8">
+          <a href="/rodrigo-cv.pdf" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800">
+            Download PDF Version
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

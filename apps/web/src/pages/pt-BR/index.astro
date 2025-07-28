@@ -1,13 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { siteConfig } from '@rodrigopsasaki/config';
-import { getLangFromUrl, useTranslations, getLocalizedPath } from '../i18n';
-
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 ---
 
-<BaseLayout title={t.nav.home}>
+<BaseLayout title="Início">
   <!-- Hero Section -->
   <section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-monokai-bg">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -18,32 +14,29 @@ const t = useTranslations(lang);
           {siteConfig.availableForWork && (
             <div class="inline-flex items-center px-4 py-2 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-green rounded-full text-sm font-medium mb-6">
               <span class="w-2 h-2 bg-green-500 dark:bg-monokai-green rounded-full mr-2 animate-pulse"></span>
-              {lang === 'pt-BR' ? 'Disponível para novas oportunidades' : 'Available for new opportunities'}
+              Disponível para novas oportunidades
             </div>
           )}
           
           <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-gray-800 dark:text-monokai-text mb-4">
-            {lang === 'pt-BR' ? 'Oi, eu sou' : "Hey, I'm"} <span class="text-primary-600 dark:text-monokai-yellow">Rodrigo</span>
+            Oi, eu sou <span class="text-primary-600 dark:text-monokai-yellow">Rodrigo</span>
           </h1>
           
           <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted max-w-3xl mx-auto leading-relaxed">
-            {lang === 'pt-BR' 
-              ? <>{t.home.description}</>
-              : <>I build software that <span class="font-semibold text-primary-600 dark:text-monokai-orange">feels simple</span> — by thinking deeply about the things that make it hard.</>
-            }
+            Eu construo sistemas de software bem pensados que priorizam clareza, manutenibilidade e experiência do desenvolvedor.
           </p>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-          <a href={getLocalizedPath('/blog', lang)} 
+          <a href="/pt-BR/blog" 
              class="group inline-flex items-center justify-center px-8 py-4 bg-primary-600 dark:bg-monokai-orange text-white font-semibold rounded-xl shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all duration-200">
-            <span>{t.home.cta.readBlog}</span>
+            <span>Ler Blog</span>
           </a>
           
-          <a href={getLocalizedPath('/projects', lang)} 
+          <a href="/pt-BR/projects" 
              class="group inline-flex items-center justify-center px-8 py-4 bg-gray-200 dark:bg-monokai-surface text-gray-800 dark:text-monokai-text font-semibold rounded-xl border border-gray-300 dark:border-monokai-border hover:bg-gray-300 dark:hover:bg-monokai-border transform hover:-translate-y-1 transition-all duration-200">
-            <span>{t.home.cta.viewProjects}</span>
+            <span>Ver Projetos</span>
             <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
             </svg>
@@ -65,10 +58,10 @@ const t = useTranslations(lang);
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-monokai-text mb-4">
-          {lang === 'pt-BR' ? 'Sobre mim' : "What I'm all about"}
+          Sobre mim
         </h2>
         <p class="text-lg text-gray-600 dark:text-monokai-muted max-w-2xl mx-auto">
-          I care about clean architecture, production reality, and the engineer who gets paged at 2AM and has to troubleshoot the system I helped build.
+          Me importo com arquitetura limpa, realidade de produção e com o engenheiro que recebe uma chamada às 2 da manhã e precisa resolver problemas no sistema que ajudei a construir.
         </p>
       </div>
 
@@ -79,9 +72,9 @@ const t = useTranslations(lang);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Clarity Over Cleverness</h3>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Clareza Antes de Esperteza</h3>
           <p class="text-gray-600 dark:text-monokai-muted">
-            I strive to write code that’s boring in the best way — clear, predictable, and honest. Something future me (or someone else) can step into and trust.
+            Me esforço para escrever código que é entediante da melhor forma — claro, previsível e honesto. Algo que meu eu futuro (ou outra pessoa) possa entender e confiar.
           </p>
         </div>
 
@@ -91,9 +84,9 @@ const t = useTranslations(lang);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Simplicity</h3>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Simplicidade</h3>
           <p class="text-gray-600 dark:text-monokai-muted">
-            I care about simplicity that holds up under pressure. Good defaults. Clear contracts. Code that invites understanding, not explanation.
+            Me importo com simplicidade que se mantém sob pressão. Bons padrões. Contratos claros. Código que convida ao entendimento, não à explicação.
           </p>
         </div>
 
@@ -103,9 +96,9 @@ const t = useTranslations(lang);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Production-First Thinking</h3>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Pensamento Production-First</h3>
           <p class="text-gray-600 dark:text-monokai-muted">
-            I design systems for the real world — where logs matter, failures happen, and someone is always on call. I build with observability, resilience, and clarity from the start.
+            Projeto sistemas para o mundo real — onde logs importam, falhas acontecem e alguém está sempre de plantão. Construo com observabilidade, resiliência e clareza desde o início.
           </p>
         </div>
       </div>
@@ -117,21 +110,21 @@ const t = useTranslations(lang);
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Recent work & thoughts
+          Trabalhos e pensamentos recentes
         </h2>
       </div>
 
       <div class="grid md:grid-cols-2 gap-8">
         <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300">
-          <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
+          <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Posts do Blog</div>
           <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            Deep dives into architecture, and developer experience. Or some scattered random thoughts.
+            Mergulhos profundos em arquitetura e experiência do desenvolvedor. Ou alguns pensamentos aleatórios.
           </h3>
           <p class="text-gray-600 dark:text-gray-400 mb-4">
-            Technical insights, lessons learned, and opinions on building better software.
+            Insights técnicos, lições aprendidas e opiniões sobre construir software melhor.
           </p>
-          <a href="/blog" class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-            Read more
+          <a href="/pt-BR/blog" class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+            Ler mais
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
             </svg>
@@ -139,15 +132,15 @@ const t = useTranslations(lang);
         </div>
 
         <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300">
-          <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
+          <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projetos</div>
           <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            Open source tools and side projects
+            Projetos open source e ferramentas que desenvolvi
           </h3>
           <p class="text-gray-600 dark:text-gray-400 mb-4">
-            From developer tools to web applications, explore what I've been building.
+            De ferramentas para desenvolvedores a aplicações web, explore o que tenho construído.
           </p>
-          <a href="/projects" class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-            Explore projects
+          <a href="/pt-BR/projects" class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+            Explorar projetos
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
             </svg>

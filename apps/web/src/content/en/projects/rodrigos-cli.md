@@ -123,12 +123,21 @@ rc gen id       # Alias from config
 rc gen guid     # Another alias
 ```
 
-### System-Level Aliases
-Make commands feel native:
+### Intelligent Command Wrappers
+Make rc commands feel native while preserving system functionality:
 
 ```bash
-rc alias gen uuid    # Creates 'uuid' command
-uuid                 # Now works directly
+# Create intelligent wrappers
+rc alias gen             # Creates 'gen' wrapper for all gen commands
+rc alias npm             # Creates 'npm' wrapper that extends system npm
+
+# Set up all aliases automatically
+eval "$(rc alias-init)"  # One command configures everything
+
+# Use them naturally
+gen uuid                 # Runs: rc gen uuid
+npm ss                   # Custom command via rc
+npm install react       # System npm (passed through)
 ```
 
 ## Command Wrapping & Extension
@@ -138,12 +147,16 @@ Extend existing tools while preserving their functionality:
 ```bash
 # Create enhanced npm with custom commands
 mkdir -p ~/.local/share/rc/extensions/npm
-# Add your custom npm commands here
-rc alias npm         # Override system npm
+# Add your custom npm commands here (show-scripts.sh, etc.)
+
+# Create wrapper and set up aliases
+rc alias npm             # Creates intelligent npm wrapper
+eval "$(rc alias-init)"  # Sets up all aliases automatically
 
 # Now 'npm' includes both:
 npm install          # Original npm command (passed through)
-npm show-scripts     # Your custom command
+npm show-scripts     # Your custom command via rc
+npm ss               # Aliased custom command
 ```
 
 ## Architecture: XDG Compliance

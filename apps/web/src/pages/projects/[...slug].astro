@@ -136,15 +136,21 @@ const { Content } = await project.render();
         const content = document.getElementById('main-content');
         const tocNav = document.getElementById('toc-nav');
         const mobileTocNav = document.getElementById('mobile-toc-nav');
+        
+        if (!content || !tocNav || !mobileTocNav) return;
+        
         const headings = content.querySelectorAll('h2, h3, h4');
         
         if (headings.length === 0) return;
         
         let tocHTML = '';
         
-        headings.forEach((heading, index) => {
+        headings.forEach((heading) => {
           // Create unique ID for each heading
-          const id = heading.textContent.toLowerCase()
+          const textContent = heading.textContent;
+          if (!textContent) return;
+          
+          const id = textContent.toLowerCase()
             .replace(/[^\w\s-]/g, '') // Remove special characters
             .replace(/\s+/g, '-') // Replace spaces with hyphens
             .replace(/--+/g, '-') // Replace multiple hyphens with single
@@ -153,7 +159,7 @@ const { Content } = await project.render();
           heading.id = id;
           
           const level = parseInt(heading.tagName.substring(1));
-          const text = heading.textContent;
+          const text = textContent;
           
           let linkClass = 'block py-1 px-2 rounded text-sm transition-colors duration-200 ';
           let indentClass = '';
@@ -185,13 +191,17 @@ const { Content } = await project.render();
       // Smooth scroll for ToC links
       function setupSmoothScroll() {
         document.addEventListener('click', function(e) {
-          if (e.target.matches('a[href^="#"]')) {
+          const target = e.target as HTMLElement;
+          if (target && target.matches && target.matches('a[href^="#"]')) {
             e.preventDefault();
-            const targetId = e.target.getAttribute('href').substring(1);
+            const href = target.getAttribute('href');
+            if (!href) return;
+            
+            const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
-              const offsetTop = targetElement.offsetTop - 100; // Account for sticky header
+              const offsetTop = (targetElement as HTMLElement).offsetTop - 100; // Account for sticky header
               window.scrollTo({
                 top: offsetTop,
                 behavior: 'smooth'
@@ -211,7 +221,7 @@ const { Content } = await project.render();
       }
       
       // Highlight active section in ToC
-      function updateActiveHeading(activeId) {
+      function updateActiveHeading(activeId: string) {
         // Remove active state from all links
         document.querySelectorAll('[data-heading-id]').forEach(link => {
           link.classList.remove('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
@@ -232,7 +242,7 @@ const { Content } = await project.render();
           const scrollPosition = window.scrollY + 150; // Offset for better UX
           
           for (let i = headings.length - 1; i >= 0; i--) {
-            const heading = headings[i];
+            const heading = headings[i] as HTMLElement;
             if (heading.offsetTop <= scrollPosition) {
               const newActive = heading.id;
               if (newActive !== currentActive) {

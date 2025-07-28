@@ -32,7 +32,11 @@ COPY --from=base /app/apps/web/dist /usr/share/nginx/html
 COPY <<EOF /etc/nginx/conf.d/default.conf
 server {
     listen 3000;
-    server_name _;
+    server_name rodrigopsasaki.com www.rodrigopsasaki.com;
+
+    port_in_redirect false;
+    proxy_redirect off;
+
     root /usr/share/nginx/html;
     index index.html;
 

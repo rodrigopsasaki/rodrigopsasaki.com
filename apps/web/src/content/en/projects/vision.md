@@ -177,57 +177,13 @@ vision.init({
 
 ## Integrations
 
-Vision integrates seamlessly with your existing stack. Choose from our growing collection of integrations:
+Vision integrates seamlessly with your existing stack through our growing ecosystem of framework integrations, data layer connectors, and exporters.
 
-### Web Framework Integrations
+**Web Frameworks**: Express.js, Fastify, Koa, NestJS
+**Data Layer**: Prisma ORM
+**Exporters**: Datadog (with OpenTelemetry compliance)
 
-Automatically create Vision contexts for every HTTP request with our framework integrations:
-
-#### [Express.js](/projects/vision/express)
-The most popular Node.js framework with zero-configuration observability.
-```bash
-npm install @rodrigopsasaki/vision-express
-```
-
-#### [Fastify](/projects/vision/fastify)  
-High-performance framework with multiple configuration variants and native plugin architecture.
-```bash
-npm install @rodrigopsasaki/vision-fastify
-```
-
-#### [Koa](/projects/vision/koa)
-Elegant async/await middleware for modern Node.js applications.
-```bash
-npm install @rodrigopsasaki/vision-koa
-```
-
-#### [NestJS](/projects/vision/nestjs)
-Enterprise-grade framework with decorator-based configuration and dependency injection.
-```bash
-npm install @rodrigopsasaki/vision-nestjs
-```
-
-### Data Integrations
-
-Automatic observability for your data layer operations:
-
-#### [Prisma](/projects/vision/prisma)
-Automatic database operation observability for Prisma ORM with zero configuration required.
-```bash
-npm install @rodrigopsasaki/vision-prisma
-```
-
-### Exporters
-
-Send your observability data to your favorite monitoring platforms:
-
-#### [Datadog Exporter](/projects/vision/datadog-exporter)
-Production-ready Datadog integration with circuit breakers, batching, and OpenTelemetry compliance.
-```bash
-npm install @rodrigopsasaki/vision-datadog-exporter
-```
-
-Each integration page contains comprehensive examples, configuration options, and production deployment patterns specific to that technology.
+Browse the complete integration ecosystem using the navigation menu when viewing any integration page. Each integration includes comprehensive examples, configuration variants, and production deployment patterns.
 
 ## Why Vision Works
 
@@ -243,14 +199,13 @@ Each integration page contains comprehensive examples, configuration options, an
 
 ## Quick Start
 
-Ready to add structured observability to your application? Choose your framework:
+Ready to add structured observability to your application? 
 
-- **Express.js**: `npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-express`
-- **Fastify**: `npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-fastify`
-- **Koa**: `npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-koa`
-- **NestJS**: `npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-nestjs`
+1. Install Vision core: `npm install @rodrigopsasaki/vision`
+2. Choose your framework integration from the ecosystem menu
+3. Follow the comprehensive setup guide for your specific framework
 
-Then click on your framework integration above for comprehensive setup guides and examples.
+Each integration provides zero-configuration setup, multiple deployment patterns, and production-ready examples.
 
 ## The Bigger Picture
 

@@ -1,9 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getLangFromUrl } from '../../../i18n';
 import { getCollection } from 'astro:content';
-
-const lang = getLangFromUrl(Astro.url);
 
 // Get the integration content
 const integrations = await getCollection('en/projects');

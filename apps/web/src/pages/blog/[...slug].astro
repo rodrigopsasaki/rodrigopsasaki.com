@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getLangFromUrl } from '../../i18n';
+import { getLangFromUrl, formatDate } from '../../i18n';
 import { getLocalizedCollection } from '../../i18n/content';
 
 export async function getStaticPaths() {
@@ -32,11 +32,7 @@ const { Content } = await post.render();
         <!-- Date and Tags -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <time class="text-gray-500 dark:text-monokai-muted">
-            {new Date(post.data.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+            {formatDate(post.data.date, lang)}
           </time>
           
           <div class="flex flex-wrap gap-2">

@@ -7,7 +7,9 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const projects = await getLocalizedCollection('projects', lang);
-const sortedProjects = projects.sort((a, b) => {
+// Filter out integration pages (those with a parent field)
+const topLevelProjects = projects.filter(project => !project.data.parent);
+const sortedProjects = topLevelProjects.sort((a, b) => {
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
   return (a.data.order ?? 999) - (b.data.order ?? 999);
@@ -47,7 +49,7 @@ const sortedProjects = projects.sort((a, b) => {
         </div>
       ) : (
         sortedProjects.map((project) => (
-          <div class={`group relative bg-gray-200 dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300 overflow-hidden hover:-translate-y-2 cursor-pointer ${project.data.featured ? 'md:col-span-2 lg:col-span-2' : ''}`} onclick={`window.location.href='/projects/${project.id}'`}>
+          <div class={`group relative bg-gray-200 dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300 overflow-hidden hover:-translate-y-2 cursor-pointer ${project.data.featured ? 'md:col-span-2 lg:col-span-2' : ''}`} onclick={`window.location.href='/projects/${project.id.replace('.md', '')}'`}>
             
             <div class="p-6">
               <!-- Project header -->

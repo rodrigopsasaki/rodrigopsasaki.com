@@ -1,0 +1,379 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getLangFromUrl, useTranslations } from '../../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Get the integration content
+const integrations = await getCollection('en/projects');
+const integration = integrations.find(entry => entry.id === 'vision/fastify.md');
+
+if (!integration) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await integration.render();
+
+// Get parent project for breadcrumbs
+const parentProject = integrations.find(entry => entry.id === 'vision.md');
+---
+
+<BaseLayout title={integration.data.title} description={integration.data.description}>
+  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex gap-8 lg:gap-12">
+        <!-- Sidebar with navigation -->
+        <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
+          <div class="sticky top-24 h-[calc(100vh-8rem)] flex flex-col">
+            <!-- Breadcrumb navigation -->
+            <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4 mb-4">
+              <nav class="text-sm">
+                <ol class="list-none p-0 inline-flex">
+                  <li class="flex items-center">
+                    <a href="/projects" class="text-primary-600 dark:text-monokai-blue hover:underline">
+                      Projects
+                    </a>
+                    <svg class="fill-current w-3 h-3 mx-3 text-gray-400" viewBox="0 0 20 20">
+                      <path d="M5.59 7.41L7 6l6 6-6 6-1.41-1.41L10.17 12z"/>
+                    </svg>
+                  </li>
+                  <li class="flex items-center">
+                    <a href="/projects/vision" class="text-primary-600 dark:text-monokai-blue hover:underline">
+                      {parentProject?.data.title || 'Vision'}
+                    </a>
+                    <svg class="fill-current w-3 h-3 mx-3 text-gray-400" viewBox="0 0 20 20">
+                      <path d="M5.59 7.41L7 6l6 6-6 6-1.41-1.41L10.17 12z"/>
+                    </svg>
+                  </li>
+                  <li class="text-gray-500 dark:text-monokai-muted">
+                    {integration.data.title}
+                  </li>
+                </ol>
+              </nav>
+            </div>
+
+            <!-- Scrollable Table of Contents at top -->
+            <div class="flex-1 min-h-0 mb-4">
+              <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4 h-full flex flex-col">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                  Table of Contents
+                </h3>
+                <nav class="flex-1 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-monokai-border scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-monokai-muted" id="toc-nav">
+                  <!-- ToC will be populated by JavaScript -->
+                </nav>
+              </div>
+            </div>
+
+            <!-- Fixed Integration navigation at bottom -->
+            <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                Vision Integrations
+              </h3>
+              <nav class="space-y-1">
+                <a href="/projects/vision" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Overview
+                </a>
+                <a href="/projects/vision/express" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Express.js
+                </a>
+                <a href="/projects/vision/fastify" 
+                   class="block py-2 px-3 text-sm bg-primary-100 dark:bg-monokai-surface text-primary-800 dark:text-monokai-yellow rounded font-medium">
+                  Fastify
+                </a>
+                <a href="/projects/vision/koa" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Koa
+                </a>
+                <a href="/projects/vision/nestjs" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  NestJS
+                </a>
+                <a href="/projects/vision/datadog-exporter" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Datadog Exporter
+                </a>
+              </nav>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0">
+          <article class="max-w-4xl">
+            <!-- Header Section -->
+            <header class="mb-12">
+              <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
+                {integration.data.title}
+              </h1>
+              <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted mb-6 leading-relaxed">
+                {integration.data.description}
+              </p>
+              
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-2 mb-6">
+                {integration.data.tags.map((tag) => (
+                  <span class="text-xs px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              
+              <!-- Links -->
+              <div class="flex flex-wrap gap-4">
+                {integration.data.npm && (
+                  <a 
+                    href={integration.data.npm} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.331h-2.669v-4H9.335v4h1.331zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331z"/>
+                    </svg>
+                    npm package
+                  </a>
+                )}
+                {integration.data.github && (
+                  <a 
+                    href={integration.data.github} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-monokai-border text-white dark:text-monokai-text rounded-lg hover:bg-gray-700 dark:hover:bg-monokai-surface transition-colors duration-200 font-medium"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View Source
+                  </a>
+                )}
+                <a 
+                  href="/projects/vision"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                  </svg>
+                  Back to Vision
+                </a>
+              </div>
+            </header>
+
+            <!-- Content Section -->
+            <div id="main-content" class="prose prose-lg prose-gray dark:prose-invert max-w-none 
+                        prose-headings:text-gray-800 dark:prose-headings:text-monokai-text
+                        prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-monokai-border prose-h2:pb-2
+                        prose-h3:text-primary-700 dark:prose-h3:text-monokai-yellow
+                        prose-h4:text-primary-600 dark:prose-h4:text-monokai-orange
+                        prose-a:text-primary-600 dark:prose-a:text-monokai-blue 
+                        prose-a:no-underline hover:prose-a:underline
+                        prose-strong:text-gray-800 dark:prose-strong:text-monokai-text
+                        prose-code:bg-gray-100 dark:prose-code:bg-monokai-surface 
+                        prose-code:text-gray-800 dark:prose-code:text-monokai-green
+                        prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm
+                        prose-blockquote:border-l-primary-600 dark:prose-blockquote:border-l-monokai-orange
+                        prose-blockquote:text-gray-600 dark:prose-blockquote:text-monokai-muted
+                        prose-th:bg-gray-100 dark:prose-th:bg-monokai-surface
+                        prose-th:text-gray-800 dark:prose-th:text-monokai-text
+                        prose-td:border-gray-300 dark:prose-td:border-monokai-border
+                        prose-hr:border-gray-300 dark:prose-hr:border-monokai-border">
+              <Content />
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Same ToC JavaScript as main project page -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Generate Table of Contents
+      function generateTOC() {
+        const content = document.getElementById('main-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!content || !tocNav) return;
+        
+        const headings = content.querySelectorAll('h2, h3, h4');
+        
+        if (headings.length === 0) return;
+        
+        let tocHTML = '';
+        
+        headings.forEach((heading) => {
+          const textContent = heading.textContent;
+          if (!textContent) return;
+          
+          const id = textContent.toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/--+/g, '-')
+            .trim();
+          
+          heading.id = id;
+          
+          const level = parseInt(heading.tagName.substring(1));
+          const text = textContent;
+          
+          let linkClass = 'block py-1 px-2 rounded text-sm transition-colors duration-200 ';
+          let indentClass = '';
+          
+          if (level === 2) {
+            linkClass += 'text-gray-700 dark:text-monokai-text hover:bg-primary-50 dark:hover:bg-monokai-border font-medium';
+            indentClass = '';
+          } else if (level === 3) {
+            linkClass += 'text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border';
+            indentClass = 'ml-3';
+          } else if (level === 4) {
+            linkClass += 'text-gray-500 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border text-xs';
+            indentClass = 'ml-6';
+          }
+          
+          tocHTML += `
+            <div class="${indentClass}">
+              <a href="#${id}" class="${linkClass}" data-heading-id="${id}">
+                ${text}
+              </a>
+            </div>
+          `;
+        });
+        
+        tocNav.innerHTML = tocHTML;
+      }
+      
+      // Smooth scroll for ToC links
+      function setupSmoothScroll() {
+        document.addEventListener('click', function(e) {
+          const target = e.target;
+          if (target && target.matches && target.matches('a[href^="#"]')) {
+            e.preventDefault();
+            const href = target.getAttribute('href');
+            if (!href) return;
+            
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              const offsetTop = targetElement.offsetTop - 100;
+              window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+              });
+              
+              updateActiveHeading(targetId);
+            }
+          }
+        });
+      }
+      
+      // Highlight active section in ToC
+      function updateActiveHeading(activeId) {
+        document.querySelectorAll('[data-heading-id]').forEach((link) => {
+          link.classList.remove('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
+        });
+        
+        document.querySelectorAll(`[data-heading-id="${activeId}"]`).forEach((link) => {
+          link.classList.add('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
+        });
+      }
+      
+      // Initialize everything
+      generateTOC();
+      setupSmoothScroll();
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  /* Same styles as main project page */
+  .prose :global(pre) {
+    @apply bg-gray-100 dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-4 overflow-x-auto my-6;
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    line-height: 1.5 !important;
+  }
+  
+  .prose :global(pre code) {
+    @apply bg-transparent text-gray-800 dark:text-monokai-text px-0 py-0 rounded-none;
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    line-height: inherit !important;
+  }
+  
+  .prose :global(code) {
+    font-variant-ligatures: none !important;
+    text-rendering: optimizeLegibility !important;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4) {
+    scroll-margin-top: 120px;
+  }
+
+  /* Beautiful custom scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-gray-300 {
+    scrollbar-color: rgb(209 213 219) transparent;
+  }
+  
+  .dark .scrollbar-thumb-monokai-border {
+    scrollbar-color: theme('colors.monokai.border') transparent;
+  }
+  
+  .scrollbar-track-transparent {
+    scrollbar-color: transparent transparent;
+  }
+  
+  /* WebKit scrollbar styling */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(209 213 219);
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(156 163 175);
+  }
+  
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: theme('colors.monokai.border');
+  }
+  
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.monokai.muted');
+  }
+  
+  /* Hide scrollbar initially, show on hover for cleaner look */
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+  
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    background: rgb(209 213 219);
+  }
+  
+  .dark .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    background: theme('colors.monokai.border');
+  }
+</style>

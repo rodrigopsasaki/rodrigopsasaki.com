@@ -6,7 +6,7 @@ import { getLocalizedCollection } from '../../i18n/content';
 export async function getStaticPaths() {
   const projects = await getLocalizedCollection('projects', 'en');
   return projects.map((project) => ({
-    params: { slug: project.id },
+    params: { slug: project.id.replace('.md', '') },
     props: project,
   }));
 }
@@ -23,15 +23,60 @@ const { Content } = await project.render();
     <div class="flex gap-8 lg:gap-12">
       <!-- Table of Contents Sidebar -->
       <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
-        <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
-          <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
-              Table of Contents
-            </h3>
-            <nav class="space-y-1" id="toc-nav">
-              <!-- ToC will be populated by JavaScript -->
-            </nav>
-          </div>
+        <div class="sticky top-24 h-[calc(100vh-8rem)] flex flex-col">
+          <!-- Table of Contents at TOP (only for Vision project with special layout) -->
+          {project.id === 'vision.md' ? (
+            <div class="flex-1 min-h-0 mb-4">
+              <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4 h-full flex flex-col">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                  Table of Contents
+                </h3>
+                <nav class="flex-1 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-monokai-border scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-monokai-muted" id="toc-nav">
+                  <!-- ToC will be populated by JavaScript -->
+                </nav>
+              </div>
+            </div>
+          ) : (
+            <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                Table of Contents
+              </h3>
+              <nav class="space-y-1" id="toc-nav">
+                <!-- ToC will be populated by JavaScript -->
+              </nav>
+            </div>
+          )}
+
+          <!-- Vision Integrations Navigation at BOTTOM (only for Vision project) -->
+          {project.id === 'vision.md' && (
+            <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                Vision Integrations
+              </h3>
+              <nav class="space-y-1">
+                <a href="/projects/vision/express" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Express.js
+                </a>
+                <a href="/projects/vision/fastify" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Fastify
+                </a>
+                <a href="/projects/vision/koa" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Koa
+                </a>
+                <a href="/projects/vision/nestjs" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  NestJS
+                </a>
+                <a href="/projects/vision/datadog-exporter" 
+                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                  Datadog Exporter
+                </a>
+              </nav>
+            </div>
+          )}
         </div>
       </aside>
 

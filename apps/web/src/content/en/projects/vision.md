@@ -7,87 +7,189 @@ featured: true
 order: 2
 ---
 
-# Vision: Production-First Observability
+# Vision: Structured Observability for Node.js
 
-Vision is a structured observability framework for Node.js applications. It's built on a simple premise: **observability shouldn't be an afterthought**. When you're building systems that matter, you need to understand what's happening inside them — not just when things break, but all the time.
+> Structured observability, modeled around intent — not output.
 
-## The Philosophy: Zero-Setup Observability
+Vision is a structured observability framework for Node.js applications that treats production monitoring as a first-class citizen, not an afterthought.
 
-We've all been there. You ship a feature, it works great in development, and then... something weird happens in production. Maybe it's slow sometimes. Maybe it fails in ways you never anticipated. Maybe you just can't figure out why.
+## What is Vision?
 
-Traditional approaches add monitoring later — after the architecture is set, after the patterns are established, after it becomes an uphill battle. Vision takes a different approach: **what if observability was automatic?**
+You don't need more logs, you need **context**.
+
+You need to know:
+- What just happened
+- What data was involved  
+- What the outcome was
+
+But most systems log like this:
 
 ```typescript
-// Setup once in your app (usually in server.ts or app.ts)
+console.log("starting payment processing");
+console.log("loaded payment", paymentId);
+console.log("charging card", amount);
+console.log("done", { status: "success" });
+```
+
+This tells a story — but it's whispering. No IDs. No continuity. Just bursts of text into the void.
+
+**Vision fixes this by giving you structured context instead of scattered logs.**
+
+## Vision Core - Getting Started
+
+Install the core package first:
+
+```bash
+npm install @rodrigopsasaki/vision
+```
+
+Vision works without any configuration. Here's your first example:
+
+```typescript
 import { vision } from '@rodrigopsasaki/vision';
-import { visionMiddleware } from '@rodrigopsasaki/vision-express';
-import { createDatadogExporter } from '@rodrigopsasaki/vision-datadog-exporter';
 
-// One-time setup
-vision.init({
-  exporters: [createDatadogExporter({ apiKey: "...", service: "my-api" })]
+await vision.observe('payment.process', async () => {
+  vision.set('payment_id', 'pay_123');
+  vision.set('amount', 2500); // $25.00
+  
+  // Your business logic here
+  const result = await processPayment();
+  vision.set('charge_id', result.id);
+  vision.set('status', 'completed');
 });
-app.use(visionMiddleware()); // That's it - every endpoint is now traced
+```
 
-// Now your regular code automatically gets observability
-async function processPayment(paymentId: string) {
-  // The context already exists from the HTTP request
-  vision.set("payment_id", paymentId);
-  
-  const payment = await db.payment.findUnique({ where: { id: paymentId } });
-  vision.set("amount", payment.amount);
-  vision.set("currency", payment.currency);
-  
-  const result = await stripe.charges.create({ amount: payment.amount });
-  vision.set("charge_id", result.id);
-  vision.set("status", "completed");
-  
-  await db.payment.update({ 
-    where: { id: paymentId }, 
-    data: { status: 'completed' } 
-  });
-  
-  return result;
+That's it. No setup. No boilerplate. Vision runs with a default console exporter out of the box.
+
+This produces a clean canonical event:
+
+```json
+{
+  "name": "payment.process",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "data": {
+    "payment_id": "pay_123",
+    "amount": 2500,
+    "charge_id": "ch_abc123",
+    "status": "completed"
+  }
 }
 ```
 
-That's it. No wrapping every function. No manual context creation. Just add data to the context that already exists. When something goes wrong, you get the complete story: what endpoint was called, what data was involved, how long each step took, and exactly where it failed.
+## Core Concepts & Examples
+
+### Working with Context
+
+Vision gives you simple tools to build rich context:
+
+```typescript
+// Set simple values
+vision.set('user_id', 'u123');
+vision.set('operation', 'checkout');
+
+// Build arrays
+vision.push('events', 'cart_loaded');
+vision.push('events', 'payment_processed');
+
+// Build objects
+vision.merge('metadata', { version: '1.2.3' });
+vision.merge('metadata', { region: 'us-east-1' });
+
+// Retrieve values
+const userId = vision.get('user_id'); // 'u123'
+```
+
+Everything you set is scoped to the active `observe()` block. Accessing context outside that block throws — by design.
+
+### Real-World Example
+
+Here's what Vision looks like in real code:
+
+```typescript
+await vision.observe('order.fulfillment', async () => {
+  vision.set('user_id', user.id);
+  vision.set('order_id', order.id);
+
+  await fulfillOrder(order);
+});
+
+// fulfillment.ts - Notice: no context passing needed
+async function fulfillOrder(order) {
+  await pickItems(order);
+  await packItems(order);
+  await shipOrder(order);
+}
+
+async function pickItems(order) {
+  // ...picking logic...
+  vision.push('events', 'picked');
+}
+
+async function packItems(order) {
+  // ...packing logic...
+  vision.push('events', 'packed');
+  vision.merge('dimensions', { weight: '2.1kg' });
+}
+
+async function shipOrder(order) {
+  // ...shipping logic...
+  vision.push('events', 'shipped');
+  vision.merge('shipment', {
+    carrier: 'DHL',
+    tracking: 'abc123',
+  });
+}
+```
+
+You don't pass context around. You don't log manually. You just describe what happened.
+
+Vision collects it — then emits exactly one event:
+
+```json
+{
+  "name": "order.fulfillment",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "data": {
+    "user_id": "user123",
+    "order_id": "ord456",
+    "events": ["picked", "packed", "shipped"],
+    "dimensions": { "weight": "2.1kg" },
+    "shipment": { "carrier": "DHL", "tracking": "abc123" }
+  }
+}
+```
+
+### Custom Exporters
+
+By default, Vision logs to the console. But you can register your own exporters:
+
+```typescript
+vision.init({
+  exporters: [
+    {
+      name: 'datadog',
+      success: (ctx) => sendToDatadog(ctx),
+      error: (ctx, err) => sendErrorToDatadog(ctx, err),
+    },
+  ],
+});
+```
 
 ## Framework Integrations
 
-Vision integrates seamlessly with all major Node.js frameworks through dedicated packages:
+Once you understand Vision core, you can integrate it with your favorite Node.js framework. Each integration automatically creates Vision contexts for every HTTP request:
 
-### Express.js Integration
-
-The most popular Node.js framework, with zero-configuration observability:
-
+### Express.js
 ```bash
-npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-express
+npm install @rodrigopsasaki/vision-express
 ```
 
 ```typescript
-import express from 'express';
-import { vision } from '@rodrigopsasaki/vision';
 import { visionMiddleware } from '@rodrigopsasaki/vision-express';
 
-const app = express();
+app.use(visionMiddleware()); // Every endpoint is now traced
 
-// Setup once
-vision.init({
-  exporters: [/* your exporters */]
-});
-
-// Add middleware - every route is now traced
-app.use(visionMiddleware({
-  captureBody: true,
-  captureHeaders: true,
-  performance: {
-    slowOperationThreshold: 1000
-  }
-}));
-
-// Routes automatically get Vision context
-app.get('/api/users/:id', async (req, res) => {
+app.get('/users/:id', async (req, res) => {
   vision.set('user_id', req.params.id);
   vision.set('operation', 'get_user');
   
@@ -96,274 +198,80 @@ app.get('/api/users/:id', async (req, res) => {
 });
 ```
 
-### Fastify Integration
-
-High-performance framework with native plugin architecture:
-
+### Fastify
 ```bash
-npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-fastify
+npm install @rodrigopsasaki/vision-fastify
 ```
 
 ```typescript
-import Fastify from 'fastify';
 import { visionPlugin } from '@rodrigopsasaki/vision-fastify';
 
-const fastify = Fastify();
-
-// Register as a plugin
-await fastify.register(visionPlugin, {
-  captureBody: true,
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 500
-  },
-  extractUser: (request) => request.headers['x-user-id']
-});
+await fastify.register(visionPlugin);
 
 fastify.get('/users/:id', async (request, reply) => {
-  // Access Vision context
-  const ctx = request.visionContext;
-  
   vision.set('user_id', request.params.id);
-  vision.set('operation', 'get_user');
-  
-  const user = await getUser(request.params.id);
-  return user;
+  return getUser(request.params.id);
 });
 ```
 
-### Koa Integration
-
-Elegant async/await middleware for modern Node.js:
-
+### Koa
 ```bash
-npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-koa
+npm install @rodrigopsasaki/vision-koa
 ```
 
 ```typescript
-import Koa from 'koa';
-import { createVisionMiddleware } from '@rodrigopsasaki/vision-koa';
+import { visionMiddleware } from '@rodrigopsasaki/vision-koa';
 
-const app = new Koa();
-
-// Add Vision middleware
-app.use(createVisionMiddleware({
-  captureBody: true,
-  captureKoaMetadata: true,
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 1000
-  }
-}));
+app.use(visionMiddleware());
 
 app.use(async (ctx) => {
-  // Vision context is automatically available
   vision.set('user_id', ctx.params.id);
-  vision.set('operation', 'get_user');
-  
-  const user = await getUser(ctx.params.id);
-  ctx.body = user;
+  ctx.body = await getUser(ctx.params.id);
 });
 ```
 
-### NestJS Integration
-
-Enterprise-grade framework with decorator-based configuration:
-
+### NestJS
 ```bash
-npm install @rodrigopsasaki/vision @rodrigopsasaki/vision-nestjs
+npm install @rodrigopsasaki/vision-nestjs
 ```
 
 ```typescript
-import { Module } from '@nestjs/common';
 import { VisionModule } from '@rodrigopsasaki/vision-nestjs';
 
 @Module({
-  imports: [
-    VisionModule.forRoot({
-      exporters: [/* your exporters */],
-      captureBody: true,
-      captureHeaders: true
-    })
-  ]
+  imports: [VisionModule.forRoot()],
 })
 export class AppModule {}
 
-// Use in your controllers
 @Controller('users')
 export class UsersController {
   @Get(':id')
-  @UseVision('get_user') // Automatic context creation
   async getUser(@Param('id') id: string) {
     vision.set('user_id', id);
-    return await this.usersService.getUser(id);
+    return await this.userService.getUser(id);
   }
 }
 ```
 
-## Performance Variants
+## Available Packages
 
-Each integration offers pre-configured variants for different use cases:
+Vision is architected as a modular ecosystem:
 
-### Minimal (Ultra-Fast)
+### Core Framework
+- **[@rodrigopsasaki/vision](https://www.npmjs.com/package/@rodrigopsasaki/vision)** - Core observability framework
 
-```typescript
-import { createMinimalVisionPlugin } from '@rodrigopsasaki/vision-fastify';
+### Framework Integrations
+- **[@rodrigopsasaki/vision-express](https://www.npmjs.com/package/@rodrigopsasaki/vision-express)** - Express.js middleware
+- **[@rodrigopsasaki/vision-fastify](https://www.npmjs.com/package/@rodrigopsasaki/vision-fastify)** - Fastify plugin
+- **[@rodrigopsasaki/vision-koa](https://www.npmjs.com/package/@rodrigopsasaki/vision-koa)** - Koa middleware
+- **[@rodrigopsasaki/vision-nestjs](https://www.npmjs.com/package/@rodrigopsasaki/vision-nestjs)** - NestJS module
 
-await fastify.register(createMinimalVisionPlugin({
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 10, // Very fast threshold
-    trackMemoryUsage: false
-  }
-}));
-```
-
-### Comprehensive (Full Observability)
-
-```typescript
-import { createComprehensiveVisionPlugin } from '@rodrigopsasaki/vision-fastify';
-
-await fastify.register(createComprehensiveVisionPlugin({
-  captureHeaders: true,
-  captureBody: true,
-  captureQuery: true,
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 500,
-    trackMemoryUsage: true
-  },
-  errorHandling: {
-    captureErrors: true,
-    captureStackTrace: true
-  }
-}));
-```
-
-### Performance-Optimized
-
-```typescript
-import { createPerformanceVisionPlugin } from '@rodrigopsasaki/vision-fastify';
-
-await fastify.register(createPerformanceVisionPlugin({
-  captureHeaders: false,
-  captureBody: false,
-  redactSensitiveData: false, // Skip redaction for speed
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 100
-  }
-}));
-```
-
-## How It Works: Structured Contexts
-
-At its core, Vision is about **contexts** — scoped units of work that carry structured metadata. Every context has a name, contains key-value data, and tracks timing automatically.
-
-```typescript
-await vision.observe(
-  "user.authenticate",
-  {
-    scope: "http-server",
-    source: "auth-service",
-  },
-  async () => {
-    vision.set("user_email", email);
-    vision.set("auth_method", "password");
-    vision.set("ip_address", req.ip);
-
-    // Your authentication logic here
-    const user = await verifyCredentials(email, password);
-
-    vision.set("user_id", user.id);
-    vision.set("user_role", user.role);
-    vision.set("login_success", true);
-  }
-);
-```
-
-When this context completes, Vision sends the complete picture to your configured exporters: the timing, the metadata, success or failure, and any errors that occurred.
-
-## Advanced Features
-
-### Security & Data Redaction
-
-Vision automatically redacts sensitive data from headers, query parameters, and request bodies:
-
-```typescript
-app.use(visionMiddleware({
-  redactSensitiveData: true,
-  redactHeaders: [
-    'authorization',
-    'cookie',
-    'x-api-key'
-  ],
-  redactQueryParams: [
-    'token',
-    'key',
-    'secret',
-    'password'
-  ],
-  redactBodyFields: [
-    'password',
-    'ssn',
-    'creditCard'
-  ]
-}));
-```
-
-### Custom User Extraction
-
-Extract user information from requests using custom functions:
-
-```typescript
-app.use(visionMiddleware({
-  extractUser: (req) => {
-    // Extract from JWT, session, or headers
-    return req.user || req.headers['x-user-id'];
-  },
-  extractTenant: (req) => {
-    return req.headers['x-tenant-id'];
-  },
-  extractCorrelationId: (req) => {
-    return req.headers['x-correlation-id'] || 
-           req.headers['x-request-id'];
-  }
-}));
-```
-
-### Performance Monitoring
-
-Track execution time, memory usage, and identify slow operations:
-
-```typescript
-app.use(visionMiddleware({
-  performance: {
-    trackExecutionTime: true,
-    slowOperationThreshold: 1000, // Mark operations > 1s as slow
-    trackMemoryUsage: true
-  }
-}));
-```
-
-### Route Exclusion
-
-Exclude health checks and internal routes from tracking:
-
-```typescript
-app.use(visionMiddleware({
-  excludeRoutes: ['/health', '/metrics', '/favicon.ico'],
-  shouldExcludeRoute: (req) => {
-    return req.url.startsWith('/internal/');
-  }
-}));
-```
+### Exporters
+- **[@rodrigopsasaki/vision-datadog-exporter](https://www.npmjs.com/package/@rodrigopsasaki/vision-datadog-exporter)** - Datadog traces, metrics, logs
 
 ## Production-Ready Exporters
 
 ### Datadog Integration
-
-The Datadog exporter transforms Vision contexts into OpenTelemetry-compliant distributed traces:
 
 ```bash
 npm install @rodrigopsasaki/vision-datadog-exporter
@@ -388,12 +296,11 @@ vision.init({
 });
 ```
 
-This isn't just a simple HTTP client. It includes:
+This includes:
 - **Circuit breaker**: Protects your app when Datadog is down
 - **Intelligent batching**: Reduces API calls and improves performance  
 - **Retry logic**: Exponential backoff with error classification
 - **OpenTelemetry compliance**: Proper trace/span relationships
-- **Automatic span kind detection**: Maps contexts to appropriate span types
 
 ### Custom Exporters
 
@@ -418,6 +325,161 @@ const slackExporter: VisionExporter = {
     }
   }
 };
+```
+
+## Detailed Framework Integration Examples
+
+Now that you understand the basics, here are comprehensive integration examples for each framework:
+
+### Express.js - Advanced Configuration
+
+```typescript
+import express from 'express';
+import { vision } from '@rodrigopsasaki/vision';
+import { visionMiddleware } from '@rodrigopsasaki/vision-express';
+
+const app = express();
+
+// Advanced setup
+vision.init({
+  exporters: [/* your exporters */]
+});
+
+app.use(visionMiddleware({
+  captureBody: true,
+  captureHeaders: true,
+  redactSensitiveData: true,
+  redactHeaders: ['authorization', 'cookie'],
+  performance: {
+    trackExecutionTime: true,
+    slowOperationThreshold: 1000
+  },
+  extractUser: (req) => req.headers['x-user-id'],
+  excludeRoutes: ['/health', '/metrics']
+}));
+
+app.get('/api/users/:id', async (req, res) => {
+  vision.set('user_id', req.params.id);
+  vision.set('operation', 'get_user');
+  
+  const user = await getUser(req.params.id);
+  res.json(user);
+});
+```
+
+### Fastify - Performance Variants
+
+```typescript
+import Fastify from 'fastify';
+import { visionPlugin, createPerformanceVisionPlugin } from '@rodrigopsasaki/vision-fastify';
+
+const fastify = Fastify();
+
+// Performance-optimized variant
+await fastify.register(createPerformanceVisionPlugin({
+  captureHeaders: false,
+  captureBody: false,
+  performance: {
+    trackExecutionTime: true,
+    slowOperationThreshold: 100
+  }
+}));
+
+// Or comprehensive variant
+await fastify.register(visionPlugin, {
+  captureBody: true,
+  captureHeaders: true,
+  performance: {
+    trackExecutionTime: true,
+    slowOperationThreshold: 500,
+    trackMemoryUsage: true
+  },
+  extractUser: (request) => request.headers['x-user-id']
+});
+
+fastify.get('/users/:id', async (request, reply) => {
+  vision.set('user_id', request.params.id);
+  vision.set('operation', 'get_user');
+  
+  const user = await getUser(request.params.id);
+  return user;
+});
+```
+
+### Koa - Async/Await Patterns
+
+```typescript
+import Koa from 'koa';
+import { createVisionMiddleware } from '@rodrigopsasaki/vision-koa';
+
+const app = new Koa();
+
+app.use(createVisionMiddleware({
+  captureBody: true,
+  captureKoaMetadata: true,
+  performance: {
+    trackExecutionTime: true,
+    slowOperationThreshold: 1000
+  },
+  redactSensitiveData: true,
+  extractUser: (ctx) => ctx.headers['x-user-id']
+}));
+
+app.use(async (ctx) => {
+  vision.set('user_id', ctx.params.id);
+  vision.set('operation', 'get_user');
+  
+  const user = await getUser(ctx.params.id);
+  ctx.body = user;
+});
+```
+
+### NestJS - Enterprise Configuration
+
+```typescript
+import { Module } from '@nestjs/common';
+import { VisionModule } from '@rodrigopsasaki/vision-nestjs';
+
+@Module({
+  imports: [
+    VisionModule.forRoot({
+      exporters: [/* your exporters */],
+      captureBody: true,
+      captureHeaders: true,
+      redactSensitiveData: true,
+      performance: {
+        trackExecutionTime: true,
+        slowOperationThreshold: 1000
+      }
+    })
+  ]
+})
+export class AppModule {}
+
+@Controller('users')
+export class UsersController {
+  @Get(':id')
+  @UseVision('get_user') // Automatic context creation
+  async getUser(@Param('id') id: string) {
+    vision.set('user_id', id);
+    return await this.usersService.getUser(id);
+  }
+}
+```
+
+## Advanced Features
+
+### Security & Data Redaction
+
+Vision automatically redacts sensitive data:
+
+```typescript
+app.use(visionMiddleware({
+  redactSensitiveData: true,
+  redactHeaders: ['authorization', 'cookie', 'x-api-key'],
+  redactQueryParams: ['token', 'key', 'secret', 'password'],
+  redactBodyFields: ['password', 'ssn', 'creditCard']
+}));
 ```
 
 ## Microservices & Distributed Systems

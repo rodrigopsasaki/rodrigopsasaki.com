@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getLangFromUrl, useTranslations } from '../../../i18n';
+import { getLangFromUrl } from '../../../i18n';
 import { getCollection } from 'astro:content';
 
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+
 
 // Get the integration content
 const integrations = await getCollection('en/projects');
@@ -253,9 +253,9 @@ const parentProject = integrations.find(entry => entry.id === 'vision.md');
       function setupSmoothScroll() {
         document.addEventListener('click', function(e) {
           const target = e.target;
-          if (target && target.matches && target.matches('a[href^="#"]')) {
+          if (target && (target as HTMLElement).matches && (target as HTMLElement).matches('a[href^="#"]')) {
             e.preventDefault();
-            const href = target.getAttribute('href');
+            const href = (target as HTMLAnchorElement).getAttribute('href');
             if (!href) return;
             
             const targetId = href.substring(1);
@@ -275,7 +275,7 @@ const parentProject = integrations.find(entry => entry.id === 'vision.md');
       }
       
       // Highlight active section in ToC
-      function updateActiveHeading(activeId) {
+      function updateActiveHeading(activeId: string) {
         document.querySelectorAll('[data-heading-id]').forEach((link) => {
           link.classList.remove('bg-primary-100', 'dark:bg-monokai-surface', 'text-primary-800', 'dark:text-monokai-yellow');
         });

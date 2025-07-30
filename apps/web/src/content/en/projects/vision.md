@@ -9,7 +9,7 @@ order: 2
 
 # Vision: Structured Observability for Node.js
 
-> Structured observability, modeled around intent — not output.
+> Structured observability, modeled around intent, not output.
 
 Vision is a structured observability framework for Node.js applications that treats production monitoring as a first-class citizen, not an afterthought.
 
@@ -31,7 +31,7 @@ console.log("charging card", amount);
 console.log("done", { status: "success" });
 ```
 
-This tells a story — but it's whispering. No IDs. No continuity. Just bursts of text into the void.
+This tells a story, but it's whispering. No IDs. No continuity. Just bursts of text into the void.
 
 **Vision fixes this by giving you structured context instead of scattered logs.**
 
@@ -99,7 +99,7 @@ vision.merge('metadata', { region: 'us-east-1' });
 const userId = vision.get('user_id'); // 'u123'
 ```
 
-Everything you set is scoped to the active `observe()` block. Accessing context outside that block throws — by design.
+Everything you set is scoped to the active `observe()` block. Accessing context outside that block throws by design.
 
 ### Real-World Example
 
@@ -143,7 +143,7 @@ async function shipOrder(order) {
 
 You don't pass context around. You don't log manually. You just describe what happened.
 
-Vision collects it — then emits exactly one event:
+Vision collects it and then emits exactly one event:
 
 ```json
 {
@@ -916,25 +916,25 @@ Vision is architected as a modular ecosystem:
 
 **Minimal Overhead**: Vision is designed to be lightweight. Contexts are just objects with metadata. No heavy instrumentation or performance impact.
 
-**Natural Integration**: It doesn't change how you write code — it enhances it. The framework-specific integrations feel natural and make your code more readable.
+**Natural Integration**: It doesn't change how you write code, it enhances it. The framework-specific integrations feel natural and make your code more readable.
 
 **Powerful Insights**: Because every operation is wrapped and enriched with context, you get incredibly detailed traces that tell the complete story of what happened.
 
 **Production Safety**: Built-in features like circuit breakers, retries, and security redaction mean you can trust it in production from day one.
 
-**Flexible Architecture**: The exporter system means you can send data anywhere — multiple destinations, custom transformations, different formats.
+**Flexible Architecture**: The exporter system means you can send data anywhere: multiple destinations, custom transformations, different formats.
 
 ## The Bigger Picture
 
-We're not trying to reinvent observability. There are fantastic tools out there — Datadog, New Relic, Honeycomb, Jaeger. What we're trying to do is make it easier to get high-quality data into those tools.
+We're not trying to reinvent observability. There are fantastic tools out there like Datadog, New Relic, Honeycomb, and Jaeger. What we're trying to do is make it easier to get high-quality data into those tools.
 
 Vision is our best attempt at solving a problem we've faced repeatedly: **how do you build applications that are observable by design?** It's not perfect, and it's not magic. It's just what we've learned works well for building systems you can understand and debug.
 
-If you're building Node.js applications that need to work reliably in production, give Vision a try. Start small — choose your framework integration, add an exporter, see what insights you get. We think you'll find it makes debugging and understanding your systems significantly easier.
+If you're building Node.js applications that need to work reliably in production, give Vision a try. Start small: choose your framework integration, add an exporter, see what insights you get. We think you'll find it makes debugging and understanding your systems significantly easier.
 
 ## 🙏 Acknowledgments
 
-Special thanks to [Ryan McGrath](https://github.com/zoltrain), the brilliant Go-savvy engineer who first introduced me to the power of propagating structured context across services. This project is a direct descendant of those conversations — just ported to a new ecosystem with the same care for clarity, pragmatism and the value of sharing good ideas.
+Special thanks to [Ryan McGrath](https://github.com/zoltrain), the brilliant Go-savvy engineer who first introduced me to the power of propagating structured context across services. This project is a direct descendant of those conversations, just ported to a new ecosystem with the same care for clarity, pragmatism and the value of sharing good ideas.
 
 ---
 

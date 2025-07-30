@@ -282,7 +282,7 @@ jobs:
 ### Blockquote with Attribution
 > "The best way to predict the future is to create it."
 > 
-> — Peter Drucker
+> - Peter Drucker
 
 ### Blockquote with Code
 > When using the command line, remember:
@@ -435,7 +435,7 @@ console.log(sum); // 15
 
 > "Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live."
 > 
-> — John Woods
+> - John Woods
 >
 > This is why we write clean, self-documenting code:
 >

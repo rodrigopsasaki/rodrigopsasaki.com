@@ -1,6 +1,6 @@
 ---
 title: "rodrigos-cli"
-description: "A developer-first CLI framework that makes local commands feel native — like they were always part of your environment."
+description: "A developer-first CLI framework that makes local commands feel native, like they were always part of your environment."
 tags: ["CLI", "TypeScript", "Developer Tools", "Framework", "XDG", "Extensions"]
 github: "https://github.com/rodrigopsasaki/rodrigos-cli"
 featured: true
@@ -9,7 +9,7 @@ order: 1
 
 ## What is rodrigos-cli?
 
-A developer-first CLI framework that makes local commands feel native — like they were always part of your environment. Built with XDG compliance, theme-aware colors, and a delightful developer experience.
+A developer-first CLI framework that makes local commands feel native, like they were always part of your environment. Built with XDG compliance, theme-aware colors, and a delightful developer experience.
 
 ## Philosophy: Explicit by Design
 

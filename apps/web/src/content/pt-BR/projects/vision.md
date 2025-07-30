@@ -9,13 +9,13 @@ order: 2
 
 # Vision: Observabilidade Production-First
 
-Vision é um framework de observabilidade estruturada para aplicações Node.js. É construído sobre uma premissa simples: **observabilidade não deveria ser uma reflexão tardia**. Quando você está construindo sistemas que importam, você precisa entender o que está acontecendo dentro deles — não apenas quando as coisas quebram, mas o tempo todo.
+Vision é um framework de observabilidade estruturada para aplicações Node.js. É construído sobre uma premissa simples: **observabilidade não deveria ser uma reflexão tardia**. Quando você está construindo sistemas que importam, você precisa entender o que está acontecendo dentro deles, não apenas quando as coisas quebram, mas o tempo todo.
 
 ## A Filosofia: Observabilidade Zero-Setup
 
 Todos nós já passamos por isso. Você entrega uma funcionalidade, ela funciona bem em desenvolvimento, e então... algo estranho acontece em produção. Talvez seja lento às vezes. Talvez falhe de maneiras que você nunca antecipou. Talvez você simplesmente não consiga descobrir o porquê.
 
-Abordagens tradicionais adicionam monitoramento depois — depois que a arquitetura está definida, depois que os padrões estão estabelecidos, depois que se torna uma batalha árdua. Vision adota uma abordagem diferente: **e se a observabilidade fosse automática?**
+Abordagens tradicionais adicionam monitoramento depois: depois que a arquitetura está definida, depois que os padrões estão estabelecidos, depois que se torna uma batalha árdua. Vision adota uma abordagem diferente: **e se a observabilidade fosse automática?**
 
 ```typescript
 // Configure uma vez na sua aplicação (geralmente em server.ts ou app.ts)
@@ -258,7 +258,7 @@ await fastify.register(createPerformanceVisionPlugin({
 
 ## Como Funciona: Contextos Estruturados
 
-No seu núcleo, Vision é sobre **contextos** — unidades de trabalho com escopo que carregam metadados estruturados. Todo contexto tem um nome, contém dados chave-valor e rastreia tempo automaticamente.
+No seu núcleo, Vision é sobre **contextos**: unidades de trabalho com escopo que carregam metadados estruturados. Todo contexto tem um nome, contém dados chave-valor e rastreia tempo automaticamente.
 
 ```typescript
 await vision.observe(
@@ -854,25 +854,25 @@ Vision é arquitetado como um ecossistema modular:
 
 **Overhead Mínimo**: Vision é projetado para ser leve. Contextos são apenas objetos com metadados. Sem instrumentação pesada ou impacto na performance.
 
-**Integração Natural**: Não muda como você escreve código — ele o aprimora. As integrações específicas de framework são naturais e tornam seu código mais legível.
+**Integração Natural**: Não muda como você escreve código, ele o aprimora. As integrações específicas de framework são naturais e tornam seu código mais legível.
 
 **Insights Poderosos**: Como toda operação é envolvida e enriquecida com contexto, você obtém traces incrivelmente detalhados que contam a história completa do que aconteceu.
 
 **Segurança de Produção**: Recursos incorporados como circuit breakers, retries e redação de segurança significam que você pode confiar nele em produção desde o primeiro dia.
 
-**Arquitetura Flexível**: O sistema de exportadores significa que você pode enviar dados para qualquer lugar — múltiplos destinos, transformações personalizadas, formatos diferentes.
+**Arquitetura Flexível**: O sistema de exportadores significa que você pode enviar dados para qualquer lugar: múltiplos destinos, transformações personalizadas, formatos diferentes.
 
 ## O Quadro Geral
 
-Não estamos tentando reinventar observabilidade. Existem ferramentas fantásticas por aí — Datadog, New Relic, Honeycomb, Jaeger. O que estamos tentando fazer é tornar mais fácil obter dados de alta qualidade nessas ferramentas.
+Não estamos tentando reinventar observabilidade. Existem ferramentas fantásticas por aí como Datadog, New Relic, Honeycomb e Jaeger. O que estamos tentando fazer é tornar mais fácil obter dados de alta qualidade nessas ferramentas.
 
 Vision é nossa melhor tentativa de resolver um problema que enfrentamos repetidamente: **como você constrói aplicações que são observáveis por design?** Não é perfeito, e não é mágica. É apenas o que aprendemos que funciona bem para construir sistemas que você pode entender e debuggar.
 
-Se você está construindo aplicações Node.js que precisam funcionar de forma confiável em produção, dê uma chance ao Vision. Comece pequeno — escolha sua integração de framework, adicione um exportador, veja que insights você obtém. Pensamos que você descobrirá que torna debuggar e entender seus sistemas significativamente mais fácil.
+Se você está construindo aplicações Node.js que precisam funcionar de forma confiável em produção, dê uma chance ao Vision. Comece pequeno: escolha sua integração de framework, adicione um exportador, veja que insights você obtém. Pensamos que você descobrirá que torna debuggar e entender seus sistemas significativamente mais fácil.
 
 ## 🙏 Agradecimentos
 
-Agradecimento especial ao [Ryan McGrath](https://github.com/zoltrain), o brilhante engenheiro conhecedor de Go que me apresentou pela primeira vez ao poder de propagar contexto estruturado através de serviços. Este projeto é um descendente direto dessas conversas — apenas portado para um novo ecossistema com o mesmo cuidado por clareza, pragmatismo e o valor de compartilhar boas ideias.
+Agradecimento especial ao [Ryan McGrath](https://github.com/zoltrain), o brilhante engenheiro conhecedor de Go que me apresentou pela primeira vez ao poder de propagar contexto estruturado através de serviços. Este projeto é um descendente direto dessas conversas, apenas portado para um novo ecossistema com o mesmo cuidado por clareza, pragmatismo e o valor de compartilhar boas ideias.
 
 ---
 

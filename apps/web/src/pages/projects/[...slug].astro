@@ -51,33 +51,49 @@ const { Content } = await project.render();
           {project.id === 'vision.md' && (
             <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
               <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
-                Vision Integrations
+                Vision Ecosystem
               </h3>
-              <nav class="space-y-1">
-                <a href="/projects/vision/express" 
+              <nav class="space-y-3">
+                <a href="/projects/vision" 
                    class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Express.js
+                  Getting Started
                 </a>
-                <a href="/projects/vision/fastify" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Fastify
-                </a>
-                <a href="/projects/vision/koa" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Koa
-                </a>
-                <a href="/projects/vision/nestjs" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  NestJS
-                </a>
-                <a href="/projects/vision/prisma" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Prisma
-                </a>
-                <a href="/projects/vision/datadog-exporter" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Datadog Exporter
-                </a>
+                
+                <div>
+                  <h4 class="px-3 text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-1">Web Frameworks</h4>
+                  <a href="/projects/vision/express" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    Express
+                  </a>
+                  <a href="/projects/vision/fastify" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    Fastify
+                  </a>
+                  <a href="/projects/vision/koa" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    Koa
+                  </a>
+                  <a href="/projects/vision/nestjs" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    NestJS
+                  </a>
+                </div>
+                
+                <div>
+                  <h4 class="px-3 text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-1">Data</h4>
+                  <a href="/projects/vision/prisma" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    Prisma
+                  </a>
+                </div>
+                
+                <div>
+                  <h4 class="px-3 text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-1">Exporters</h4>
+                  <a href="/projects/vision/datadog-exporter" 
+                     class="block py-1.5 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
+                    Datadog
+                  </a>
+                </div>
               </nav>
             </div>
           )}

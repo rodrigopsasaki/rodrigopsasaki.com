@@ -175,47 +175,59 @@ vision.init({
 });
 ```
 
-## Framework Integrations
+## Integrations
 
-Once you understand Vision core, you can integrate it with your favorite Node.js framework. Each integration automatically creates Vision contexts for every HTTP request:
+Vision integrates seamlessly with your existing stack. Choose from our growing collection of integrations:
 
-### [Express.js Integration](/projects/vision/express)
+### Web Framework Integrations
+
+Automatically create Vision contexts for every HTTP request with our framework integrations:
+
+#### [Express.js](/projects/vision/express)
 The most popular Node.js framework with zero-configuration observability.
 ```bash
 npm install @rodrigopsasaki/vision-express
 ```
 
-### [Fastify Integration](/projects/vision/fastify)  
+#### [Fastify](/projects/vision/fastify)  
 High-performance framework with multiple configuration variants and native plugin architecture.
 ```bash
 npm install @rodrigopsasaki/vision-fastify
 ```
 
-### [Koa Integration](/projects/vision/koa)
+#### [Koa](/projects/vision/koa)
 Elegant async/await middleware for modern Node.js applications.
 ```bash
 npm install @rodrigopsasaki/vision-koa
 ```
 
-### [NestJS Integration](/projects/vision/nestjs)
+#### [NestJS](/projects/vision/nestjs)
 Enterprise-grade framework with decorator-based configuration and dependency injection.
 ```bash
 npm install @rodrigopsasaki/vision-nestjs
 ```
 
-### [Prisma Integration](/projects/vision/prisma)
-Automatic database operation observability for Prisma with zero configuration required.
+### Data Integrations
+
+Automatic observability for your data layer operations:
+
+#### [Prisma](/projects/vision/prisma)
+Automatic database operation observability for Prisma ORM with zero configuration required.
 ```bash
 npm install @rodrigopsasaki/vision-prisma
 ```
 
-### [Datadog Exporter](/projects/vision/datadog-exporter)
+### Exporters
+
+Send your observability data to your favorite monitoring platforms:
+
+#### [Datadog Exporter](/projects/vision/datadog-exporter)
 Production-ready Datadog integration with circuit breakers, batching, and OpenTelemetry compliance.
 ```bash
 npm install @rodrigopsasaki/vision-datadog-exporter
 ```
 
-Each integration page contains comprehensive examples, configuration options, and production deployment patterns specific to that framework.
+Each integration page contains comprehensive examples, configuration options, and production deployment patterns specific to that technology.
 
 ## Why Vision Works
 

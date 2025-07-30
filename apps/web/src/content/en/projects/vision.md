@@ -203,6 +203,12 @@ Enterprise-grade framework with decorator-based configuration and dependency inj
 npm install @rodrigopsasaki/vision-nestjs
 ```
 
+### [Prisma Integration](/projects/vision/prisma)
+Automatic database operation observability for Prisma with zero configuration required.
+```bash
+npm install @rodrigopsasaki/vision-prisma
+```
+
 ### [Datadog Exporter](/projects/vision/datadog-exporter)
 Production-ready Datadog integration with circuit breakers, batching, and OpenTelemetry compliance.
 ```bash

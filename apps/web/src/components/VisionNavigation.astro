@@ -1,0 +1,90 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath } = Astro.props;
+
+// Vision integration categories and their items
+const visionIntegrations = {
+  overview: {
+    title: 'Getting Started',
+    href: '/projects/vision',
+  },
+  categories: [
+    {
+      name: 'Web Frameworks',
+      items: [
+        { name: 'Express', href: '/projects/vision/express' },
+        { name: 'Fastify', href: '/projects/vision/fastify' },
+        { name: 'Koa', href: '/projects/vision/koa' },
+        { name: 'NestJS', href: '/projects/vision/nestjs' },
+      ],
+    },
+    {
+      name: 'Data Layer',
+      items: [
+        { name: 'Prisma', href: '/projects/vision/prisma' },
+        { name: 'TypeORM', href: '/projects/vision/typeorm' },
+      ],
+    },
+    {
+      name: 'Exporters',
+      items: [
+        { name: 'Datadog', href: '/projects/vision/datadog-exporter' },
+      ],
+    },
+  ],
+};
+
+// Helper function to check if a path is active
+function isActive(href: string, currentPath?: string): boolean {
+  if (!currentPath) return false;
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
+
+// Helper function to get link classes
+function getLinkClasses(href: string, currentPath?: string, isMainItem = true): string {
+  const baseClasses = isMainItem
+    ? 'block py-2 px-3 text-sm rounded transition-colors'
+    : 'block py-1.5 px-3 text-sm rounded transition-colors';
+  
+  if (isActive(href, currentPath)) {
+    return `${baseClasses} bg-primary-100 dark:bg-monokai-surface text-primary-800 dark:text-monokai-yellow font-medium`;
+  }
+  
+  return `${baseClasses} text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border`;
+}
+---
+
+<div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
+  <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+    Vision Ecosystem
+  </h3>
+  <nav class="space-y-3">
+    <!-- Overview / Getting Started -->
+    <a 
+      href={visionIntegrations.overview.href}
+      class={getLinkClasses(visionIntegrations.overview.href, currentPath)}
+    >
+      {visionIntegrations.overview.title}
+    </a>
+    
+    <!-- Categories with integrations -->
+    {visionIntegrations.categories.map((category) => (
+      <div>
+        <h4 class="px-3 text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-1">
+          {category.name}
+        </h4>
+        {category.items.map((item) => (
+          <a 
+            href={item.href}
+            class={getLinkClasses(item.href, currentPath, false)}
+          >
+            {item.name}
+          </a>
+        ))}
+      </div>
+    ))}
+  </nav>
+</div>

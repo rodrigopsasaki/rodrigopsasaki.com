@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import VisionNavigation from '../../../components/VisionNavigation.astro';
 
 
 // Get the integration content
@@ -63,46 +64,8 @@ const parentProject = integrations.find(entry => entry.id === 'vision.md');
               </div>
             </div>
 
-            <!-- Fixed Integration navigation at bottom -->
-            <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
-              <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
-                Vision Integrations
-              </h3>
-              <nav class="space-y-1">
-                <a href="/projects/vision" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Overview
-                </a>
-                <a href="/projects/vision/express" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Express.js
-                </a>
-                <a href="/projects/vision/fastify" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Fastify
-                </a>
-                <a href="/projects/vision/koa" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Koa
-                </a>
-                <a href="/projects/vision/nestjs" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  NestJS
-                </a>
-                <a href="/projects/vision/prisma" 
-                   class="block py-2 px-3 text-sm bg-primary-100 dark:bg-monokai-surface text-primary-800 dark:text-monokai-yellow rounded font-medium">
-                  Prisma
-                </a>
-                <a href="/projects/vision/typeorm" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  TypeORM
-                </a>
-                <a href="/projects/vision/datadog-exporter" 
-                   class="block py-2 px-3 text-sm text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border rounded transition-colors">
-                  Datadog Exporter
-                </a>
-              </nav>
-            </div>
+            <!-- Vision Integrations Navigation -->
+            <VisionNavigation currentPath={Astro.url.pathname} />
           </div>
         </aside>
 

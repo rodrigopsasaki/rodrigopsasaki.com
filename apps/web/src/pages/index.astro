@@ -2,9 +2,25 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '@rodrigopsasaki/config';
 import { getLangFromUrl, useTranslations, getLocalizedPath } from '../i18n';
+import { getCollection } from 'astro:content';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+// Get recent blog posts and projects
+const blogPosts = await getCollection('en/blog').then(posts => 
+  posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+       .slice(0, 1)
+);
+
+const projects = await getCollection('en/projects').then(projects => 
+  projects.filter(project => project.data.featured)
+          .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+          .slice(0, 1)
+);
+
+const latestBlogPost = blogPosts[0];
+const featuredProject = projects[0];
 ---
 
 <BaseLayout title={t.nav.home}>
@@ -122,37 +138,93 @@ const t = useTranslations(lang);
       </div>
 
       <div class="grid md:grid-cols-2 gap-8">
-        <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/blog', lang)}'`}>
-          <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            Deep dives into architecture, and developer experience. Or some scattered random thoughts.
-          </h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-4">
-            Technical insights, lessons learned, and opinions on building better software.
-          </p>
-          <a href="/blog" class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-            Read more
-            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-        </div>
+        <!-- Blog Post Card -->
+        {latestBlogPost ? (
+          <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath(`/blog/${latestBlogPost.slug}`, lang)}'`}>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Latest Blog Post</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              {latestBlogPost.data.title}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              {latestBlogPost.data.description}
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 dark:text-gray-500">
+                {new Date(latestBlogPost.data.date).toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </span>
+              <a href={getLocalizedPath(`/blog/${latestBlogPost.slug}`, lang)} class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+                Read more
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/blog', lang)}'`}>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              Deep dives into architecture, and developer experience. Or some scattered random thoughts.
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              Technical insights, lessons learned, and opinions on building better software.
+            </p>
+            <a href={getLocalizedPath('/blog', lang)} class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+              Read more
+              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        )}
 
-        <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/projects', lang)}'`}>
-          <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            Open source tools and side projects
-          </h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-4">
-            From developer tools to web applications, explore what I've been building.
-          </p>
-          <a href="/projects" class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-            Explore projects
-            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-        </div>
+        <!-- Project Card -->
+        {featuredProject ? (
+          <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath(`/projects/${featuredProject.slug}`, lang)}'`}>
+            <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Featured Project</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              {featuredProject.data.title}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              {featuredProject.data.description}
+            </p>
+            <div class="flex items-center justify-between">
+              <div class="flex flex-wrap gap-1">
+                {featuredProject.data.tags?.slice(0, 3).map((tag: string) => (
+                  <span class="px-2 py-1 bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-300 text-xs rounded-md">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <a href={getLocalizedPath(`/projects/${featuredProject.slug}`, lang)} class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+                Explore
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/projects', lang)}'`}>
+            <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              Open source tools and side projects
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              From developer tools to web applications, explore what I've been building.
+            </p>
+            <a href={getLocalizedPath('/projects', lang)} class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
+              Explore projects
+              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </section>

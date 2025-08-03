@@ -7,7 +7,7 @@ export default defineConfig({
   site: 'https://rodrigopsasaki.com',
   integrations: [tailwind()],
   output: 'static',
-  trailingSlash: 'never',
+  trailingSlash: 'always',
   build: {
     format: 'directory'
   },

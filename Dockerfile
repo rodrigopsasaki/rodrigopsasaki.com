@@ -37,11 +37,8 @@ server {
     port_in_redirect off;
     proxy_redirect off;
 
-    # Preserve the original protocol from Fly.io proxy
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
-    proxy_set_header X-Real-IP $remote_addr;
+    # Force HTTPS for static site
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     root /usr/share/nginx/html;
     index index.html;
@@ -53,8 +50,18 @@ server {
 
     # Handle Astro's static files
     location / {
+        # Determine the protocol based on X-Forwarded-Proto header
+        set \$proto \$scheme;
+        if (\$http_x_forwarded_proto = "https") {
+            set \$proto "https";
+        }
+        
+        # Force HTTPS redirect for paths without trailing slash that need it
+        if (\$uri !~ /\$) {
+            return 301 \$proto://\$host\$uri/;
+        }
         # First try the exact file, then try as directory with index.html
-        try_files \$uri \$uri/ \$uri/index.html @fallback;
+        try_files \$uri \$uri/index.html @fallback;
     }
     
     # Fallback for routes that don't exist as files

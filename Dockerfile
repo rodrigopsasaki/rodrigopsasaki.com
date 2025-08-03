@@ -37,11 +37,11 @@ server {
     port_in_redirect off;
     proxy_redirect off;
 
-    # Prevent proxy headers from leaking port 3000
-    proxy_set_header Host rodrigopsasaki.com;
-    proxy_set_header X-Forwarded-Host "";
-    proxy_set_header X-Forwarded-Port "";
-    proxy_set_header X-Forwarded-Proto "";
+    # Preserve the original protocol from Fly.io proxy
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+    proxy_set_header X-Real-IP $remote_addr;
 
     root /usr/share/nginx/html;
     index index.html;

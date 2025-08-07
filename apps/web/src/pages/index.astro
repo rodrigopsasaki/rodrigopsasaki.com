@@ -1,230 +1,38 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { siteConfig } from '@rodrigopsasaki/config';
 import { getLangFromUrl, useTranslations, getLocalizedPath } from '../i18n';
-import { getCollection } from 'astro:content';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-
-// Get recent blog posts and projects
-const blogPosts = await getCollection('en/blog').then(posts => 
-  posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-       .slice(0, 1)
-);
-
-const projects = await getCollection('en/projects').then(projects => 
-  projects.filter(project => project.data.featured)
-          .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
-          .slice(0, 1)
-);
-
-const latestBlogPost = blogPosts[0];
-const featuredProject = projects[0];
 ---
 
 <BaseLayout title={t.nav.home}>
-  <!-- Hero Section -->
-  <section class="min-h-[80vh] flex items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-monokai-bg">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-      <!-- Main Content -->
-      <div class="space-y-8 animate-fade-in">
-        <!-- Greeting with animated typing effect -->
-        <div class="space-y-4">
-          {siteConfig.availableForWork && (
-            <div class="inline-flex items-center px-4 py-2 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-green rounded-full text-sm font-medium mb-6">
-              <span class="w-2 h-2 bg-green-500 dark:bg-monokai-green rounded-full mr-2 animate-pulse"></span>
-              {lang === 'pt-BR' ? 'Disponível para novas oportunidades' : 'Available for new opportunities'}
-            </div>
-          )}
-          
-          <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-gray-800 dark:text-monokai-text mb-4">
-            {lang === 'pt-BR' ? 'Oi, eu sou' : "Hey, I'm"} <span class="text-primary-600 dark:text-monokai-yellow">Rodrigo</span>
-          </h1>
-          
-          <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted max-w-3xl mx-auto leading-relaxed">
-            {lang === 'pt-BR' 
-              ? <>{t.home.description}</>
-              : <>I build software that <span class="font-semibold text-primary-600 dark:text-monokai-orange">feels simple</span> — by thinking deeply about the things that make it hard.</>
-            }
-          </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-          <a href={getLocalizedPath('/blog', lang)} 
-             class="group inline-flex items-center justify-center px-8 py-4 bg-primary-600 dark:bg-monokai-orange text-white font-semibold rounded-xl shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all duration-200">
-            <span>{t.home.cta.readBlog}</span>
+  <!-- Minimal Hero Section -->
+  <section class="min-h-[calc(100vh-4rem)] flex items-center justify-center relative bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="space-y-12">
+        <!-- Name -->
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-800 dark:text-monokai-text">
+          Rodrigo Sasaki
+        </h1>
+        
+        <!-- Simple navigation links -->
+        <nav class="flex flex-col sm:flex-row gap-6 sm:gap-12 justify-center items-center text-lg">
+          <a href={getLocalizedPath('/projects/', lang)} 
+             class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+            {t.nav.projects}
           </a>
           
-          <a href={getLocalizedPath('/projects', lang)} 
-             class="group inline-flex items-center justify-center px-8 py-4 bg-gray-200 dark:bg-monokai-surface text-gray-800 dark:text-monokai-text font-semibold rounded-xl border border-gray-300 dark:border-monokai-border hover:bg-gray-300 dark:hover:bg-monokai-border transform hover:-translate-y-1 transition-all duration-200">
-            <span>{t.home.cta.viewProjects}</span>
-            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
+          <a href={getLocalizedPath('/blog/', lang)} 
+             class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+            {t.nav.blog}
           </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-      </svg>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="py-20 bg-gray-100 dark:bg-monokai-surface/30">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-monokai-text mb-4">
-          {lang === 'pt-BR' ? 'Sobre mim' : "What I'm all about"}
-        </h2>
-        <p class="text-lg text-gray-600 dark:text-monokai-muted max-w-2xl mx-auto">
-          I care about clean architecture, production reality, and the engineer who gets paged at 2AM and has to troubleshoot the system I helped build.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="group p-8 bg-gray-200 dark:bg-monokai-surface rounded-2xl shadow-sm border border-gray-300 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-          <div class="w-12 h-12 bg-primary-600 dark:bg-monokai-green rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Clarity Over Cleverness</h3>
-          <p class="text-gray-600 dark:text-monokai-muted">
-            I strive to write code that’s boring in the best way — clear, predictable, and honest. Something future me (or someone else) can step into and trust.
-          </p>
-        </div>
-
-        <div class="group p-8 bg-gray-200 dark:bg-monokai-surface rounded-2xl shadow-sm border border-gray-300 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-          <div class="w-12 h-12 bg-accent-600 dark:bg-monokai-purple rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Simplicity</h3>
-          <p class="text-gray-600 dark:text-monokai-muted">
-            I care about simplicity that holds up under pressure. Good defaults. Clear contracts. Code that invites understanding, not explanation.
-          </p>
-        </div>
-
-        <div class="group p-8 bg-gray-200 dark:bg-monokai-surface rounded-2xl shadow-sm border border-gray-300 dark:border-monokai-border hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-          <div class="w-12 h-12 bg-primary-700 dark:bg-monokai-blue rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Production-First Thinking</h3>
-          <p class="text-gray-600 dark:text-monokai-muted">
-            I design systems for the real world — where logs matter, failures happen, and someone is always on call. I build with observability, resilience, and clarity from the start.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Recent Work Preview -->
-  <section class="py-20 bg-gray-50 dark:bg-monokai-bg">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Recent work & thoughts
-        </h2>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Blog Post Card -->
-        {latestBlogPost ? (
-          <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath(`/blog/${latestBlogPost.slug}`, lang)}'`}>
-            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Latest Blog Post</div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {latestBlogPost.data.title}
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              {latestBlogPost.data.description}
-            </p>
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-500 dark:text-gray-500">
-                {new Date(latestBlogPost.data.date).toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </span>
-              <a href={getLocalizedPath(`/blog/${latestBlogPost.slug}`, lang)} class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-                Read more
-                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div class="group p-8 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20 rounded-2xl border border-primary-200/50 dark:border-primary-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/blog', lang)}'`}>
-            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Blog Posts</div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              Deep dives into architecture, and developer experience. Or some scattered random thoughts.
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              Technical insights, lessons learned, and opinions on building better software.
-            </p>
-            <a href={getLocalizedPath('/blog', lang)} class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-              Read more
-              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </a>
-          </div>
-        )}
-
-        <!-- Project Card -->
-        {featuredProject ? (
-          <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath(`/projects/${featuredProject.slug}`, lang)}'`}>
-            <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Featured Project</div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {featuredProject.data.title}
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              {featuredProject.data.description}
-            </p>
-            <div class="flex items-center justify-between">
-              <div class="flex flex-wrap gap-1">
-                {featuredProject.data.tags?.slice(0, 3).map((tag: string) => (
-                  <span class="px-2 py-1 bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-300 text-xs rounded-md">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <a href={getLocalizedPath(`/projects/${featuredProject.slug}`, lang)} class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-                Explore
-                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div class="group p-8 bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-950/20 dark:to-primary-950/20 rounded-2xl border border-accent-200/50 dark:border-accent-800/50 hover:shadow-lg transition-all duration-300 cursor-pointer" onclick={`window.location.href='${getLocalizedPath('/projects', lang)}'`}>
-            <div class="text-accent-600 dark:text-accent-400 text-sm font-medium mb-3">Projects</div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              Open source tools and side projects
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              From developer tools to web applications, explore what I've been building.
-            </p>
-            <a href={getLocalizedPath('/projects', lang)} class="inline-flex items-center text-accent-600 dark:text-accent-400 font-medium group-hover:translate-x-1 transition-transform duration-200">
-              Explore projects
-              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </a>
-          </div>
-        )}
+          
+          <a href={getLocalizedPath('/cv/', lang)} 
+             class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+            {t.nav.cv}
+          </a>
+        </nav>
       </div>
     </div>
   </section>

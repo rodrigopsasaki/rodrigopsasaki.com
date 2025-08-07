@@ -50,36 +50,25 @@ const { title, description = t.meta.description } = Astro.props;
       initCopyCodeButtons();
     </script>
   </head>
-  <body class="min-h-screen bg-gray-100 dark:bg-monokai-bg text-gray-800 dark:text-monokai-text transition-colors duration-300">
-    <!-- Subtle floating elements -->
-    <div class="fixed inset-0 -z-10 overflow-hidden">
-      <div class="absolute top-20 right-20 w-32 h-32 bg-primary-200/10 dark:bg-monokai-green/5 rounded-full blur-2xl animate-float"></div>
-      <div class="absolute bottom-40 left-20 w-24 h-24 bg-accent-200/10 dark:bg-monokai-orange/5 rounded-full blur-xl animate-float" style="animation-delay: 2s;"></div>
-    </div>
-
-    <nav class="sticky top-0 z-50 backdrop-blur-sm bg-gray-100/95 dark:bg-monokai-bg/90 border-b border-gray-200/30 dark:border-monokai-border/50">
+  <body class="min-h-screen bg-gray-50 dark:bg-monokai-bg text-gray-800 dark:text-monokai-text transition-colors duration-300">
+    <nav class="sticky top-0 z-50 bg-gray-50 dark:bg-monokai-bg border-b border-gray-200 dark:border-monokai-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-            <a href={getLocalizedPath('/', lang)} class="group flex items-center space-x-2">
-              <div class="w-8 h-8 bg-primary-600 dark:bg-monokai-orange rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <span class="text-white font-bold text-sm">RS</span>
-              </div>
-              <span class="font-semibold text-lg text-gray-800 dark:text-monokai-text">
-                {t.home.title}
-              </span>
+            <a href={getLocalizedPath('/', lang)} class="font-semibold text-lg text-gray-800 dark:text-monokai-text hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-200">
+              RS
             </a>
           </div>
           
           <div class="flex items-center space-x-6">
             <div class="hidden md:flex items-center space-x-6">
-              <a href={getLocalizedPath('/blog', lang)} class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
-                {t.nav.blog}
-              </a>
-              <a href={getLocalizedPath('/projects', lang)} class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
+              <a href={getLocalizedPath('/projects/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
                 {t.nav.projects}
               </a>
-              <a href={getLocalizedPath('/cv', lang)} class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-yellow transition-colors duration-200 font-medium">
+              <a href={getLocalizedPath('/blog/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+                {t.nav.blog}
+              </a>
+              <a href={getLocalizedPath('/cv/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
                 {t.nav.cv}
               </a>
             </div>
@@ -95,20 +84,20 @@ const { title, description = t.meta.description } = Astro.props;
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-200/30 dark:border-monokai-border/50 bg-gray-100/30 dark:bg-monokai-surface/50 backdrop-blur-sm">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer class="border-t border-gray-200 dark:border-monokai-border">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div class="text-gray-500 dark:text-monokai-muted">
-            {t.footer.copyright.replace('{year}', new Date().getFullYear().toString())} {t.footer.madeWith} Astro {t.footer.and} TailwindCSS.
+          <div class="text-gray-500 dark:text-monokai-muted text-sm">
+            © {new Date().getFullYear()}
           </div>
-          <div class="flex items-center space-x-6">
-            <a href="https://github.com/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+          <div class="flex items-center space-x-6 text-sm">
+            <a href="https://github.com/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               GitHub
             </a>
-            <a href="https://linkedin.com/in/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+            <a href="https://linkedin.com/in/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               LinkedIn
             </a>
-            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-primary-700 dark:hover:text-monokai-blue transition-colors duration-200">
+            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               RSS
             </a>
           </div>

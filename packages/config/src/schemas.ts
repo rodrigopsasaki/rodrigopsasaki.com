@@ -6,6 +6,8 @@ export const blogPostSchema = z.object({
   tags: z.array(z.string()),
   description: z.string(),
   draft: z.boolean().optional().default(false),
+  author: z.string().optional(),
+  lastModified: z.string().optional(),
 });
 
 export const projectSchema = z.object({

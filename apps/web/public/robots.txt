@@ -1,0 +1,35 @@
+# Robots.txt for rodrigopsasaki.com
+# Allow all bots to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_astro/
+
+# Sitemap location
+Sitemap: https://rodrigopsasaki.com/sitemap-index.xml
+
+# Crawl delay (in seconds) - be nice to servers
+Crawl-delay: 1
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

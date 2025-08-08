@@ -1,0 +1,119 @@
+---
+import { SEO as AstroSEO } from 'astro-seo';
+import { getLangFromUrl, getHtmlLang } from '../i18n';
+
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const lang = getLangFromUrl(Astro.url);
+const htmlLang = getHtmlLang(lang);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const {
+  title,
+  description,
+  image = '/og-image.png',
+  article,
+  noindex = false,
+  nofollow = false,
+} = Astro.props;
+
+const fullTitle = title === 'Home' 
+  ? 'Rodrigo Sasaki - Software Engineer' 
+  : `${title} | Rodrigo Sasaki`;
+
+const imageURL = new URL(image, Astro.site);
+---
+
+<AstroSEO
+  title={fullTitle}
+  description={description}
+  canonical={canonicalURL.href}
+  openGraph={{
+    basic: {
+      title: fullTitle,
+      type: article ? 'article' : 'website',
+      image: imageURL.href,
+      url: canonicalURL.href,
+    },
+    optional: {
+      description: description,
+      locale: htmlLang,
+      siteName: 'Rodrigo Sasaki',
+    },
+    image: {
+      url: imageURL.href,
+      width: 1200,
+      height: 630,
+      alt: title,
+      type: 'image/png',
+    },
+    article: article ? {
+      publishedTime: article.publishedTime,
+      modifiedTime: article.modifiedTime,
+      authors: article.author ? [article.author] : ['Rodrigo Sasaki'],
+      tags: article.tags,
+    } : undefined,
+  }}
+  twitter={{
+    card: 'summary_large_image',
+    site: '@rodrigopsasaki',
+    creator: '@rodrigopsasaki',
+    title: fullTitle,
+    description: description,
+    image: imageURL.href,
+    imageAlt: title,
+  }}
+  extend={{
+    link: [
+      {
+        rel: 'alternate',
+        hreflang: 'en',
+        href: new URL(Astro.url.pathname.replace('/pt-BR', ''), Astro.site).href,
+      },
+      {
+        rel: 'alternate',
+        hreflang: 'pt-BR',
+        href: new URL(`/pt-BR${Astro.url.pathname}`, Astro.site).href,
+      },
+      {
+        rel: 'alternate',
+        hreflang: 'x-default',
+        href: new URL(Astro.url.pathname.replace('/pt-BR', ''), Astro.site).href,
+      },
+    ],
+    meta: [
+      {
+        name: 'author',
+        content: article?.author || 'Rodrigo Sasaki',
+      },
+      {
+        name: 'robots',
+        content: `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`,
+      },
+      {
+        name: 'googlebot',
+        content: `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`,
+      },
+      {
+        property: 'og:locale:alternate',
+        content: htmlLang === 'en' ? 'pt_BR' : 'en_US',
+      },
+      ...(article?.tags ? [{
+        name: 'keywords',
+        content: article.tags.join(', '),
+      }] : []),
+    ],
+  }}
+/>

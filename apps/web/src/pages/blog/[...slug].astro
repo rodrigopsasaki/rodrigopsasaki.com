@@ -14,9 +14,56 @@ export async function getStaticPaths() {
 const lang = getLangFromUrl(Astro.url);
 const post = Astro.props;
 const { Content } = await post.render();
+
+// Calculate reading time (roughly 200 words per minute)
+const wordCount = post.body.split(/\s+/).length;
+const readingTime = Math.ceil(wordCount / 200);
+
+// Prepare article metadata for SEO
+const articleData = {
+  publishedTime: new Date(post.data.date).toISOString(),
+  modifiedTime: post.data.lastModified 
+    ? new Date(post.data.lastModified).toISOString() 
+    : new Date(post.data.date).toISOString(),
+  author: post.data.author || 'Rodrigo Sasaki',
+  tags: post.data.tags || []
+};
+
+// Generate structured data for rich snippets
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "author": {
+    "@type": "Person",
+    "name": articleData.author,
+    "url": "https://rodrigopsasaki.com"
+  },
+  "datePublished": articleData.publishedTime,
+  "dateModified": articleData.modifiedTime,
+  "publisher": {
+    "@type": "Person",
+    "name": "Rodrigo Sasaki",
+    "url": "https://rodrigopsasaki.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url
+  },
+  "keywords": articleData.tags.join(", "),
+  "articleSection": "Technology",
+  "wordCount": wordCount,
+  "timeRequired": `PT${readingTime}M`
+};
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
+<BaseLayout 
+  title={post.data.title} 
+  description={post.data.description}
+  article={articleData}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <article>
@@ -29,11 +76,15 @@ const { Content } = await post.render();
           {post.data.description}
         </p>
         
-        <!-- Date and Tags -->
+        <!-- Date, Reading Time and Tags -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-          <time class="text-gray-500 dark:text-monokai-muted">
-            {formatDate(post.data.date, lang)}
-          </time>
+          <div class="flex items-center gap-4 text-gray-500 dark:text-monokai-muted">
+            <time>
+              {formatDate(post.data.date, lang)}
+            </time>
+            <span>•</span>
+            <span>{readingTime} min read</span>
+          </div>
           
           <div class="flex flex-wrap gap-2">
             {post.data.tags.map((tag) => (

@@ -2,18 +2,35 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LanguageToggle from '../components/LanguageToggle.astro';
+import SEO from '../components/SEO.astro';
 import { getLangFromUrl, useTranslations, getHtmlLang, getLocalizedPath } from '../i18n';
 
 export interface Props {
   title: string;
   description?: string;
+  image?: string;
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
+  noindex?: boolean;
+  nofollow?: boolean;
 }
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const htmlLang = getHtmlLang(lang);
 
-const { title, description = t.meta.description } = Astro.props;
+const { 
+  title, 
+  description = t.meta.description,
+  image,
+  article,
+  noindex,
+  nofollow 
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -21,10 +38,19 @@ const { title, description = t.meta.description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Rodrigo Sasaki - Blog RSS Feed" href="/rss.xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
-    <title>{title === 'Home' ? t.meta.title : `${title} | ${t.home.title}`}</title>
+    
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      article={article}
+      noindex={noindex}
+      nofollow={nofollow}
+    />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,7 +123,7 @@ const { title, description = t.meta.description } = Astro.props;
             <a href="https://linkedin.com/in/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               LinkedIn
             </a>
-            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
+            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200" type="application/rss+xml">
               RSS
             </a>
           </div>

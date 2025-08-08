@@ -11,6 +11,44 @@ const filteredPosts = posts.filter(({ data }) => data.draft !== true);
 const sortedPosts = filteredPosts.sort((a, b) => 
   new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
+
+// Group posts by series and individual posts
+const seriesMap = new Map();
+const individualPosts = [];
+
+for (const post of sortedPosts) {
+  if (post.data.series) {
+    if (!seriesMap.has(post.data.series)) {
+      seriesMap.set(post.data.series, {
+        overview: null,
+        episodes: []
+      });
+    }
+    
+    const seriesData = seriesMap.get(post.data.series);
+    
+    // If this post has no order, it's the series overview
+    if (!post.data.order) {
+      seriesData.overview = post;
+    } else {
+      seriesData.episodes.push(post);
+    }
+  } else {
+    individualPosts.push(post);
+  }
+}
+
+// Sort episodes within each series by order
+for (const [, seriesData] of seriesMap) {
+  seriesData.episodes.sort((a: any, b: any) => (a.data.order || 0) - (b.data.order || 0));
+}
+
+// Convert series map to array and sort by overview date
+const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
+  id,
+  ...data
+})).filter(series => series.overview) // Only include series with overview posts
+  .sort((a, b) => new Date(b.overview.data.date).getTime() - new Date(a.overview.data.date).getTime());
 ---
 
 <BaseLayout title="Blog">
@@ -24,35 +62,100 @@ const sortedPosts = filteredPosts.sort((a, b) =>
     </div>
     
     <!-- Posts List -->
-    <div class="space-y-6">
-      {sortedPosts.length === 0 ? (
+    <div class="space-y-8">
+      {(seriesArray.length === 0 && individualPosts.length === 0) ? (
         <p class="text-gray-600 dark:text-gray-400">
           No posts yet.
         </p>
       ) : (
-        sortedPosts.map((post) => (
-          <article class="border-b border-gray-200 dark:border-monokai-border pb-6">
-            <div>
-              <!-- Post metadata -->
-              <div class="flex items-center gap-4 mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <time>
-                  {formatDate(post.data.date, lang)}
-                </time>
-              </div>
+        <>
+          <!-- Series Posts -->
+          {seriesArray.map((series) => (
+            <article class="bg-white dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div class="mb-4">
+                <!-- Series Badge -->
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-monokai-border text-primary-800 dark:text-monokai-yellow">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+                    </svg>
+                    Series · {series.episodes.length} {series.episodes.length === 1 ? 'episode' : 'episodes'}
+                  </span>
+                </div>
+                
+                <!-- Series metadata -->
+                <div class="flex items-center gap-4 mb-3 text-sm text-gray-500 dark:text-monokai-muted">
+                  <time>
+                    {formatDate(series.overview.data.date, lang)}
+                  </time>
+                </div>
 
-              <!-- Post title -->
-              <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-2 hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-200">
-                <a href={`/blog/${post.id.replace('.md', '')}/`}>
-                  {post.data.title}
-                </a>
-              </h2>
-              
-              <p class="text-gray-600 dark:text-gray-400">
-                {post.data.description}
-              </p>
-            </div>
-          </article>
-        ))
+                <!-- Series title -->
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-monokai-text mb-3 hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-200">
+                  <a href={`/blog/${series.overview.id.replace('.md', '')}/`}>
+                    {series.overview.data.title}
+                  </a>
+                </h2>
+                
+                <p class="text-gray-600 dark:text-monokai-muted text-lg mb-4">
+                  {series.overview.data.description}
+                </p>
+                
+                <!-- Episode List -->
+                <div class="border-t border-gray-200 dark:border-monokai-border pt-4">
+                  <h3 class="text-sm font-semibold text-gray-700 dark:text-monokai-text mb-3 uppercase tracking-wide">
+                    Episodes
+                  </h3>
+                  <div class="grid gap-2">
+                    {series.episodes.map((episode: any) => (
+                      <a 
+                        href={`/blog/${episode.id.replace('.md', '')}/`} 
+                        class="flex items-center justify-between p-3 rounded-md bg-gray-50 dark:bg-monokai-bg border border-gray-200 dark:border-monokai-border hover:bg-gray-100 dark:hover:bg-monokai-border hover:border-primary-300 dark:hover:border-monokai-muted transition-all duration-200 group"
+                      >
+                        <div class="flex-1">
+                          <div class="font-medium text-gray-800 dark:text-monokai-text group-hover:text-primary-600 dark:group-hover:text-monokai-yellow transition-colors">
+                            {episode.data.title}
+                          </div>
+                          <div class="text-sm text-gray-500 dark:text-monokai-muted mt-1">
+                            {episode.data.description}
+                          </div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 dark:text-monokai-muted group-hover:text-primary-500 dark:group-hover:text-monokai-yellow transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+          
+          <!-- Individual Posts -->
+          {individualPosts.map((post) => (
+            <article class="border-b border-gray-200 dark:border-monokai-border pb-6">
+              <div>
+                <!-- Post metadata -->
+                <div class="flex items-center gap-4 mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <time>
+                    {formatDate(post.data.date, lang)}
+                  </time>
+                </div>
+
+                <!-- Post title -->
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-2 hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-200">
+                  <a href={`/blog/${post.id.replace('.md', '')}/`}>
+                    {post.data.title}
+                  </a>
+                </h2>
+                
+                <p class="text-gray-600 dark:text-gray-400">
+                  {post.data.description}
+                </p>
+              </div>
+            </article>
+          ))}
+        </>
       )}
     </div>
   </div>

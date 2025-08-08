@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogSeriesNavigation from '../../components/BlogSeriesNavigation.astro';
+import BlogBreadcrumbs from '../../components/BlogBreadcrumbs.astro';
 import { getLangFromUrl, formatDate } from '../../i18n';
 import { getLocalizedCollection } from '../../i18n/content';
 
@@ -14,6 +16,66 @@ export async function getStaticPaths() {
 const lang = getLangFromUrl(Astro.url);
 const post = Astro.props;
 const { Content } = await post.render();
+
+// Determine if this is part of a series
+const isInSeries = post.data.series || post.id.includes('/');
+let seriesName = post.data.series;
+let parentPost = null;
+
+if (post.id.includes('/') && !seriesName) {
+  // Extract series name from path (e.g., "simplicity/episode-1.md" -> "simplicity")
+  seriesName = post.id.split('/')[0];
+}
+
+// Get parent/series overview post if this is an episode
+if (seriesName) {
+  const allPosts = await getLocalizedCollection('blog', 'en');
+  parentPost = allPosts.find(p => 
+    p.id === `${seriesName}.md` || 
+    (p.data.series === seriesName && !p.id.includes('/'))
+  );
+}
+
+// Build breadcrumbs
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
+
+const breadcrumbItems: BreadcrumbItem[] = [
+  { label: 'Blog', href: '/blog/' }
+];
+
+if (isInSeries && seriesName) {
+  breadcrumbItems.push({
+    label: parentPost?.data.title || seriesName.charAt(0).toUpperCase() + seriesName.slice(1),
+    href: `/blog/${seriesName}/`
+  });
+}
+
+breadcrumbItems.push({
+  label: post.data.title
+  // No href for current page (last item)
+});
+
+// Find next/previous episodes for series navigation
+let prevPost = null;
+let nextPost = null;
+
+if (isInSeries && seriesName) {
+  const allPosts = await getLocalizedCollection('blog', 'en');
+  const seriesPosts = allPosts
+    .filter(p => p.data.series === seriesName || p.id.startsWith(seriesName + '/'))
+    .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+
+  const currentIndex = seriesPosts.findIndex(p => p.id === post.id);
+  if (currentIndex > 0) {
+    prevPost = seriesPosts[currentIndex - 1];
+  }
+  if (currentIndex < seriesPosts.length - 1) {
+    nextPost = seriesPosts[currentIndex + 1];
+  }
+}
 
 // Calculate reading time (roughly 200 words per minute)
 const wordCount = post.body.split(/\s+/).length;
@@ -65,8 +127,42 @@ const structuredData = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <article>
+    <div class={isInSeries ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" : "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
+{isInSeries && (
+        <!-- Mobile navigation (visible on mobile only) -->
+        <div class="lg:hidden mb-8">
+          <BlogBreadcrumbs items={breadcrumbItems} />
+          <BlogSeriesNavigation 
+            currentPath={Astro.url.pathname}
+            seriesName={seriesName}
+          />
+        </div>
+      )}
+      
+      <div class={isInSeries ? "flex gap-8 lg:gap-12" : ""}>
+{isInSeries && (
+          <!-- Sidebar with navigation -->
+          <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
+            <div class="sticky top-24 h-[calc(100vh-8rem)] flex flex-col space-y-4">
+              <!-- Series Navigation -->
+              <BlogSeriesNavigation 
+                currentPath={Astro.url.pathname}
+                seriesName={seriesName}
+              />
+            </div>
+          </aside>
+        )}
+        
+        <!-- Main content -->
+        <main class={isInSeries ? "flex-1 min-w-0" : ""}>
+          <article>
+      {isInSeries && (
+        <!-- Desktop breadcrumb -->
+        <div class="hidden lg:block">
+          <BlogBreadcrumbs items={breadcrumbItems} />
+        </div>
+      )}
+      
       <!-- Header Section -->
       <header class="mb-12">
         <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
@@ -116,7 +212,50 @@ const structuredData = {
                   prose-hr:border-gray-300 dark:prose-hr:border-monokai-border">
         <Content />
       </div>
-    </article>
+      
+      <!-- Series navigation at bottom -->
+      {isInSeries && (prevPost || nextPost) && (
+        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-monokai-border">
+          <div class="flex justify-between items-center">
+            {prevPost && (
+              <a 
+                href={`/blog/${prevPost.id.replace('.md', '')}/`}
+                class="flex items-center space-x-2 text-primary-600 dark:text-monokai-blue hover:underline"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                <div class="text-left">
+                  <div class="text-sm text-gray-500 dark:text-monokai-muted">Previous</div>
+                  <div class="font-medium">{prevPost.data.title}</div>
+                </div>
+              </a>
+            )}
+            
+            {!prevPost && (<div></div>)}
+            
+            {nextPost && (
+              <a 
+                href={`/blog/${nextPost.id.replace('.md', '')}/`}
+                class="flex items-center space-x-2 text-primary-600 dark:text-monokai-blue hover:underline text-right"
+              >
+                <div>
+                  <div class="text-sm text-gray-500 dark:text-monokai-muted">Next</div>
+                  <div class="font-medium">{nextPost.data.title}</div>
+                </div>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            )}
+            
+            {!nextPost && (<div></div>)}
+          </div>
+        </div>
+      )}
+          </article>
+        </main>
+      </div>
     </div>
   </div>
 </BaseLayout>

@@ -8,6 +8,9 @@ export const blogPostSchema = z.object({
   draft: z.boolean().optional().default(false),
   author: z.string().optional(),
   lastModified: z.string().optional(),
+  series: z.string().optional(), // For grouping posts in series
+  order: z.number().optional(), // Order within series
+  parent: z.string().optional(), // Parent series (like projects)
 });
 
 export const projectSchema = z.object({

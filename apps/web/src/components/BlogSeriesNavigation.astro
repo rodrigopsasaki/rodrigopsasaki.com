@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  currentPath?: string;
+  seriesName?: string;
+}
+
+const { currentPath, seriesName } = Astro.props;
+
+let seriesStructure: any = null;
+
+if (seriesName) {
+  // Get all blog posts
+  const allPosts = await getCollection('en/blog');
+  
+  // Find series posts and main series post
+  const seriesPosts = allPosts
+    .filter(post => post.data.series === seriesName || post.id.startsWith(seriesName + '/'))
+    .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+  
+  const mainPost = seriesPosts.find(post => post.id === `${seriesName}.md` || (!post.data.parent && !post.id.includes('/')));
+  const episodePosts = seriesPosts.filter(post => post.id.includes('/') || post.data.parent);
+  
+  if (mainPost || episodePosts.length > 0) {
+    seriesStructure = {
+      title: mainPost?.data.title || seriesName,
+      overview: {
+        title: 'Overview',
+        href: `/blog/${seriesName}/`,
+      },
+      episodes: episodePosts.map(post => ({
+        title: post.data.title,
+        href: `/blog/${post.id.replace('.md', '')}/`,
+        order: post.data.order || 0,
+      })),
+    };
+  }
+}
+
+// Helper function to check if a path is active
+function isActive(href: string, currentPath?: string): boolean {
+  if (!currentPath) return false;
+  return currentPath === href || currentPath === href.replace(/\/$/, '');
+}
+
+// Helper function to get link classes
+function getLinkClasses(href: string, currentPath?: string, isMainItem = true): string {
+  const baseClasses = isMainItem
+    ? 'block py-2 px-3 text-sm rounded transition-colors'
+    : 'block py-1.5 px-3 text-sm rounded transition-colors';
+  
+  if (isActive(href, currentPath)) {
+    return `${baseClasses} bg-primary-100 dark:bg-monokai-surface text-primary-800 dark:text-monokai-yellow font-medium`;
+  }
+  
+  return `${baseClasses} text-gray-600 dark:text-monokai-muted hover:bg-primary-50 dark:hover:bg-monokai-border`;
+}
+---
+
+{seriesStructure && (
+  <div class="bg-gray-200 dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg p-4">
+    <h3 class="text-sm font-semibold text-gray-900 dark:text-monokai-text mb-3 uppercase tracking-wide">
+      {seriesStructure.title}
+    </h3>
+    <nav class="space-y-2">
+      <!-- Overview -->
+      <a 
+        href={seriesStructure.overview.href}
+        class={getLinkClasses(seriesStructure.overview.href, currentPath)}
+      >
+        {seriesStructure.overview.title}
+      </a>
+      
+      <!-- Episodes -->
+      {seriesStructure.episodes.length > 0 && (
+        <div>
+          <h4 class="px-3 text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-1 mt-3">
+            Episodes
+          </h4>
+          {seriesStructure.episodes.map((episode: any) => (
+            <a 
+              href={episode.href}
+              class={getLinkClasses(episode.href, currentPath, false)}
+            >
+              {episode.title}
+            </a>
+          ))}
+        </div>
+      )}
+    </nav>
+  </div>
+)}

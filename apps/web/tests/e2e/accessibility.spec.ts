@@ -1,41 +1,30 @@
 import { test, expect } from '@playwright/test';
-import { injectAxe, checkA11y } from '@axe-core/playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Accessibility', () => {
-  test.beforeEach(async ({ page }) => {
-    await injectAxe(page);
-  });
-
   test('should pass accessibility audit on homepage', async ({ page }) => {
     await page.goto('/');
-    await checkA11y(page, null, {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-    });
+    
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 
   test('should pass accessibility audit on blog page', async ({ page }) => {
     await page.goto('/blog');
-    await checkA11y(page, null, {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-    });
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 
   test('should pass accessibility audit on projects page', async ({ page }) => {
     await page.goto('/projects');
-    await checkA11y(page, null, {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-    });
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 
   test('should pass accessibility audit on CV page', async ({ page }) => {
     await page.goto('/cv');
-    await checkA11y(page, null, {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-    });
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 
   test('should have proper heading hierarchy', async ({ page }) => {
@@ -143,7 +132,6 @@ test.describe('Accessibility', () => {
         
         // Images should have alt text or be marked as decorative
         const hasAlt = await img.getAttribute('alt');
-        const isDecorative = hasAlt === '' || await img.getAttribute('role') === 'presentation';
         const hasAriaLabel = await img.getAttribute('aria-label');
         
         expect(hasAlt !== null || hasAriaLabel).toBeTruthy();

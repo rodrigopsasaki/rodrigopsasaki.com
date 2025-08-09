@@ -155,7 +155,7 @@ test.describe('Core Pages', () => {
       await page.goto('/cv');
       
       // Check for print styles (this is basic - real print testing is complex)
-      const printStyles = await page.locator('style, link[rel="stylesheet"]')
+      await page.locator('style, link[rel="stylesheet"]')
         .evaluateAll(elements => 
           elements.some(el => el.textContent?.includes('@media print') || 
                               el.getAttribute('media')?.includes('print'))

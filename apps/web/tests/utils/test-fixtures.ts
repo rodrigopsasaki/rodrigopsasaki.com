@@ -1,7 +1,7 @@
 /**
  * Test fixtures and utilities for the application
  */
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 
 export const mockSearchData = [
   {
@@ -158,7 +158,7 @@ export async function waitForElement(selector: string, timeout = 5000) {
   
   while (Date.now() - start < timeout) {
     const element = document.querySelector(selector);
-    if (element && element.offsetParent !== null) {
+    if (element && (element as HTMLElement).offsetParent !== null) {
       return element;
     }
     await new Promise(resolve => setTimeout(resolve, 100));

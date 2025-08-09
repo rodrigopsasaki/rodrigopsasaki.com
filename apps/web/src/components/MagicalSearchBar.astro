@@ -298,11 +298,9 @@ class MagicalSearchManager {
   
   navigateResults(direction: number) {
     if (this.currentResults.length === 0) {
-      console.log('No results to navigate');
       return;
     }
     
-    const oldIndex = this.selectedIndex;
     
     // Handle first navigation from -1
     if (this.selectedIndex === -1) {
@@ -319,7 +317,6 @@ class MagicalSearchManager {
       }
     }
     
-    console.log(`Navigation: direction=${direction}, ${oldIndex} -> ${this.selectedIndex}`);
     
     // Update visual selection
     this.updateSelection();
@@ -328,51 +325,15 @@ class MagicalSearchManager {
   updateSelection() {
     const resultElements = this.searchContent.querySelectorAll('.search-result');
     
-    console.log(`=== SELECTION UPDATE ===`);
-    console.log(`Selected index: ${this.selectedIndex}, Total results: ${resultElements.length}`);
     
-    // Log search container info
     const containerRect = this.searchContent.getBoundingClientRect();
-    const containerScroll = this.searchContent.scrollTop;
-    console.log(`Search container:`, {
-      rect: { x: containerRect.x, y: containerRect.y, width: containerRect.width, height: containerRect.height },
-      scrollTop: containerScroll,
-      scrollHeight: this.searchContent.scrollHeight,
-      clientHeight: this.searchContent.clientHeight
-    });
     
     resultElements.forEach((element, index) => {
-      const rect = element.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(element);
       
       if (index === this.selectedIndex) {
         element.classList.add('selected');
         
-        // Log detailed info about selected element
-        console.log(`🎯 SELECTED element at index ${index}:`, {
-          element: element,
-          position: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-          offsetTop: (element as HTMLElement).offsetTop,
-          offsetLeft: (element as HTMLElement).offsetLeft,
-          classList: Array.from(element.classList),
-          computedStyles: {
-            backgroundColor: computedStyle.backgroundColor,
-            borderLeft: computedStyle.borderLeft,
-            color: computedStyle.color,
-            transform: computedStyle.transform,
-            display: computedStyle.display,
-            visibility: computedStyle.visibility
-          },
-          isInView: rect.top >= containerRect.top && rect.bottom <= containerRect.bottom,
-          relativePosition: {
-            topRelativeToContainer: rect.top - containerRect.top,
-            bottomRelativeToContainer: rect.bottom - containerRect.top
-          }
-        });
         
-        // Check if element is visible in container
-        const isVisible = rect.top >= containerRect.top && rect.bottom <= containerRect.bottom;
-        console.log(`Selected element visible: ${isVisible}`);
         
         // Apply inline styles directly since Astro scoped styles don't work on dynamic content
         const htmlElement = element as HTMLElement;
@@ -393,7 +354,6 @@ class MagicalSearchManager {
         // Only scroll if element is not fully visible
         if (elementRect.top < containerRect.top || elementRect.bottom > containerRect.bottom) {
           setTimeout(() => {
-            console.log(`Scrolling element into view...`);
             // Use scrollIntoView with block: 'nearest' to minimize movement
             element.scrollIntoView({ 
               block: 'nearest', 
@@ -416,11 +376,9 @@ class MagicalSearchManager {
           h3.style.fontWeight = '';
         }
         
-        console.log(`Deselected element at index ${index}: position=${rect.x}, ${rect.y}`);
       }
     });
     
-    console.log(`=== END SELECTION UPDATE ===`);
   }
   
   resetSelection() {
@@ -451,13 +409,11 @@ class MagicalSearchManager {
   }
   
   displayResults(results: FuseResult<SearchItem>[]) {
-    console.log(`🔍 DISPLAYING RESULTS: ${results.length} items`);
     
     this.hideLoading();
     this.hideSuggestions();
     
     if (results.length === 0) {
-      console.log(`No results to display`);
       this.searchContent.innerHTML = `
         <div class="px-6 py-8 text-center">
           <svg class="mx-auto w-12 h-12 text-gray-300 dark:text-monokai-border mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -504,17 +460,7 @@ class MagicalSearchManager {
         `;
       }).join('');
       
-      console.log(`Generated HTML for ${results.length} results`);
       
-      // Log the generated elements after DOM update
-      setTimeout(() => {
-        const generatedElements = this.searchContent.querySelectorAll('.search-result');
-        console.log(`DOM elements after generation: ${generatedElements.length}`);
-        generatedElements.forEach((el, i) => {
-          const rect = el.getBoundingClientRect();
-          console.log(`Element ${i}: position=(${rect.x}, ${rect.y}), size=(${rect.width}, ${rect.height}), classes=[${el.className}]`);
-        });
-      }, 0);
     }
     
     // No stats display needed

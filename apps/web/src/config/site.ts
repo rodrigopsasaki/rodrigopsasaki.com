@@ -24,12 +24,21 @@ export const siteConfig = {
   },
   
   /**
+   * Feature Flags
+   * Control which features are enabled on the site
+   */
+  features: {
+    // RSS feed functionality - set to false to hide RSS links
+    rss: false,
+  },
+  
+  /**
    * Other site configuration can go here
    */
   site: {
     name: 'Rodrigo Sasaki',
     url: 'https://rodrigopsasaki.com',
-    description: 'Software Engineer specializing in TypeScript, Node.js, and cloud architecture.',
+    description: 'Software Engineer',
   },
 } as const;
 

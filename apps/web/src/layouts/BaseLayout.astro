@@ -5,6 +5,7 @@ import LanguageToggle from '../components/LanguageToggle.astro';
 import MagicalSearchBar from '../components/MagicalSearchBar.astro';
 import SEO from '../components/SEO.astro';
 import { getLangFromUrl, useTranslations, getHtmlLang, getLocalizedPath } from '../i18n';
+import { siteConfig } from '../config/site';
 
 export interface Props {
   title: string;
@@ -40,7 +41,9 @@ const {
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
-    <link rel="alternate" type="application/rss+xml" title="Rodrigo Sasaki - Blog RSS Feed" href="/rss.xml" />
+    {siteConfig.features.rss && (
+      <link rel="alternate" type="application/rss+xml" title="Rodrigo Sasaki - Blog RSS Feed" href="/rss.xml" />
+    )}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     
@@ -122,15 +125,17 @@ const {
             © {new Date().getFullYear()}
           </div>
           <div class="flex items-center space-x-6 text-sm">
-            <a href="https://github.com/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
+            <a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               GitHub
             </a>
-            <a href="https://linkedin.com/in/rodrigopsasaki" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
+            <a href="https://linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
               LinkedIn
             </a>
-            <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200" type="application/rss+xml">
-              RSS
-            </a>
+            {siteConfig.features.rss && (
+              <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200" type="application/rss+xml">
+                RSS
+              </a>
+            )}
           </div>
         </div>
       </div>

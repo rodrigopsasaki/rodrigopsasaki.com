@@ -273,11 +273,11 @@ import { personalInfo, summary, experience, education, skillCategories, formatDa
       <h1 class="text-3xl font-bold text-gray-800 dark:text-monokai-text mb-2">{personalInfo.name}</h1>
       <p class="text-gray-600 dark:text-monokai-muted mb-3">{personalInfo.location}</p>
       <div class="contact-links flex flex-wrap justify-center gap-4 text-sm">
-        <a href={personalInfo.linkedin} target="_blank" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+        <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
           LinkedIn
         </a>
         <span class="text-gray-400">•</span>
-        <a href={personalInfo.github} target="_blank" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+        <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
           GitHub
         </a>
       </div>

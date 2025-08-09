@@ -1,7 +1,16 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { siteConfig } from '../config/site';
 
 export async function GET(context) {
+  // Return 404 if RSS is disabled
+  if (!siteConfig.features.rss) {
+    return new Response(null, {
+      status: 404,
+      statusText: 'Not Found'
+    });
+  }
+  
   const blog = await getCollection('blog');
   
   // Sort posts by date, newest first

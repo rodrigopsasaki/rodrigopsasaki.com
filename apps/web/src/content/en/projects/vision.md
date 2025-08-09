@@ -4,6 +4,7 @@ description: "A structured observability framework for Node.js that treats produ
 tags: ["TypeScript", "Observability", "Node.js", "Monitoring", "Production", "Framework"]
 github: "https://github.com/rodrigopsasaki/vision"
 featured: true
+visible: true
 order: 2
 ---
 

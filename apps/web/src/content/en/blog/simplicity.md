@@ -1,5 +1,5 @@
 ---
-title: "Simplicity is not a dispensable luxury"
+title: "Simplicity matters"
 description: "Why we choose familiar complexity over unfamiliar simplicity, and why that's killing our systems"
 date: "2025-08-09"
 tags: ["simplicity", "architecture", "philosophy", "software design"]
@@ -9,13 +9,17 @@ seriesOrder: 0
 visible: true  
 ---
 
+> How do we convince people that in programming, simplicity and clarity —in short: what mathematicians call "elegance"— are not a dispensable luxury, but a crucial matter that decides between success and failure?
+>
+> - Edsger W. Dijkstra <sup>[[1]](#ref1)</sup>
+
 Have you ever wondered how telecom systems work? 
 
 They're ancient by our standards. Written in Erlang. Running on principles from the 1980s. And they work so beautifully that you never think about them. When did you last worry that your call wouldn't connect? That the phone network would be "down for maintenance"?
 
 That's real software engineering.
 
-Ericsson's `AXD301` switch, built with Erlang, achieved `99.9999999%` uptime <sup>[[1]](#ref1)</sup>. Nine nines! That's 31 milliseconds of downtime per year. If you're actively working on a system, how many times has it crashed this year? Or this week? 
+Ericsson's `AXD301` switch, built with Erlang, achieved `99.9999999%` uptime <sup>[[2]](#ref2)</sup>. Nine nines! That's 31 milliseconds of downtime per year. If you're actively working on a system, how many times has it crashed this year? Or this week? 
 
 Why does their ancient tech work while our modern systems need constant babysitting?
 
@@ -25,7 +29,7 @@ They chose simple. We often choose easy.
 
 I'm not telling you anything new here. This is old wisdom. Battle-tested principles. The kind of boring truth that's been true since Dijkstra was writing about simplicity in the 1970s.
 
-I grew up on Rich Hickey's talks. "Simple Made Easy" <sup>[[2]](#ref2)</sup> fundamentally changed how I think about software. If what follows feels familiar, it should. These aren't my ideas, I'm just another engineer who finally understood the wisdom in these teachings.
+I grew up on Rich Hickey's talks. "Simple Made Easy" <sup>[[3]](#ref3)</sup> fundamentally changed how I think about software. If what follows feels familiar, it should. These aren't my ideas, I'm just another engineer who finally understood the wisdom in these teachings.
 
 The tragedy is that every generation of programmers needs to rediscover these truths. Usually after building something so complex it collapses under its own weight.
 
@@ -226,5 +230,6 @@ Especially when it's not easy.
 ---
 ## References
 
-1. <span id="ref1"></span>[Armstrong, J. (2007). Programming Erlang: Software for a Concurrent World](https://pragprog.com/titles/jaerlang/programming-erlang/) - Joe Armstrong documents the AXD301's nine nines reliability. Also discussed in his [2003 PhD thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), Chapter 1.2
-2. <span id="ref2"></span>[Simple Made Easy - Rich Hickey (2011)](https://www.infoq.com/presentations/Simple-Made-Easy/) - The talk that fundamentally changed how many of us think about simplicity vs ease
+1. <span id="ref1"></span>[Dijkstra, E. W. (1982). EWD648: Why is software so expensive? (An explanation to the hardware designer.)](https://www.cs.utexas.edu/~EWD/transcriptions/EWD06xx/EWD648.html) - The famous quote about elegance not being a dispensable luxury in programming.
+2. <span id="ref2"></span>[Armstrong, J. (2007). Programming Erlang: Software for a Concurrent World](https://pragprog.com/titles/jaerlang/programming-erlang/) - Joe Armstrong documents the AXD301's nine nines reliability. Also discussed in his [2003 PhD thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), Chapter 1.2
+3. <span id="ref3"></span>[Simple Made Easy - Rich Hickey (2011)](https://www.infoq.com/presentations/Simple-Made-Easy/) - The talk that fundamentally changed how many of us think about simplicity vs ease

@@ -4,6 +4,7 @@ description: "A developer-first CLI framework that makes local commands feel nat
 tags: ["CLI", "TypeScript", "Developer Tools", "Framework", "XDG", "Extensions"]
 github: "https://github.com/rodrigopsasaki/rodrigos-cli"
 featured: true
+visible: true
 order: 1
 ---
 

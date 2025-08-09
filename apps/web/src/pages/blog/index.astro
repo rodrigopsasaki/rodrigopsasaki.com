@@ -52,7 +52,7 @@ const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
   .sort((a, b) => new Date(b.overview.data.date).getTime() - new Date(a.overview.data.date).getTime());
 
 // Move series overviews that have no episodes to individual posts
-for (const [seriesId, seriesData] of seriesMap.entries()) {
+for (const [, seriesData] of seriesMap.entries()) {
   if (seriesData.overview && seriesData.episodes.length === 0) {
     individualPosts.push(seriesData.overview);
   }

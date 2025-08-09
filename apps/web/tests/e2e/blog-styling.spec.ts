@@ -45,7 +45,7 @@ test.describe('Blog post styling enhancements', () => {
     
     // Skip test if no ordered lists exist
     if (await orderedList.count() === 0) {
-      test.skip('No ordered lists found on page');
+      test.skip();
       return;
     }
     

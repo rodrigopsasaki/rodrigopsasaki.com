@@ -99,9 +99,6 @@ test.describe('Content Visibility System', () => {
   test('should not show duplicate titles', async ({ page }) => {
     await page.goto('/blog/simplicity/');
     
-    // Count how many times the title appears (should only be once in the header)
-    const titleElements = await page.locator('text="Simple is not Easy"').all();
-    
     // Should appear only once in the page header, not duplicated in content
     // Note: It might appear in sidebar too, so we check that main content doesn't duplicate
     const mainContentTitle = page.locator('main h1:has-text("Simple is not Easy")');
@@ -145,8 +142,8 @@ test.describe('Content Visibility System', () => {
   test('should not show backticks around inline code', async ({ page }) => {
     await page.goto('/blog/simplicity/');
     
-    // Find inline code elements
-    const codeElements = page.locator('.prose code').not('.prose pre code');
+    // Find inline code elements (exclude code inside pre blocks)
+    const codeElements = page.locator('.prose p code, .prose li code');
     
     if (await codeElements.count() > 0) {
       const firstCode = codeElements.first();
@@ -156,12 +153,12 @@ test.describe('Content Visibility System', () => {
       expect(codeText).not.toMatch(/^`.*`$/);
       
       // Check that no pseudo-element is adding backticks
-      const beforeContent = await firstCode.evaluate((el) => {
+      const beforeContent = await firstCode.evaluate((el: Element) => {
         const beforeStyles = window.getComputedStyle(el, '::before');
         return beforeStyles.content;
       });
       
-      const afterContent = await firstCode.evaluate((el) => {
+      const afterContent = await firstCode.evaluate((el: Element) => {
         const afterStyles = window.getComputedStyle(el, '::after');
         return afterStyles.content;
       });

@@ -2,9 +2,9 @@ export type Theme = 'light' | 'dark' | 'system';
 
 function getStoredTheme(): Theme {
   if (typeof localStorage !== 'undefined') {
-    return (localStorage.getItem('theme') as Theme) || 'system';
+    return (localStorage.getItem('theme') as Theme) || 'dark';
   }
-  return 'system';
+  return 'dark';
 }
 
 function getSystemTheme(): 'light' | 'dark' {

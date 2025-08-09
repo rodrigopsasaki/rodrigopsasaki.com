@@ -12,7 +12,7 @@ export default {
   home: {
     title: 'Rodrigo Sasaki',
     subtitle: 'Software Engineer',
-    description: 'I build thoughtful software systems that prioritize clarity, maintainability, and developer experience.',
+    description: 'I build software.',
     cta: {
       viewProjects: 'View Projects',
       readBlog: 'Read Blog',
@@ -20,7 +20,7 @@ export default {
   },
   blog: {
     title: 'Blog',
-    subtitle: 'Thoughts on software engineering, architecture, and building better systems',
+    subtitle: 'Thoughts on software engineering',
     readMore: 'Read more',
     publishedOn: 'Published on',
     backToBlog: 'Back to Blog',

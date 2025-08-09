@@ -7,8 +7,9 @@ const lang = 'pt-BR';
 const t = useTranslations(lang);
 
 const posts = await getLocalizedCollection('blog', lang);
+const filteredPosts = posts.filter(({ data }) => data.draft !== true && data.visible === true);
 
-const sortedPosts = posts.sort((a, b) => 
+const sortedPosts = filteredPosts.sort((a, b) => 
   new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 ---

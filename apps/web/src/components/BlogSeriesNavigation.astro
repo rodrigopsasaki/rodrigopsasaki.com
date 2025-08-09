@@ -11,13 +11,13 @@ const { currentPath, seriesName } = Astro.props;
 let seriesStructure: any = null;
 
 if (seriesName) {
-  // Get all blog posts
-  const allPosts = await getCollection('en/blog');
+  // Get all blog posts (only visible ones)
+  const allPosts = await getCollection('en/blog', ({ data }) => data.visible === true);
   
   // Find series posts and main series post
   const seriesPosts = allPosts
     .filter(post => post.data.series === seriesName || post.id.startsWith(seriesName + '/'))
-    .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+    .sort((a, b) => (a.data.seriesOrder || 0) - (b.data.seriesOrder || 0));
   
   const mainPost = seriesPosts.find(post => post.id === `${seriesName}.md` || (!post.data.parent && !post.id.includes('/')));
   const episodePosts = seriesPosts.filter(post => post.id.includes('/') || post.data.parent);
@@ -32,7 +32,7 @@ if (seriesName) {
       episodes: episodePosts.map(post => ({
         title: post.data.title,
         href: `/blog/${post.id.replace('.md', '')}/`,
-        order: post.data.order || 0,
+        order: post.data.seriesOrder || 0,
       })),
     };
   }

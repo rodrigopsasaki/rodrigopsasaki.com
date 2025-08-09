@@ -6,6 +6,7 @@ tags: ["Simplicity", "Philosophy", "Software Design", "Architecture"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 order: 1
+visible: false
 ---
 
 # Episode 1: The Philosophy of Simple Software

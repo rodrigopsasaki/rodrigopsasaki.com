@@ -3,6 +3,7 @@ title: "Complete Markdown Showcase: Every Format You Can Use"
 description: "A comprehensive demonstration of all markdown formatting capabilities available in this blog system, from basic text to advanced code blocks and tables."
 date: "2025-07-28"
 tags: ["Demo", "Markdown", "Formatting", "Documentation"]
+visible: false
 ---
 
 # Complete Markdown Showcase

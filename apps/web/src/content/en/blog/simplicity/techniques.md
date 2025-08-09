@@ -6,6 +6,7 @@ tags: ["Refactoring", "Simplicity", "Best Practices", "Code Quality"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 order: 3
+visible: false
 ---
 
 # Episode 3: Practical Simplification Techniques

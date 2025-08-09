@@ -6,6 +6,7 @@ tags: ["Complexity", "Code Quality", "Refactoring", "Architecture"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 order: 2
+visible: false
 ---
 
 # Episode 2: Recognizing Unnecessary Complexity

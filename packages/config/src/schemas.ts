@@ -6,10 +6,11 @@ export const blogPostSchema = z.object({
   tags: z.array(z.string()),
   description: z.string(),
   draft: z.boolean().optional().default(false),
+  visible: z.boolean().optional().default(false), // Posts are hidden by default
   author: z.string().optional(),
   lastModified: z.string().optional(),
   series: z.string().optional(), // For grouping posts in series
-  order: z.number().optional(), // Order within series
+  seriesOrder: z.number().optional(), // Order within series
   parent: z.string().optional(), // Parent series (like projects)
 });
 
@@ -21,6 +22,7 @@ export const projectSchema = z.object({
   demo: z.string().url().optional(),
   npm: z.string().url().optional(),
   featured: z.boolean().optional().default(false),
+  visible: z.boolean().optional().default(false), // Projects are hidden by default
   order: z.number().optional(),
   parent: z.string().optional(), // For nested project pages
 });

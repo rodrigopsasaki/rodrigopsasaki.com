@@ -7,13 +7,13 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 // Get featured content
-const allProjects = await getCollection('en/projects');
+const allProjects = await getCollection('en/projects', ({ data }) => data.visible === true);
 const featuredProjects = allProjects
   .filter(project => project.data.featured)
   .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
   .slice(0, 2);
 
-const allPosts = await getCollection('en/blog');
+const allPosts = await getCollection('en/blog', ({ data }) => data.visible === true);
 const recentPosts = allPosts
   .sort((a, b) => new Date(b.data.date || '').getTime() - new Date(a.data.date || '').getTime())
   .slice(0, 3);

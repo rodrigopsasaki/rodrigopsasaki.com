@@ -5,8 +5,8 @@ import { getLocalizedCollection } from '../../i18n/content';
 
 const lang = getLangFromUrl(Astro.url);
 
-const posts = await getLocalizedCollection('blog', 'en');
-const filteredPosts = posts.filter(({ data }) => data.draft !== true);
+const posts = await getLocalizedCollection('blog', lang);
+const filteredPosts = posts.filter(({ data }) => data.draft !== true && data.visible === true);
 
 const sortedPosts = filteredPosts.sort((a, b) => 
   new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
@@ -27,8 +27,8 @@ for (const post of sortedPosts) {
     
     const seriesData = seriesMap.get(post.data.series);
     
-    // If this post has no order, it's the series overview
-    if (!post.data.order) {
+    // If this post has seriesOrder 0 or no seriesOrder, it's the series overview
+    if (!post.data.seriesOrder || post.data.seriesOrder === 0) {
       seriesData.overview = post;
     } else {
       seriesData.episodes.push(post);
@@ -38,17 +38,26 @@ for (const post of sortedPosts) {
   }
 }
 
-// Sort episodes within each series by order
+// Sort episodes within each series by seriesOrder
 for (const [, seriesData] of seriesMap) {
-  seriesData.episodes.sort((a: any, b: any) => (a.data.order || 0) - (b.data.order || 0));
+  seriesData.episodes.sort((a: any, b: any) => (a.data.seriesOrder || 0) - (b.data.seriesOrder || 0));
 }
 
-// Convert series map to array and sort by overview date
+// Convert series map to array - only keep series that have episodes AND an overview
+// Series with only overview (no episodes) get moved to individual posts
 const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
   id,
   ...data
-})).filter(series => series.overview) // Only include series with overview posts
+})).filter(series => series.overview && series.episodes.length > 0) // Only include series with overview AND episodes
   .sort((a, b) => new Date(b.overview.data.date).getTime() - new Date(a.overview.data.date).getTime());
+
+// Move series overviews that have no episodes to individual posts
+for (const [seriesId, seriesData] of seriesMap.entries()) {
+  if (seriesData.overview && seriesData.episodes.length === 0) {
+    individualPosts.push(seriesData.overview);
+  }
+}
+
 ---
 
 <BaseLayout title="Blog">

@@ -82,7 +82,7 @@ export async function generateSearchIndex(): Promise<SearchItem[]> {
   // Index blog posts
   try {
     const posts = await getCollection('en/blog');
-    const filteredPosts = posts.filter(({ data }) => data.draft !== true);
+    const filteredPosts = posts.filter(({ data }) => data.draft !== true && data.visible === true);
 
     const blogItems: SearchItem[] = filteredPosts.map((post) => {
       const rawContent = post.body || '';
@@ -97,7 +97,7 @@ export async function generateSearchIndex(): Promise<SearchItem[]> {
         contentPreview,
         tags: (post.data.tags || []).map((tag: string) => cleanTextContent(tag)),
         series: post.data.series,
-        seriesOrder: post.data.order,
+        seriesOrder: post.data.seriesOrder,
         date: post.data.date,
         url: `/blog/${post.id.replace('.md', '')}/`,
         type: getContentType(post),
@@ -113,7 +113,7 @@ export async function generateSearchIndex(): Promise<SearchItem[]> {
 
   // Index projects
   try {
-    const projects = await getCollection('en/projects');
+    const projects = await getCollection('en/projects', ({ data }) => data.visible === true);
     const projectItems: SearchItem[] = projects.map((project) => {
       const rawContent = project.body || '';
       const cleanContent = cleanTextContent(rawContent);

@@ -17,9 +17,19 @@ const lang = getLangFromUrl(Astro.url);
 const post = Astro.props;
 const { Content } = await post.render();
 
-// Determine if this is part of a series
-const isInSeries = post.data.series || post.id.includes('/');
+// Determine if this is part of a series with multiple visible posts
+let isInSeries = false;
 let seriesName = post.data.series;
+
+// Check if there are multiple visible posts in this series
+if (seriesName) {
+  const allPosts = await getLocalizedCollection('blog', lang);
+  const visibleSeriesPosts = allPosts
+    .filter(p => p.data.series === seriesName && p.data.visible === true);
+  
+  // Only show series UI if there are multiple visible posts in the series
+  isInSeries = visibleSeriesPosts.length > 1;
+}
 let parentPost = null;
 
 if (post.id.includes('/') && !seriesName) {
@@ -63,10 +73,10 @@ let prevPost = null;
 let nextPost = null;
 
 if (isInSeries && seriesName) {
-  const allPosts = await getLocalizedCollection('blog', 'en');
+  const allPosts = await getLocalizedCollection('blog', lang);
   const seriesPosts = allPosts
     .filter(p => p.data.series === seriesName || p.id.startsWith(seriesName + '/'))
-    .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+    .sort((a, b) => (a.data.seriesOrder || 0) - (b.data.seriesOrder || 0));
 
   const currentIndex = seriesPosts.findIndex(p => p.id === post.id);
   if (currentIndex > 0) {
@@ -184,9 +194,11 @@ const structuredData = {
           
           <div class="flex flex-wrap gap-2">
             {post.data.tags.map((tag) => (
-              <span class="text-xs px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full font-medium">
+              <button 
+                data-query={tag}
+                class="tag-button search-suggestion text-xs px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full font-medium hover:bg-primary-200 dark:hover:bg-monokai-border transition-colors cursor-pointer">
                 {tag}
-              </span>
+              </button>
             ))}
           </div>
         </div>
@@ -282,6 +294,86 @@ const structuredData = {
     transform: none !important;
     display: block !important;
     overflow: visible !important;
+  }
+  
+  /* Inline code styling - Remove Tailwind prose default quotes/backticks */
+  .prose :global(p code):not(.prose :global(pre code)),
+  .prose :global(li code):not(.prose :global(pre code)),
+  .prose :global(h1 code):not(.prose :global(pre code)),
+  .prose :global(h2 code):not(.prose :global(pre code)),
+  .prose :global(h3 code):not(.prose :global(pre code)),
+  .prose :global(h4 code):not(.prose :global(pre code)),
+  .prose :global(h5 code):not(.prose :global(pre code)),
+  .prose :global(h6 code):not(.prose :global(pre code)) {
+    @apply bg-gray-100 dark:bg-monokai-border/30 text-gray-800 dark:text-monokai-text px-1.5 py-0.5 rounded text-sm;
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-size: 0.875em !important;
+  }
+  
+  /* Remove any pseudo-element content that might be adding backticks */
+  .prose :global(code):before,
+  .prose :global(code):after {
+    content: none !important;
+  }
+  
+  /* Enhanced list styling with subtle accents - Override all default list styling */
+  .prose :global(ul),
+  .prose :global(ol) {
+    @apply space-y-3;
+    list-style: none !important;
+    list-style-type: none !important;
+    list-style-position: outside !important;
+    list-style-image: none !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  
+  .prose :global(ol) {
+    counter-reset: list-counter;
+  }
+  
+  .prose :global(ul li),
+  .prose :global(ol li) {
+    @apply relative pl-6;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin-left: 0 !important;
+  }
+  
+  .prose :global(ol li) {
+    counter-increment: list-counter;
+  }
+  
+  /* Custom bullets for unordered lists */
+  .prose :global(ul li):before {
+    content: '';
+    @apply absolute left-0 top-2.5 w-1.5 h-1.5 bg-primary-500 dark:bg-monokai-yellow rounded-full;
+  }
+  
+  /* Custom numbers for ordered lists */
+  .prose :global(ol li):before {
+    content: counter(list-counter) '.';
+    @apply absolute left-0 top-0 text-primary-500 dark:text-monokai-yellow font-medium;
+  }
+  
+  /* Enhanced blockquote styling */
+  .prose :global(blockquote) {
+    @apply border-l-4 border-primary-500 dark:border-monokai-yellow bg-primary-50/50 dark:bg-monokai-border/20 pl-6 py-4 my-6 rounded-r-lg;
+  }
+  
+  /* Call-out boxes for emphasized paragraphs starting with specific patterns */
+  .prose :global(p):has(strong:first-child) {
+    @apply bg-gray-50 dark:bg-monokai-surface border-l-4 border-primary-500 dark:border-monokai-orange pl-6 py-4 my-6 rounded-r-lg;
+  }
+  
+  /* Enhanced emphasis for italic text */
+  .prose :global(em) {
+    @apply text-primary-600 dark:text-monokai-yellow font-medium not-italic;
+  }
+  
+  /* Subtle background for standalone questions */
+  .prose :global(p):has(strong:only-child) {
+    @apply bg-primary-50/80 dark:bg-monokai-border/30 border border-primary-200 dark:border-monokai-border px-6 py-4 rounded-lg my-6 text-center;
   }
   
   /* Ensure proper code rendering */

@@ -337,14 +337,29 @@ class MagicalSearchManager {
         
         // Apply inline styles directly since Astro scoped styles don't work on dynamic content
         const htmlElement = element as HTMLElement;
-        htmlElement.style.backgroundColor = 'rgb(248, 250, 252)';
-        htmlElement.style.borderLeft = '3px solid rgb(148, 163, 184)';
+        const isDark = document.documentElement.classList.contains('dark');
+        
+        if (isDark) {
+          // Dark mode - very subtle highlighting
+          htmlElement.style.backgroundColor = 'rgb(32, 32, 36)';
+          htmlElement.style.borderLeft = '3px solid rgb(75, 85, 99)';
+          htmlElement.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.12)';
+        } else {
+          // Light mode
+          htmlElement.style.backgroundColor = 'rgb(248, 250, 252)';
+          htmlElement.style.borderLeft = '3px solid rgb(148, 163, 184)';
+          htmlElement.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+        }
+        
         htmlElement.style.transform = 'translateX(2px)';
-        htmlElement.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
         
         const h3 = element.querySelector('h3') as HTMLElement;
         if (h3) {
-          h3.style.color = 'rgb(71, 85, 105)';
+          if (isDark) {
+            h3.style.color = 'rgb(156, 163, 175)';
+          } else {
+            h3.style.color = 'rgb(71, 85, 105)';
+          }
           h3.style.fontWeight = '600';
         }
         
@@ -558,9 +573,9 @@ document.addEventListener('astro:page-load', () => {
 }
 
 .dark #magical-search-content .search-result.selected {
-  background-color: rgb(39 39 42) !important;
-  border-left: 3px solid rgb(100 116 139) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  background-color: rgb(32 32 36) !important;
+  border-left: 3px solid rgb(75 85 99) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
 }
 
 #magical-search-content .search-result.selected h3 {
@@ -569,7 +584,7 @@ document.addEventListener('astro:page-load', () => {
 }
 
 .dark #magical-search-content .search-result.selected h3 {
-  color: rgb(148 163 184) !important;
+  color: rgb(156 163 175) !important;
   font-weight: 600 !important;
 }
 
@@ -580,8 +595,8 @@ div#magical-search-content a.search-result.selected {
 }
 
 .dark div#magical-search-content a.search-result.selected {
-  background: linear-gradient(90deg, rgb(39 39 42), rgb(32 32 35)) !important;
-  border-left: 3px solid rgb(100 116 139) !important;
+  background: linear-gradient(90deg, rgb(32 32 36), rgb(28 28 32)) !important;
+  border-left: 3px solid rgb(75 85 99) !important;
 }
 
 /* Smooth dropdown animation */

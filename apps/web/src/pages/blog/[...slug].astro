@@ -317,48 +317,49 @@ const structuredData = {
   }
   
   /* Enhanced list styling with subtle accents - Override all default list styling */
+  /* Clean, readable list styling */
   .prose :global(ul),
   .prose :global(ol) {
-    @apply space-y-3;
-    list-style: none !important;
-    list-style-type: none !important;
-    list-style-position: outside !important;
-    list-style-image: none !important;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
+    @apply space-y-2 my-6 pl-6;
+  }
+  
+  .prose :global(ul) {
+    list-style-type: disc;
+    list-style-position: outside;
   }
   
   .prose :global(ol) {
-    counter-reset: list-counter;
+    list-style-type: decimal;
+    list-style-position: outside;
   }
   
-  .prose :global(ul li),
-  .prose :global(ol li) {
-    @apply relative pl-6;
-    list-style: none !important;
-    list-style-type: none !important;
-    margin-left: 0 !important;
+  .prose :global(li) {
+    @apply mb-2 leading-7;
   }
   
-  .prose :global(ol li) {
-    counter-increment: list-counter;
+  /* Nested lists */
+  .prose :global(ul ul) {
+    @apply mt-2 mb-2;
+    list-style-type: circle;
   }
   
-  /* Custom bullets for unordered lists */
-  .prose :global(ul li):before {
-    content: '';
-    @apply absolute left-0 top-2.5 w-1.5 h-1.5 bg-primary-500 dark:bg-monokai-yellow rounded-full;
-  }
-  
-  /* Custom numbers for ordered lists */
-  .prose :global(ol li):before {
-    content: counter(list-counter) '.';
-    @apply absolute left-0 top-0 text-primary-500 dark:text-monokai-yellow font-medium;
+  .prose :global(ul ul ul) {
+    list-style-type: square;
   }
   
   /* Enhanced blockquote styling */
   .prose :global(blockquote) {
-    @apply border-l-4 border-primary-500 dark:border-monokai-yellow bg-primary-50/50 dark:bg-monokai-border/20 pl-6 py-4 my-6 rounded-r-lg;
+    @apply border-l-4 border-primary-500 dark:border-monokai-yellow bg-primary-50/50 dark:bg-monokai-border/20 pl-6 pr-6 py-5 my-8 rounded-lg italic;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .prose :global(blockquote p) {
+    @apply text-gray-700 dark:text-monokai-text font-medium;
+    margin-bottom: 0.75rem;
+  }
+  
+  .prose :global(blockquote p:last-child) {
+    @apply mb-0;
   }
   
   /* Call-out boxes for emphasized paragraphs starting with specific patterns */
@@ -368,7 +369,27 @@ const structuredData = {
   
   /* Enhanced emphasis for italic text */
   .prose :global(em) {
-    @apply text-primary-600 dark:text-monokai-yellow font-medium not-italic;
+    @apply text-primary-600 dark:text-monokai-yellow font-medium italic;
+  }
+
+  /* Better paragraph spacing for readability */
+  .prose :global(p) {
+    @apply mb-5 leading-7;
+    line-height: 1.7;
+  }
+
+  /* Closer spacing between consecutive paragraphs for better flow */
+  .prose :global(p + p) {
+    @apply mt-0;
+    margin-top: 1rem;
+  }
+
+  /* Tighter spacing after headings to paragraphs */
+  .prose :global(h1 + p),
+  .prose :global(h2 + p),
+  .prose :global(h3 + p),
+  .prose :global(h4 + p) {
+    @apply mt-4;
   }
   
   /* Subtle background for standalone questions */

@@ -228,11 +228,18 @@ class MagicalSearchManager {
     document.addEventListener('click', (e) => {
       const suggestion = (e.target as Element).closest('.search-suggestion, .recent-search') as HTMLButtonElement;
       if (suggestion) {
+        e.preventDefault();
+        e.stopPropagation();
         const query = suggestion.dataset.query;
         if (query) {
           this.searchInput.value = query;
-          this.performSearch();
+          // Force show results first, then perform search
+          this.searchResults.classList.remove('hidden');
           this.searchInput.focus();
+          // Small delay to ensure everything is set up
+          setTimeout(() => {
+            this.performSearch();
+          }, 50);
         }
       }
     });

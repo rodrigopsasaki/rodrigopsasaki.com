@@ -1,7 +1,7 @@
 ---
-title: "Simple is not Easy"
+title: "Simplicity is not a dispensable luxury"
 description: "Why we choose familiar complexity over unfamiliar simplicity, and why that's killing our systems"
-date: "2025-01-09"
+date: "2025-08-09"
 tags: ["simplicity", "architecture", "philosophy", "software design"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
@@ -45,11 +45,30 @@ Easy means it's familiar. It's what we know. It's what's at hand.
 
 These are not the same thing.
 
-A monolithic Express app with 100 services intertwined through middleware and decorators? That's easy. You know Express. Your team knows Express. There's an npm package for everything.
+Want to store user data? The easy choice: use an ORM. Your team knows ORMs. There's documentation. There are tutorials. It handles relationships, migrations, caching, validation, serialization. It's a complete solution.
 
-A single function that takes data, validates it, transforms it, and returns a result? That's simple. But it's not easy. It's unfamiliar. Where are the classes? Where's the dependency injection? Where's the abstraction layer?
+The simple choice? A data structure and a few functions:
 
-So we choose the easy thing. And then we spend the next five years fighting the complexity we invited in.
+```typescript
+// Simple: just data
+type User = {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+}
+
+// Simple: functions that do one thing  
+function saveUser(user: User): Promise<User>
+function findUser(id: string): Promise<User | null>
+function updateUser(id: string, changes: Partial<User>): Promise<User>
+```
+
+But this feels wrong to object-oriented minds. Where's the encapsulation? Where's the Active Record pattern? Where are all the conveniences?
+
+So we choose the ORM. And then we spend years fighting N+1 queries, debugging lazy loading, wrestling with circular imports, and explaining to new developers why `user.posts` sometimes loads data and sometimes doesn't.
+
+Simple felt too bare. Easy felt complete. But easy was hiding enormous complexity.
 
 ## Braiding vs Composing
 
@@ -57,81 +76,86 @@ When you braid things together, you create a new *thing*. The strands lose their
 
 When you compose things, each piece remains itself. You can replace one piece without touching the others. You can understand one piece without understanding all pieces.
 
-Most software braids.
+Here's why this matters in practice.
+
+Your startup processes payments. Version 1 is braided:
 
 ```typescript
-class UserService {
-  constructor(
-    private db: Database,
-    private cache: Cache,
-    private events: EventBus,
-    private logger: Logger,
-    private config: Config
-  ) {}
-  
-  async createUser(data: UserData) {
-    const user = await this.db.transaction(async (trx) => {
-      const created = await trx.insert('users', data);
-      await this.cache.invalidate(`users:*`);
-      await this.events.emit('user.created', created);
-      this.logger.info('User created', { id: created.id });
-      return created;
-    });
-    return user;
+class PaymentProcessor {
+  async processPayment(paymentData: PaymentRequest) {
+    // Validate card
+    if (!this.isValidCard(paymentData.card)) {
+      await this.logFailure('invalid_card', paymentData);
+      await this.updateUserRiskScore(paymentData.userId, +10);
+      await this.sendFailureEmail(paymentData.userId, 'invalid_card');
+      throw new Error('Invalid card');
+    }
+
+    // Check for fraud
+    const riskScore = await this.calculateRisk(paymentData);
+    if (riskScore > 70) {
+      await this.logFailure('high_risk', paymentData);
+      await this.updateUserRiskScore(paymentData.userId, +20);
+      await this.flagForReview(paymentData);
+      await this.sendFailureEmail(paymentData.userId, 'requires_review');
+      throw new Error('Payment flagged for review');
+    }
+
+    // Charge card
+    const result = await this.chargeCard(paymentData);
+    await this.logSuccess('payment_processed', result);
+    await this.updateUserRiskScore(paymentData.userId, -5);
+    await this.sendReceiptEmail(paymentData.userId, result);
+    await this.updateInventory(paymentData.items);
+    
+    return result;
   }
 }
 ```
 
-Five concerns. Braided. You can't understand user creation without understanding transactions, caching strategies, event schemas, and logging formats.
+Everything is braided together. Validation, fraud detection, charging, logging, risk scoring, emails, inventory. One method, eight responsibilities.
 
-Here's composition:
+Six months later, your legal team says: "We need to store payment failures for compliance. But only card validation failures. And only for EU customers. And the data needs to be encrypted."
 
-```typescript
-// Create user
-const user = await createUser(data);
+In the braided system, this "simple" change touches everything:
+- The validation logic (to detect EU customers)  
+- The logging system (to encrypt specific logs)
+- The risk scoring (EU rules are different)
+- The email system (different templates for EU)
+- The database schema (new encrypted storage)
+- The error handling (EU-specific error codes)
 
-// Then invalidate
-await invalidateUserCache();
+You'll spend three weeks making sure your change doesn't break the eight other things this method does.
 
-// Then notify
-await emitUserCreated(user);
-
-// Then log
-logUserCreated(user);
-```
-
-"But what if one fails?" you ask.
-
-Good. Let it fail. Handle it where it matters. Don't braid error handling into every operation.
-
-Here's a pipe that embraces failure:
+Now imagine the same system composed:
 
 ```typescript
-// Simple pipe - each step can fail independently
-async function processUser(userData: unknown) {
-  const user = await createUser(userData);        // Throws on validation error
-  await invalidateUserCache();                    // Throws on cache error  
-  await emitUserCreated(user);                    // Throws on event bus error
-  logUserCreated(user);                          // Throws on logging error
-  return user;
+// Each piece has one job
+const payment = await validateCard(paymentData);
+const riskAssessment = await assessFraud(payment);
+
+if (riskAssessment.requiresReview) {
+  await flagForManualReview(payment, riskAssessment);
+  throw new PaymentError('REQUIRES_REVIEW');
 }
 
-// Handle it at the boundary
-try {
-  const user = await processUser(request.body);
-  response.json({ user });
-} catch (error) {
-  if (error instanceof ValidationError) {
-    response.status(400).json({ error: error.message });
-  } else {
-    // Cache failed? Event failed? Log failed? 
-    // The user was still created. That's what matters.
-    response.status(500).json({ error: 'Something went wrong' });
-  }
-}
+const result = await chargeCard(payment);
+await recordSuccess(result);
+await updateInventory(payment.items);
 ```
 
-Each operation has one job. When it can't do its job, it fails fast. The caller decides what failure means.
+Now that same compliance requirement? Add one line:
+
+```typescript
+const payment = await validateCard(paymentData);
+await recordComplianceData(payment);  // <- One line
+const riskAssessment = await assessFraud(payment);
+// ... rest unchanged
+```
+
+The compliance function knows about EU customers. The validation function knows about cards. Each function has one reason to change. Your "simple" legal requirement becomes a simple code change.
+
+This is why composition wins. Not because the code looks prettier. Because change becomes surgical instead of systemic.
 
 ## The Compound Interest of Complexity
 

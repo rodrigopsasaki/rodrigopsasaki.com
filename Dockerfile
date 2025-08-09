@@ -48,6 +48,13 @@ server {
         add_header Cache-Control "public, max-age=300";
     }
 
+    # Handle JSON files (like search index)
+    location ~* \.json$ {
+        expires 5m;
+        add_header Cache-Control "public, max-age=300";
+        add_header Content-Type "application/json";
+    }
+
     # Handle Astro's static files
     location / {
         # Determine the protocol based on X-Forwarded-Proto header

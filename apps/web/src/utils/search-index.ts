@@ -1,4 +1,4 @@
-import { getLocalizedCollection } from '../i18n/content';
+import { getCollection } from 'astro:content';
 import { personalInfo, summary, experience, education, skillCategories } from '../data/cv-data';
 
 export interface SearchItem {
@@ -80,36 +80,40 @@ export async function generateSearchIndex(): Promise<SearchItem[]> {
   const searchItems: SearchItem[] = [];
 
   // Index blog posts
-  const posts = await getLocalizedCollection('blog', 'en');
-  const filteredPosts = posts.filter(({ data }) => data.draft !== true);
+  try {
+    const posts = await getCollection('en/blog');
+    const filteredPosts = posts.filter(({ data }) => data.draft !== true);
 
-  const blogItems: SearchItem[] = filteredPosts.map((post) => {
-    const rawContent = post.body || '';
-    const cleanContent = cleanTextContent(rawContent);
-    const contentPreview = extractContentPreview(rawContent);
-    
-    return {
-      id: post.id,
-      title: cleanTextContent(post.data.title),
-      description: cleanTextContent(post.data.description),
-      content: cleanContent,
-      contentPreview,
-      tags: (post.data.tags || []).map((tag: string) => cleanTextContent(tag)),
-      series: post.data.series,
-      seriesOrder: post.data.order,
-      date: post.data.date,
-      url: `/blog/${post.id.replace('.md', '')}/`,
-      type: getContentType(post),
-      author: post.data.author || 'Rodrigo Sasaki',
-      category: 'blog'
-    };
-  });
+    const blogItems: SearchItem[] = filteredPosts.map((post) => {
+      const rawContent = post.body || '';
+      const cleanContent = cleanTextContent(rawContent);
+      const contentPreview = extractContentPreview(rawContent);
+      
+      return {
+        id: post.id,
+        title: cleanTextContent(post.data.title),
+        description: cleanTextContent(post.data.description),
+        content: cleanContent,
+        contentPreview,
+        tags: (post.data.tags || []).map((tag: string) => cleanTextContent(tag)),
+        series: post.data.series,
+        seriesOrder: post.data.order,
+        date: post.data.date,
+        url: `/blog/${post.id.replace('.md', '')}/`,
+        type: getContentType(post),
+        author: post.data.author || 'Rodrigo Sasaki',
+        category: 'blog'
+      };
+    });
 
-  searchItems.push(...blogItems);
+    searchItems.push(...blogItems);
+  } catch (error) {
+    console.warn('Blog collection not found, skipping blog indexing:', error);
+  }
 
   // Index projects
   try {
-    const projects = await getLocalizedCollection('projects', 'en');
+    const projects = await getCollection('en/projects');
     const projectItems: SearchItem[] = projects.map((project) => {
       const rawContent = project.body || '';
       const cleanContent = cleanTextContent(rawContent);

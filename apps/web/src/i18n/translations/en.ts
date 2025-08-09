@@ -12,7 +12,7 @@ export default {
   home: {
     title: 'Rodrigo Sasaki',
     subtitle: 'Software Engineer',
-    description: 'I build software.',
+    description: 'I like thinking about code and about systems. Here I\'ll share some of my work and my thoughts on software engineering',
     cta: {
       viewProjects: 'View Projects',
       readBlog: 'Read Blog',

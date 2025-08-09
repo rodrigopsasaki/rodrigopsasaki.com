@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LanguageToggle from '../components/LanguageToggle.astro';
+import MagicalSearchBar from '../components/MagicalSearchBar.astro';
 import SEO from '../components/SEO.astro';
 import { getLangFromUrl, useTranslations, getHtmlLang, getLocalizedPath } from '../i18n';
 
@@ -86,7 +87,7 @@ const {
             </a>
           </div>
           
-          <div class="flex items-center space-x-6">
+          <div class="flex items-center space-x-4">
             <div class="hidden md:flex items-center space-x-6">
               <a href={getLocalizedPath('/projects/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
                 {t.nav.projects}
@@ -98,6 +99,10 @@ const {
                 {t.nav.cv}
               </a>
             </div>
+            
+            <!-- Magical Search Bar -->
+            <MagicalSearchBar />
+            
             <LanguageToggle />
             <ThemeToggle />
           </div>

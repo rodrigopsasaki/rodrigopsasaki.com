@@ -9,6 +9,12 @@
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",
     "clean": "pnpm -r run clean",
+    "test": "pnpm -r run test",
+    "test:run": "pnpm -r run test:run",
+    "test:watch": "pnpm -r run test:watch",
+    "test:coverage": "pnpm -r run test:coverage",
+    "test:e2e": "pnpm -r run test:e2e",
+    "test:all": "pnpm -r run test:all",
     "deploy": "fly deploy",
     "logs": "fly logs",
     "status": "fly status"

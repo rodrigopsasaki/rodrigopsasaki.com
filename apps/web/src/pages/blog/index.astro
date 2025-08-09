@@ -56,9 +56,10 @@ const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Header -->
     <div class="mb-12">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-monokai-text mb-2">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-monokai-text mb-6">
         Blog
       </h1>
+      
     </div>
     
     <!-- Posts List -->
@@ -101,30 +102,60 @@ const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
                   {series.overview.data.description}
                 </p>
                 
-                <!-- Episode List -->
+                <!-- Collapsible Episode List -->
                 <div class="border-t border-gray-200 dark:border-monokai-border pt-4">
-                  <h3 class="text-sm font-semibold text-gray-700 dark:text-monokai-text mb-3 uppercase tracking-wide">
-                    Episodes
-                  </h3>
-                  <div class="grid gap-2">
-                    {series.episodes.map((episode: any) => (
-                      <a 
-                        href={`/blog/${episode.id.replace('.md', '')}/`} 
-                        class="flex items-center justify-between p-3 rounded-md bg-gray-50 dark:bg-monokai-bg border border-gray-200 dark:border-monokai-border hover:bg-gray-100 dark:hover:bg-monokai-border hover:border-primary-300 dark:hover:border-monokai-muted transition-all duration-200 group"
+                  <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-monokai-text uppercase tracking-wide">
+                      Episodes
+                    </h3>
+                    <button 
+                      class="series-toggle-btn flex items-center gap-1 text-sm text-primary-600 dark:text-monokai-yellow hover:text-primary-700 dark:hover:text-monokai-orange transition-colors duration-200"
+                      data-series-id={series.id}
+                      aria-expanded="false"
+                      aria-controls={`episodes-${series.id}`}
+                    >
+                      <span class="toggle-text">Show episodes</span>
+                      <svg class="w-4 h-4 toggle-icon transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div 
+                    class="episodes-container hidden"
+                    id={`episodes-${series.id}`}
+                    data-total-episodes={series.episodes.length}
+                  >
+                    <div class="grid gap-2 episodes-grid">
+                      {series.episodes.map((episode: any, index: number) => (
+                        <a 
+                          href={`/blog/${episode.id.replace('.md', '')}/`} 
+                          class={`episode-item flex items-center justify-between p-3 rounded-md bg-gray-50 dark:bg-monokai-bg border border-gray-200 dark:border-monokai-border hover:bg-gray-100 dark:hover:bg-monokai-border hover:border-primary-300 dark:hover:border-monokai-muted transition-all duration-200 group ${index >= 3 ? 'episode-extra hidden' : ''}`}
+                          data-episode-index={index}
+                        >
+                          <div class="flex-1">
+                            <div class="font-medium text-gray-800 dark:text-monokai-text group-hover:text-primary-600 dark:group-hover:text-monokai-yellow transition-colors">
+                              {episode.data.title}
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-monokai-muted mt-1">
+                              {episode.data.description}
+                            </div>
+                          </div>
+                          <svg class="w-4 h-4 text-gray-400 dark:text-monokai-muted group-hover:text-primary-500 dark:group-hover:text-monokai-yellow transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </a>
+                      ))}
+                    </div>
+                    
+                    {series.episodes.length > 3 && (
+                      <button 
+                        class="show-more-btn w-full mt-2 py-2 text-sm text-primary-600 dark:text-monokai-yellow hover:text-primary-700 dark:hover:text-monokai-orange hover:bg-primary-50 dark:hover:bg-monokai-border rounded-md transition-all duration-200"
+                        data-series-id={series.id}
                       >
-                        <div class="flex-1">
-                          <div class="font-medium text-gray-800 dark:text-monokai-text group-hover:text-primary-600 dark:group-hover:text-monokai-yellow transition-colors">
-                            {episode.data.title}
-                          </div>
-                          <div class="text-sm text-gray-500 dark:text-monokai-muted mt-1">
-                            {episode.data.description}
-                          </div>
-                        </div>
-                        <svg class="w-4 h-4 text-gray-400 dark:text-monokai-muted group-hover:text-primary-500 dark:group-hover:text-monokai-yellow transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                      </a>
-                    ))}
+                        <span class="show-more-text">Show {series.episodes.length - 3} more episodes</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -160,3 +191,195 @@ const seriesArray = Array.from(seriesMap.entries()).map(([id, data]) => ({
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  class SeriesEpisodesManager {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      // Handle series toggle buttons
+      document.querySelectorAll('.series-toggle-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.toggleSeriesEpisodes(button as HTMLButtonElement);
+        });
+      });
+
+      // Handle show more/less buttons
+      document.querySelectorAll('.show-more-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.toggleShowMore(button as HTMLButtonElement);
+        });
+      });
+    }
+
+    toggleSeriesEpisodes(button: HTMLButtonElement) {
+      const seriesId = button.dataset.seriesId;
+      const episodesContainer = document.getElementById(`episodes-${seriesId}`);
+      const toggleIcon = button.querySelector('.toggle-icon');
+      const toggleText = button.querySelector('.toggle-text');
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+      if (!episodesContainer) return;
+
+      if (isExpanded) {
+        // Collapse
+        this.collapseContainer(episodesContainer);
+        if (toggleIcon) (toggleIcon as HTMLElement).style.transform = 'rotate(0deg)';
+        if (toggleText) toggleText.textContent = 'Show episodes';
+        button.setAttribute('aria-expanded', 'false');
+      } else {
+        // Expand
+        this.expandContainer(episodesContainer);
+        if (toggleIcon) (toggleIcon as HTMLElement).style.transform = 'rotate(180deg)';
+        if (toggleText) toggleText.textContent = 'Hide episodes';
+        button.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    toggleShowMore(button: HTMLButtonElement) {
+      const seriesId = button.dataset.seriesId;
+      const episodesContainer = document.getElementById(`episodes-${seriesId}`);
+      const showMoreText = button.querySelector('.show-more-text');
+      const extraEpisodes = episodesContainer?.querySelectorAll('.episode-extra');
+      
+      if (!extraEpisodes) return;
+
+      const isShowingMore = !extraEpisodes[0]?.classList.contains('hidden');
+      const totalEpisodes = parseInt(episodesContainer?.dataset.totalEpisodes || '0');
+      const extraCount = totalEpisodes - 3;
+
+      extraEpisodes.forEach((episode, index) => {
+        if (isShowingMore) {
+          // Hide extra episodes with staggered animation
+          setTimeout(() => {
+            episode.classList.add('hidden');
+          }, index * 50);
+        } else {
+          // Show extra episodes with staggered animation
+          const episodeEl = episode as HTMLElement;
+          episodeEl.classList.remove('hidden');
+          episodeEl.style.opacity = '0';
+          episodeEl.style.transform = 'translateY(-10px)';
+          
+          setTimeout(() => {
+            episodeEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            episodeEl.style.opacity = '1';
+            episodeEl.style.transform = 'translateY(0)';
+          }, index * 50);
+        }
+      });
+
+      // Update button text
+      if (showMoreText) {
+        if (isShowingMore) {
+          showMoreText.textContent = `Show ${extraCount} more episodes`;
+        } else {
+          showMoreText.textContent = `Show fewer episodes`;
+        }
+      }
+    }
+
+    expandContainer(container: HTMLElement) {
+      container.classList.remove('hidden');
+      container.style.height = '0';
+      container.style.opacity = '0';
+      container.style.overflow = 'hidden';
+      container.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+
+      // Get the natural height
+      const scrollHeight = container.scrollHeight;
+      
+      // Animate to natural height
+      requestAnimationFrame(() => {
+        container.style.height = scrollHeight + 'px';
+        container.style.opacity = '1';
+      });
+
+      // Clean up after animation
+      setTimeout(() => {
+        container.style.height = 'auto';
+        container.style.overflow = 'visible';
+      }, 300);
+    }
+
+    collapseContainer(container: HTMLElement) {
+      container.style.height = container.scrollHeight + 'px';
+      container.style.overflow = 'hidden';
+      container.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+
+      requestAnimationFrame(() => {
+        container.style.height = '0';
+        container.style.opacity = '0';
+      });
+
+      setTimeout(() => {
+        container.classList.add('hidden');
+        container.style.height = '';
+        container.style.opacity = '';
+        container.style.overflow = '';
+        container.style.transition = '';
+      }, 300);
+    }
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    new SeriesEpisodesManager();
+  });
+
+  // Also initialize on page navigation for SPAs
+  document.addEventListener('astro:page-load', () => {
+    new SeriesEpisodesManager();
+  });
+</script>
+
+<style>
+  /* Smooth transitions for episode items */
+  .episode-item {
+    transition: all 0.2s ease;
+  }
+
+  .episode-item.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  /* Toggle button hover effects */
+  .series-toggle-btn:hover .toggle-icon {
+    transform: translateY(-1px);
+  }
+
+  .show-more-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Loading state for smooth animations */
+  .episodes-container {
+    transition: height 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Focus styles for accessibility */
+  .series-toggle-btn:focus,
+  .show-more-btn:focus {
+    outline: 2px solid theme('colors.primary.500');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .dark .series-toggle-btn:focus,
+  .dark .show-more-btn:focus {
+    outline-color: theme('colors.monokai.yellow');
+  }
+
+  /* Improve button touch targets on mobile */
+  @media (max-width: 640px) {
+    .series-toggle-btn,
+    .show-more-btn {
+      min-height: 44px;
+    }
+  }
+</style>

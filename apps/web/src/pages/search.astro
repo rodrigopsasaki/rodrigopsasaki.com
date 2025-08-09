@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchComponent from '../components/Search.astro';
+---
+
+<BaseLayout title="Search">
+  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 dark:text-monokai-text mb-4">
+          Search
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-monokai-muted max-w-2xl mx-auto">
+          Find posts, series, and content across the entire blog. Search by title, tags, or content.
+        </p>
+      </div>
+
+      <!-- Search Component -->
+      <div class="max-w-2xl mx-auto">
+        <SearchComponent />
+      </div>
+
+      <!-- Search Tips -->
+      <div class="max-w-2xl mx-auto mt-12">
+        <div class="bg-white dark:bg-monokai-surface border border-gray-200 dark:border-monokai-border rounded-lg p-6">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-monokai-text mb-4">
+            Search Tips
+          </h2>
+          <div class="grid gap-4 text-sm text-gray-600 dark:text-monokai-muted">
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-primary-100 dark:bg-monokai-surface flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="text-xs font-bold text-primary-600 dark:text-monokai-yellow">1</span>
+              </div>
+              <div>
+                <strong class="text-gray-800 dark:text-monokai-text">Use keywords</strong> - Search for specific topics like "TypeScript", "architecture", or "simplicity"
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-primary-100 dark:bg-monokai-surface flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="text-xs font-bold text-primary-600 dark:text-monokai-yellow">2</span>
+              </div>
+              <div>
+                <strong class="text-gray-800 dark:text-monokai-text">Try partial matches</strong> - The search is fuzzy, so "arch" will find "architecture" posts
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-primary-100 dark:bg-monokai-surface flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="text-xs font-bold text-primary-600 dark:text-monokai-yellow">3</span>
+              </div>
+              <div>
+                <strong class="text-gray-800 dark:text-monokai-text">Browse by tags</strong> - Click on suggested tags to explore related content
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-primary-100 dark:bg-monokai-surface flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="text-xs font-bold text-primary-600 dark:text-monokai-yellow">4</span>
+              </div>
+              <div>
+                <strong class="text-gray-800 dark:text-monokai-text">Use keyboard shortcuts</strong> - Press <kbd class="px-1.5 py-0.5 text-xs font-mono bg-gray-100 dark:bg-monokai-border rounded">/</kbd> to focus the search from anywhere
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  kbd {
+    font-family: inherit;
+  }
+</style>

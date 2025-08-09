@@ -1,0 +1,661 @@
+---
+// Component can be used anywhere, but we'll create a dedicated search page too
+---
+
+<div id="search-container" class="relative">
+  <!-- Search Input -->
+  <div class="relative">
+    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg class="w-5 h-5 text-gray-400 dark:text-monokai-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Search posts, tags, or content... (Press '/' to focus)"
+      class="w-full pl-10 pr-4 py-3 bg-white dark:bg-monokai-surface border border-gray-300 dark:border-monokai-border rounded-lg focus:ring-2 focus:ring-primary-500 dark:focus:ring-monokai-yellow focus:border-transparent transition-all duration-200 text-gray-900 dark:text-monokai-text placeholder-gray-500 dark:placeholder-monokai-muted"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    
+    <!-- Loading indicator -->
+    <div id="search-loading" class="absolute inset-y-0 right-0 pr-3 flex items-center hidden">
+      <svg class="animate-spin w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+    
+    <!-- Clear button -->
+    <button 
+      id="search-clear" 
+      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-monokai-muted hover:text-gray-600 dark:hover:text-monokai-text hidden"
+      aria-label="Clear search"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Search Suggestions (shown when input is focused but empty) -->
+  <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-monokai-surface rounded-lg border border-gray-200 dark:border-monokai-border shadow-lg hidden z-50">
+    <div class="p-4">
+      <h3 class="text-sm font-semibold text-gray-700 dark:text-monokai-text mb-3">Try searching for:</h3>
+      <div class="flex flex-wrap gap-2" id="popular-tags">
+        <!-- Popular tags will be inserted here -->
+      </div>
+      <div class="mt-4">
+        <h4 class="text-xs font-semibold text-gray-500 dark:text-monokai-muted uppercase tracking-wider mb-2">Recent Posts</h4>
+        <div id="recent-posts">
+          <!-- Recent posts will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-monokai-surface rounded-lg border border-gray-200 dark:border-monokai-border shadow-lg hidden z-50 max-h-96 overflow-y-auto">
+    <div id="search-results-content">
+      <!-- Results will be inserted here -->
+    </div>
+  </div>
+
+  <!-- Search Stats -->
+  <div id="search-stats" class="hidden text-sm text-gray-500 dark:text-monokai-muted mt-2">
+    <!-- Search statistics will appear here -->
+  </div>
+</div>
+
+<!-- Search keyboard shortcut hint -->
+<div class="text-xs text-gray-400 dark:text-monokai-muted mt-2 text-center">
+  Press <kbd class="px-1.5 py-0.5 text-xs font-mono bg-gray-100 dark:bg-monokai-border rounded">Esc</kbd> to close, 
+  <kbd class="px-1.5 py-0.5 text-xs font-mono bg-gray-100 dark:bg-monokai-border rounded">↑</kbd>
+  <kbd class="px-1.5 py-0.5 text-xs font-mono bg-gray-100 dark:bg-monokai-border rounded">↓</kbd> to navigate
+</div>
+
+<script>
+  import Fuse, { type FuseResult, type FuseResultMatch } from 'fuse.js';
+
+  interface SearchItem {
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    contentPreview: string;
+    tags: string[];
+    series?: string;
+    seriesOrder?: number;
+    date: string;
+    url: string;
+    type: 'series-overview' | 'series-episode' | 'individual';
+    author: string;
+  }
+
+  class MagicalSearch {
+    private fuse: Fuse<SearchItem> | null = null;
+    private searchData: SearchItem[] = [];
+    private selectedIndex = -1;
+    private debounceTimeout: number | null = null;
+
+    private elements = {
+      container: document.getElementById('search-container'),
+      input: document.getElementById('search-input') as HTMLInputElement,
+      loading: document.getElementById('search-loading'),
+      clear: document.getElementById('search-clear'),
+      suggestions: document.getElementById('search-suggestions'),
+      results: document.getElementById('search-results'),
+      resultsContent: document.getElementById('search-results-content'),
+      stats: document.getElementById('search-stats'),
+      popularTags: document.getElementById('popular-tags'),
+      recentPosts: document.getElementById('recent-posts')
+    };
+
+    constructor() {
+      this.init();
+    }
+
+    private async init() {
+      await this.loadSearchData();
+      this.setupEventListeners();
+      this.setupKeyboardShortcuts();
+      this.populateSuggestions();
+    }
+
+    private async loadSearchData() {
+      try {
+        this.showLoading(true);
+        const response = await fetch('/search-index.json');
+        this.searchData = await response.json();
+        
+        // Initialize Fuse.js with advanced configuration
+        this.fuse = new Fuse(this.searchData, {
+          keys: [
+            { name: 'title', weight: 0.7 },
+            { name: 'description', weight: 0.3 },
+            { name: 'tags', weight: 0.6 },
+            { name: 'contentPreview', weight: 0.2 },
+            { name: 'series', weight: 0.4 }
+          ],
+          threshold: 0.3, // Lower = more strict matching
+          distance: 100,
+          includeMatches: true,
+          includeScore: true,
+          minMatchCharLength: 2,
+          shouldSort: true,
+          ignoreLocation: true
+        });
+      } catch (error) {
+        console.error('Failed to load search data:', error);
+      } finally {
+        this.showLoading(false);
+      }
+    }
+
+    private setupEventListeners() {
+      // Input events
+      this.elements.input?.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value;
+        this.handleSearch(query);
+      });
+
+      this.elements.input?.addEventListener('focus', () => {
+        if (!this.elements.input?.value.trim()) {
+          this.showSuggestions();
+        }
+      });
+
+      this.elements.input?.addEventListener('blur', () => {
+        // Delay hiding to allow clicking on results
+        setTimeout(() => {
+          if (!this.elements.container?.contains(document.activeElement)) {
+            this.hideResults();
+          }
+        }, 200);
+      });
+
+      // Clear button
+      this.elements.clear?.addEventListener('click', () => {
+        this.clearSearch();
+      });
+
+      // Keyboard navigation
+      this.elements.input?.addEventListener('keydown', (e) => {
+        this.handleKeyboardNavigation(e);
+      });
+
+      // Click outside to close
+      document.addEventListener('click', (e) => {
+        if (!this.elements.container?.contains(e.target as Node)) {
+          this.hideResults();
+        }
+      });
+    }
+
+    private setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Focus search with '/'
+        if (e.key === '/' && !this.isInputFocused()) {
+          e.preventDefault();
+          this.elements.input?.focus();
+        }
+
+        // Escape to close
+        if (e.key === 'Escape') {
+          this.hideResults();
+          this.elements.input?.blur();
+        }
+      });
+    }
+
+    private handleSearch(query: string) {
+      // Update clear button visibility
+      if (query.trim()) {
+        this.elements.clear?.classList.remove('hidden');
+      } else {
+        this.elements.clear?.classList.add('hidden');
+        this.showSuggestions();
+        return;
+      }
+
+      // Debounce search
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
+
+      this.debounceTimeout = window.setTimeout(() => {
+        this.performSearch(query);
+      }, 150);
+    }
+
+    private performSearch(query: string) {
+      if (!this.fuse || query.length < 2) return;
+
+      this.showLoading(true);
+      this.selectedIndex = -1;
+
+      try {
+        const results = this.fuse.search(query);
+        this.displayResults(results, query);
+        this.updateStats(results.length, query);
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        this.showLoading(false);
+      }
+    }
+
+    private displayResults(results: FuseResult<SearchItem>[], query: string) {
+      if (!this.elements.resultsContent) return;
+
+      this.hideSuggestions();
+
+      if (results.length === 0) {
+        this.showNoResults(query);
+        return;
+      }
+
+      const html = results.map((result, index) => {
+        const item = result.item;
+        const matches = result.matches || [];
+        
+        // Create highlighted title and content
+        const highlightedTitle = this.highlightMatches(item.title, matches, 'title');
+        const highlightedDescription = this.highlightMatches(item.description, matches, 'description');
+        
+        const typeIcon = this.getTypeIcon(item.type);
+        const typeLabel = this.getTypeLabel(item.type, item.seriesOrder);
+        
+        return `
+          <div class="search-result-item p-4 border-b border-gray-200 dark:border-monokai-border hover:bg-gray-50 dark:hover:bg-monokai-border cursor-pointer transition-colors ${index === this.selectedIndex ? 'bg-primary-50 dark:bg-monokai-border' : ''}" 
+               data-url="${item.url}" data-index="${index}">
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 mt-1">
+                ${typeIcon}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-sm font-medium text-gray-900 dark:text-monokai-text truncate">
+                    ${highlightedTitle}
+                  </h3>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-monokai-surface text-gray-600 dark:text-monokai-muted">
+                    ${typeLabel}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-monokai-muted line-clamp-2 mb-2">
+                  ${highlightedDescription}
+                </p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    ${item.tags.slice(0, 3).map((tag: string) => `
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow">
+                        ${tag}
+                      </span>
+                    `).join('')}
+                  </div>
+                  <span class="text-xs text-gray-500 dark:text-monokai-muted">
+                    ${this.formatDate(item.date)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      this.elements.resultsContent.innerHTML = html;
+      this.showResults();
+      this.attachResultClickHandlers();
+    }
+
+    private showNoResults(query: string) {
+      if (!this.elements.resultsContent) return;
+
+      // Generate smart suggestions based on available content
+      const suggestions = this.generateSuggestions(query);
+      
+      this.elements.resultsContent.innerHTML = `
+        <div class="p-6 text-center">
+          <div class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-monokai-muted">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-monokai-text mb-2">
+            No results for "${query}"
+          </h3>
+          <p class="text-gray-500 dark:text-monokai-muted mb-4">
+            Try searching with different keywords or check out these suggestions:
+          </p>
+          <div class="flex flex-wrap justify-center gap-2">
+            ${suggestions.map(suggestion => `
+              <button class="suggestion-tag px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full text-sm hover:bg-primary-200 dark:hover:bg-monokai-border transition-colors"
+                      data-query="${suggestion}">
+                ${suggestion}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      this.showResults();
+      this.attachSuggestionHandlers();
+    }
+
+    private generateSuggestions(query: string): string[] {
+      const allTags = Array.from(new Set(this.searchData.flatMap(item => item.tags)));
+      const allSeries = Array.from(new Set(this.searchData.map(item => item.series).filter(Boolean)));
+      
+      // Find similar tags and series
+      const suggestions = [...allTags, ...allSeries]
+        .filter((item): item is string => {
+          return item != null && 
+                 (item.toLowerCase().includes(query.toLowerCase()) || 
+                  this.levenshteinDistance(item.toLowerCase(), query.toLowerCase()) <= 2);
+        })
+        .slice(0, 6);
+
+      // Add some popular items if we don't have enough suggestions
+      if (suggestions.length < 3) {
+        const popular = ['Simplicity', 'TypeScript', 'Architecture', 'Design'];
+        suggestions.push(...popular.filter(item => !suggestions.includes(item)).slice(0, 3));
+      }
+
+      return suggestions;
+    }
+
+    private populateSuggestions() {
+      if (!this.elements.popularTags || !this.elements.recentPosts) return;
+
+      // Popular tags
+      const tagCounts = new Map<string, number>();
+      this.searchData.forEach(item => {
+        item.tags.forEach(tag => {
+          tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+        });
+      });
+
+      const popularTags = Array.from(tagCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([tag]) => tag);
+
+      this.elements.popularTags.innerHTML = popularTags.map(tag => `
+        <button class="suggestion-tag px-3 py-1 bg-primary-100 dark:bg-monokai-surface text-primary-700 dark:text-monokai-yellow rounded-full text-sm hover:bg-primary-200 dark:hover:bg-monokai-border transition-colors"
+                data-query="${tag}">
+          ${tag}
+        </button>
+      `).join('');
+
+      // Recent posts
+      const recentPosts = this.searchData.slice(0, 3);
+      this.elements.recentPosts.innerHTML = recentPosts.map(post => `
+        <a href="${post.url}" class="block p-2 hover:bg-gray-50 dark:hover:bg-monokai-border rounded transition-colors">
+          <div class="text-sm font-medium text-gray-900 dark:text-monokai-text truncate">
+            ${post.title}
+          </div>
+          <div class="text-xs text-gray-500 dark:text-monokai-muted mt-1">
+            ${this.formatDate(post.date)} • ${this.getTypeLabel(post.type, post.seriesOrder)}
+          </div>
+        </a>
+      `).join('');
+
+      this.attachSuggestionHandlers();
+    }
+
+    private attachSuggestionHandlers() {
+      document.querySelectorAll('.suggestion-tag').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const query = (e.target as HTMLElement).getAttribute('data-query');
+          if (query && this.elements.input) {
+            this.elements.input.value = query;
+            this.performSearch(query);
+          }
+        });
+      });
+    }
+
+    private attachResultClickHandlers() {
+      document.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          const url = (e.currentTarget as HTMLElement).getAttribute('data-url');
+          if (url) {
+            window.location.href = url;
+          }
+        });
+      });
+    }
+
+    private handleKeyboardNavigation(e: KeyboardEvent) {
+      const results = document.querySelectorAll('.search-result-item');
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, results.length - 1);
+        this.updateSelection(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        this.updateSelection(results);
+      } else if (e.key === 'Enter' && this.selectedIndex >= 0) {
+        e.preventDefault();
+        const selectedResult = results[this.selectedIndex] as HTMLElement;
+        const url = selectedResult.getAttribute('data-url');
+        if (url) {
+          window.location.href = url;
+        }
+      }
+    }
+
+    private updateSelection(results: NodeListOf<Element>) {
+      results.forEach((result, index) => {
+        if (index === this.selectedIndex) {
+          result.classList.add('bg-primary-50', 'dark:bg-monokai-border');
+        } else {
+          result.classList.remove('bg-primary-50', 'dark:bg-monokai-border');
+        }
+      });
+    }
+
+    private highlightMatches(text: string, matches: readonly FuseResultMatch[], key: string): string {
+      const match = matches.find(m => m.key === key);
+      if (!match || !match.indices) return text;
+
+      let result = '';
+      let lastIndex = 0;
+
+      match.indices.forEach(([start, end]: [number, number]) => {
+        result += text.slice(lastIndex, start);
+        result += `<mark class="bg-yellow-200 dark:bg-monokai-yellow dark:text-monokai-bg px-0.5 rounded">${text.slice(start, end + 1)}</mark>`;
+        lastIndex = end + 1;
+      });
+
+      result += text.slice(lastIndex);
+      return result;
+    }
+
+    private getTypeIcon(type: SearchItem['type']): string {
+      switch (type) {
+        case 'series-overview':
+          return `<svg class="w-4 h-4 text-primary-600 dark:text-monokai-yellow" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+                  </svg>`;
+        case 'series-episode':
+          return `<svg class="w-4 h-4 text-blue-600 dark:text-monokai-blue" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+                  </svg>`;
+        default:
+          return `<svg class="w-4 h-4 text-gray-600 dark:text-monokai-muted" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a2 2 0 00-2 2v6a2 2 0 002 2V9a2 2 0 012-2h8a2 2 0 012 2v3a2 2 0 01-2 2v1a2 2 0 01-2-2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"></path>
+                  </svg>`;
+      }
+    }
+
+    private getTypeLabel(type: SearchItem['type'], order?: number): string {
+      switch (type) {
+        case 'series-overview':
+          return 'Series';
+        case 'series-episode':
+          return `Episode ${order || ''}`;
+        default:
+          return 'Post';
+      }
+    }
+
+    private formatDate(dateString: string): string {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    private updateStats(count: number, query: string) {
+      if (!this.elements.stats) return;
+
+      if (count > 0) {
+        this.elements.stats.textContent = `Found ${count} result${count === 1 ? '' : 's'} for "${query}"`;
+        this.elements.stats.classList.remove('hidden');
+      } else {
+        this.elements.stats.classList.add('hidden');
+      }
+    }
+
+    private clearSearch() {
+      if (this.elements.input) {
+        this.elements.input.value = '';
+        this.elements.input.focus();
+      }
+      this.elements.clear?.classList.add('hidden');
+      this.hideResults();
+      this.showSuggestions();
+    }
+
+    private showLoading(show: boolean) {
+      if (show) {
+        this.elements.loading?.classList.remove('hidden');
+      } else {
+        this.elements.loading?.classList.add('hidden');
+      }
+    }
+
+    private showSuggestions() {
+      this.elements.suggestions?.classList.remove('hidden');
+      this.elements.results?.classList.add('hidden');
+    }
+
+    private hideSuggestions() {
+      this.elements.suggestions?.classList.add('hidden');
+    }
+
+    private showResults() {
+      this.elements.results?.classList.remove('hidden');
+      this.elements.suggestions?.classList.add('hidden');
+    }
+
+    private hideResults() {
+      this.elements.results?.classList.add('hidden');
+      this.elements.suggestions?.classList.add('hidden');
+      this.elements.stats?.classList.add('hidden');
+      this.selectedIndex = -1;
+    }
+
+    private isInputFocused(): boolean {
+      return document.activeElement === this.elements.input;
+    }
+
+    private levenshteinDistance(str1: string, str2: string): number {
+      const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+
+      for (let i = 0; i <= str1.length; i += 1) {
+        matrix[0][i] = i;
+      }
+
+      for (let j = 0; j <= str2.length; j += 1) {
+        matrix[j][0] = j;
+      }
+
+      for (let j = 1; j <= str2.length; j += 1) {
+        for (let i = 1; i <= str1.length; i += 1) {
+          const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+          matrix[j][i] = Math.min(
+            matrix[j][i - 1] + 1, // deletion
+            matrix[j - 1][i] + 1, // insertion
+            matrix[j - 1][i - 1] + indicator, // substitution
+          );
+        }
+      }
+
+      return matrix[str2.length][str1.length];
+    }
+  }
+
+  // Initialize search when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new MagicalSearch();
+  });
+
+  // Also initialize on page navigation for SPAs
+  document.addEventListener('astro:page-load', () => {
+    new MagicalSearch();
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .search-result-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .search-result-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  kbd {
+    font-family: inherit;
+  }
+
+  mark {
+    font-weight: 600;
+  }
+
+  .suggestion-tag {
+    cursor: pointer;
+  }
+
+  #search-results {
+    max-height: 70vh;
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+
+  .dark #search-results {
+    scrollbar-color: theme('colors.gray.600') transparent;
+  }
+
+  #search-results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #search-results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #search-results::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.300');
+    border-radius: 3px;
+  }
+
+  .dark #search-results::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.600');
+  }
+</style>

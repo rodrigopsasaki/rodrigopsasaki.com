@@ -267,17 +267,17 @@ import { personalInfo, summary, experience, education, skillCategories, formatDa
 </style>
 
 <BaseLayout title="CV">
-  <div class="cv-container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+  <div class="cv-container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
     <!-- Header -->
     <header class="cv-header">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-monokai-text mb-2">{personalInfo.name}</h1>
-      <p class="text-gray-600 dark:text-monokai-muted mb-3">{personalInfo.location}</p>
-      <div class="contact-links flex flex-wrap justify-center gap-4 text-sm">
-        <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-monokai-text mb-1">{personalInfo.name}</h1>
+      <p class="text-sm text-gray-500 dark:text-monokai-muted mb-3">{personalInfo.location}</p>
+      <div class="contact-links flex flex-wrap gap-4 text-sm">
+        <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-800 dark:hover:text-monokai-text transition-colors duration-150">
           LinkedIn
         </a>
-        <span class="text-gray-400">•</span>
-        <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+        <span class="text-gray-300 dark:text-monokai-border">·</span>
+        <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-800 dark:hover:text-monokai-text transition-colors duration-150">
           GitHub
         </a>
       </div>
@@ -285,32 +285,32 @@ import { personalInfo, summary, experience, education, skillCategories, formatDa
 
     <!-- Summary -->
     <section class="cv-section">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-3">Summary</h2>
-      <p class="text-gray-600 dark:text-gray-400">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-monokai-text mb-3">Summary</h2>
+      <p class="text-sm text-gray-500 dark:text-monokai-muted leading-relaxed">
         {summary}
       </p>
     </section>
 
     <!-- Experience -->
     <section class="cv-section">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-4">Experience</h2>
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-monokai-text mb-5">Experience</h2>
       <div class="space-y-6">
         {experience.map((job) => (
-          <div class="experience-item border-b border-gray-200 dark:border-monokai-border pb-6 last:border-b-0 last:pb-0">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3">
+          <div class="experience-item border-b border-gray-200/80 dark:border-monokai-border/40 pb-6 last:border-b-0 last:pb-0">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
               <div>
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-monokai-text">{job.company}</h3>
-                <p class="text-gray-600 dark:text-gray-400">{job.role}</p>
-                <p class="text-sm text-gray-500 dark:text-monokai-muted">{job.location}</p>
+                <h3 class="text-base font-semibold text-gray-900 dark:text-monokai-text">{job.company}</h3>
+                <p class="text-sm text-gray-600 dark:text-monokai-muted">{job.role}</p>
+                <p class="text-xs text-gray-400 dark:text-monokai-muted">{job.location}</p>
               </div>
-              <span class="text-sm text-gray-500 dark:text-monokai-muted mt-1 sm:mt-0">
+              <span class="text-xs text-gray-400 dark:text-monokai-muted mt-1 sm:mt-0 tabular-nums">
                 {formatDateRange(job.startDate, job.endDate)}
               </span>
             </div>
-            <ul class="space-y-2">
+            <ul class="space-y-1.5 mt-3">
               {job.achievements.map((achievement) => (
-                <li class="text-gray-600 dark:text-gray-400 text-sm pl-4 relative">
-                  <span class="absolute left-0">•</span>
+                <li class="text-sm text-gray-500 dark:text-monokai-muted pl-4 relative leading-relaxed">
+                  <span class="absolute left-0 text-gray-300 dark:text-monokai-border">·</span>
                   {achievement}
                 </li>
               ))}
@@ -322,12 +322,12 @@ import { personalInfo, summary, experience, education, skillCategories, formatDa
 
     <!-- Skills -->
     <section class="cv-section">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-4">Technical Skills</h2>
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-monokai-text mb-4">Technical Skills</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Object.entries(skillCategories).map(([category, skills]) => (
           <div class="skill-category">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-monokai-text mb-2">{category}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <h3 class="text-xs font-semibold text-gray-700 dark:text-monokai-text uppercase tracking-wide mb-1.5">{category}</h3>
+            <p class="text-sm text-gray-500 dark:text-monokai-muted leading-relaxed">
               {skills.join(', ')}
             </p>
           </div>
@@ -337,16 +337,16 @@ import { personalInfo, summary, experience, education, skillCategories, formatDa
 
     <!-- Education -->
     <section class="cv-section">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-monokai-text mb-4">Education</h2>
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-monokai-text mb-4">Education</h2>
       <div class="space-y-3">
         {education.map((edu) => (
           <div class="education-item">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start">
               <div>
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-monokai-text">{edu.institution}</h3>
-                <p class="text-gray-600 dark:text-gray-400">{edu.degree}</p>
+                <h3 class="text-base font-semibold text-gray-900 dark:text-monokai-text">{edu.institution}</h3>
+                <p class="text-sm text-gray-500 dark:text-monokai-muted">{edu.degree}</p>
               </div>
-              <span class="text-sm text-gray-500 dark:text-monokai-muted mt-1 sm:mt-0">
+              <span class="text-xs text-gray-400 dark:text-monokai-muted mt-1 sm:mt-0 tabular-nums">
                 {edu.startYear}–{edu.endYear}
               </span>
             </div>

@@ -136,8 +136,8 @@ const structuredData = {
   article={articleData}
 >
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
-  <div class="min-h-screen bg-gray-50 dark:bg-monokai-bg">
-    <div class={isInSeries ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" : "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
+  <div class="min-h-screen">
+    <div class={isInSeries ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" : "max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
 {isInSeries && (
         <!-- Mobile navigation (visible on mobile only) -->
         <div class="lg:hidden mb-8">
@@ -174,11 +174,11 @@ const structuredData = {
       )}
       
       <!-- Header Section -->
-      <header class="mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-monokai-text">
+      <header class="mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-monokai-text leading-tight">
           {post.data.title}
         </h1>
-        <p class="text-xl md:text-2xl text-gray-600 dark:text-monokai-muted mb-6 leading-relaxed">
+        <p class="text-lg text-gray-500 dark:text-monokai-muted mb-5 leading-relaxed">
           {post.data.description}
         </p>
         

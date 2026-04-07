@@ -76,7 +76,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        serif: ['Source Serif 4', 'Georgia', 'serif'],
         mono: ['JetBrains Mono Variable', 'JetBrains Mono', 'monospace'],
       },
       animation: {

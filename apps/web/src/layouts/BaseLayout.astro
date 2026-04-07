@@ -59,7 +59,7 @@ const {
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Theme initialization script (runs before page renders) -->
     <script is:inline>
@@ -81,31 +81,31 @@ const {
     </script>
   </head>
   <body class="min-h-screen bg-gray-50 dark:bg-monokai-bg text-gray-800 dark:text-monokai-text transition-colors duration-300">
-    <nav class="sticky top-0 z-50 bg-gray-50 dark:bg-monokai-bg border-b border-gray-200 dark:border-monokai-border">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
+    <nav class="sticky top-0 z-50 bg-gray-50/95 dark:bg-monokai-bg/95 backdrop-blur-sm border-b border-gray-200/80 dark:border-monokai-border/80">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-14">
           <div class="flex items-center">
-            <a href={getLocalizedPath('/', lang)} class="font-semibold text-lg text-gray-800 dark:text-monokai-text hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-200">
-              RS
+            <a href={getLocalizedPath('/', lang)} class="font-serif font-semibold text-lg text-gray-900 dark:text-monokai-text hover:text-gray-600 dark:hover:text-monokai-muted transition-colors duration-150">
+              Rodrigo Sasaki
             </a>
           </div>
-          
-          <div class="flex items-center space-x-4">
-            <div class="hidden md:flex items-center space-x-6">
-              <a href={getLocalizedPath('/projects/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden md:flex items-center gap-6">
+              <a href={getLocalizedPath('/projects/', lang)} class="text-sm text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-150">
                 {t.nav.projects}
               </a>
-              <a href={getLocalizedPath('/blog/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+              <a href={getLocalizedPath('/blog/', lang)} class="text-sm text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-150">
                 {t.nav.blog}
               </a>
-              <a href={getLocalizedPath('/cv/', lang)} class="text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-200">
+              <a href={getLocalizedPath('/cv/', lang)} class="text-sm text-gray-600 dark:text-monokai-muted hover:text-gray-900 dark:hover:text-monokai-text transition-colors duration-150">
                 {t.nav.cv}
               </a>
             </div>
-            
+
             <!-- Magical Search Bar -->
             <MagicalSearchBar />
-            
+
             <LanguageToggle />
             <ThemeToggle />
           </div>
@@ -118,21 +118,21 @@ const {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-200 dark:border-monokai-border">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+    <footer class="border-t border-gray-200/80 dark:border-monokai-border/60 mt-8">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div class="text-gray-500 dark:text-monokai-muted text-sm">
-            © {new Date().getFullYear()}
+            © {new Date().getFullYear()} Rodrigo Sasaki
           </div>
-          <div class="flex items-center space-x-6 text-sm">
-            <a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
+          <div class="flex items-center gap-6 text-sm">
+            <a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-800 dark:hover:text-monokai-text transition-colors duration-150">
               GitHub
             </a>
-            <a href="https://linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200">
+            <a href="https://linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-monokai-muted hover:text-gray-800 dark:hover:text-monokai-text transition-colors duration-150">
               LinkedIn
             </a>
             {siteConfig.features.rss && (
-              <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-700 dark:hover:text-monokai-text transition-colors duration-200" type="application/rss+xml">
+              <a href="/rss.xml" class="text-gray-500 dark:text-monokai-muted hover:text-gray-800 dark:hover:text-monokai-text transition-colors duration-150" type="application/rss+xml">
                 RSS
               </a>
             )}

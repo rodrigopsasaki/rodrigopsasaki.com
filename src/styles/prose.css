@@ -1,0 +1,153 @@
+/* Prose: markdown content styling */
+.prose {
+  color: var(--c-text);
+  line-height: 1.75;
+  max-width: 65ch;
+}
+
+.prose > * + * {
+  margin-top: 1.25em;
+}
+
+/* Headings */
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: var(--c-text);
+  font-weight: 600;
+  line-height: 1.3;
+  scroll-margin-top: 5rem;
+}
+
+.prose h1 { font-size: 2rem; margin-top: 0; }
+.prose h2 {
+  font-size: 1.5rem;
+  margin-top: 2em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--c-border);
+}
+.prose h3 { font-size: 1.25rem; margin-top: 1.6em; }
+.prose h4 { font-size: 1.1rem; margin-top: 1.4em; }
+
+/* Paragraphs */
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 0;
+}
+
+/* Links */
+.prose a {
+  color: var(--c-accent);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.prose a:hover {
+  text-decoration: underline;
+}
+
+/* Strong and emphasis */
+.prose strong { color: var(--c-text); font-weight: 600; }
+.prose em { font-style: italic; }
+
+/* Lists */
+.prose ul, .prose ol {
+  padding-left: 1.5em;
+  margin-top: 1.25em;
+}
+.prose ul { list-style-type: disc; }
+.prose ol { list-style-type: decimal; }
+.prose li { margin-top: 0.5em; }
+.prose li > p { margin-top: 0.25em; }
+.prose ul ul { list-style-type: circle; margin-top: 0.5em; }
+.prose ul ul ul { list-style-type: square; }
+
+/* Blockquotes */
+.prose blockquote {
+  border-left: 2px solid var(--c-border-strong);
+  padding: 0 0 0 1.25em;
+  margin-top: 1.5em;
+  font-style: italic;
+}
+.prose blockquote p {
+  margin-top: 0.5em;
+  color: var(--c-text-secondary);
+}
+.prose blockquote p:first-child { margin-top: 0; }
+
+/* Inline code */
+.prose code:not(pre code) {
+  background: var(--c-bg-code);
+  color: var(--c-text);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Shiki dual-theme activation: swap light colors for dark when .dark is set */
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+
+/* Code blocks — Shiki handles syntax colors, we handle the container */
+.prose pre {
+  background: var(--c-bg-alt) !important;
+  border: 1px solid var(--c-border);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-top: 1.5em;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Tables */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5em;
+  font-size: 0.875em;
+}
+.prose th {
+  background: var(--c-bg-alt);
+  color: var(--c-text);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5em 0.75em;
+  border-bottom: 2px solid var(--c-border-strong);
+}
+.prose td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--c-border);
+}
+
+/* Horizontal rules */
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 2em 0;
+}
+
+/* Images */
+.prose img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin-top: 1.5em;
+}
+
+/* Superscript */
+.prose sup { font-size: 0.75em; }
+.prose sup a { text-decoration: none; }
+
+/* Remove backtick pseudo-elements from Tailwind defaults */
+.prose code::before,
+.prose code::after {
+  content: none;
+}

@@ -1,28 +1,31 @@
 {
   "name": "rodrigopsasaki.com",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm -r --parallel run dev",
-    "build": "pnpm -r run build",
-    "lint": "pnpm -r run lint",
-    "typecheck": "pnpm -r run typecheck",
-    "clean": "pnpm -r run clean",
-    "test": "pnpm -r run test",
-    "test:run": "pnpm -r run test:run",
-    "test:watch": "pnpm -r run test:watch",
-    "test:coverage": "pnpm -r run test:coverage",
-    "test:e2e": "pnpm -r run test:e2e",
-    "test:all": "pnpm -r run test:all",
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "clean": "rm -rf dist .astro",
     "deploy": "fly deploy",
     "logs": "fly logs",
     "status": "fly status"
   },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/sitemap": "^3.4.2",
+    "astro": "^5.12.3",
+    "astro-seo": "^0.8.4",
+    "fuse.js": "^7.1.0",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.0"
+  },
   "devDependencies": {
-    "@types/node": "^20.11.5",
+    "@astrojs/tailwind": "^5.1.2",
     "prettier": "^3.2.4",
-    "typescript": "^5.3.3"
+    "prettier-plugin-astro": "^0.13.0",
+    "tailwindcss": "^3.4.1"
   },
   "engines": {
     "node": ">=20.0.0",

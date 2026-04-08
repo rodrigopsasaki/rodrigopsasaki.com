@@ -1,0 +1,253 @@
+---
+import '../styles/global.css';
+import '../styles/prose.css';
+import { SEO as AstroSEO } from 'astro-seo';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import SearchBar from '../components/SearchBar.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const {
+  title,
+  description = 'Senior Software Engineer specializing in TypeScript, Node.js, and cloud architecture.',
+  image = '/og-image.png',
+  article,
+  noindex = false,
+  nofollow = false,
+} = Astro.props;
+
+const fullTitle = title === 'Home'
+  ? 'Rodrigo Sasaki - Software Engineer'
+  : `${title} | Rodrigo Sasaki`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const imageURL = new URL(image, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <AstroSEO
+      title={fullTitle}
+      description={description}
+      canonical={canonicalURL.href}
+      openGraph={{
+        basic: {
+          title: fullTitle,
+          type: article ? 'article' : 'website',
+          image: imageURL.href,
+          url: canonicalURL.href,
+        },
+        optional: {
+          description: description,
+          locale: 'en',
+          siteName: 'Rodrigo Sasaki',
+        },
+        image: {
+          url: imageURL.href,
+          width: 1200,
+          height: 630,
+          alt: title,
+          type: 'image/png',
+        },
+        article: article ? {
+          publishedTime: article.publishedTime,
+          modifiedTime: article.modifiedTime,
+          authors: article.author ? [article.author] : ['Rodrigo Sasaki'],
+          tags: article.tags,
+        } : undefined,
+      }}
+      twitter={{
+        card: 'summary_large_image',
+        site: '@rodrigopsasaki',
+        creator: '@rodrigopsasaki',
+        title: fullTitle,
+        description: description,
+        image: imageURL.href,
+        imageAlt: title,
+      }}
+      extend={{
+        meta: [
+          {
+            name: 'author',
+            content: article?.author || 'Rodrigo Sasaki',
+          },
+          {
+            name: 'robots',
+            content: `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`,
+          },
+          ...(article?.tags ? [{
+            name: 'keywords',
+            content: article.tags.join(', '),
+          }] : []),
+        ],
+      }}
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Theme initialization script (runs before render to prevent flash) -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (theme === 'system' && systemDark);
+
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Copy code functionality -->
+    <script>
+      import { initCopyCodeButtons } from '../scripts/copy-code';
+      initCopyCodeButtons();
+    </script>
+  </head>
+  <body class="min-h-screen transition-colors duration-300" style="background-color: var(--c-bg); color: var(--c-text);">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 backdrop-blur-sm" style="background-color: color-mix(in srgb, var(--c-bg) 95%, transparent); border-bottom: 1px solid var(--c-border);">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-14">
+          <!-- Logo -->
+          <div class="flex items-center">
+            <a href="/" class="nav-link font-serif font-semibold text-lg transition-colors duration-150" style="color: var(--c-text);">
+              Rodrigo Sasaki
+            </a>
+          </div>
+
+          <!-- Right side: links + search + theme -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Desktop nav links -->
+            <div class="hidden md:flex items-center gap-6">
+              <a href="/projects/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
+                Projects
+              </a>
+              <a href="/blog/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
+                Blog
+              </a>
+              <a href="/cv/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
+                CV
+              </a>
+            </div>
+
+            <SearchBar />
+            <ThemeToggle />
+
+            <!-- Mobile hamburger -->
+            <button
+              id="mobile-menu-toggle"
+              class="md:hidden p-1.5 rounded-md transition-colors duration-150"
+              style="color: var(--c-text-muted);"
+              aria-label="Toggle menu"
+            >
+              <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+              <svg id="close-menu-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile nav links -->
+        <div id="mobile-menu" class="hidden md:hidden pb-4">
+          <div class="flex flex-col gap-1">
+            <a href="/projects/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
+              Projects
+            </a>
+            <a href="/blog/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
+              Blog
+            </a>
+            <a href="/cv/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
+              CV
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="relative">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--c-border);" class="mt-8">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div class="text-sm" style="color: var(--c-text-muted);">
+            &copy; {new Date().getFullYear()} Rodrigo Sasaki
+          </div>
+          <div class="flex items-center gap-6 text-sm">
+            <a
+              href="https://github.com/rodrigopsasaki"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-link transition-colors duration-150"
+              style="color: var(--c-text-muted);"
+            >
+              GitHub
+            </a>
+            <a
+              href="https://linkedin.com/in/rodrigopsasaki"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-link transition-colors duration-150"
+              style="color: var(--c-text-muted);"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Mobile menu toggle script -->
+    <script>
+      function initMobileMenu() {
+        const toggle = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const closeIcon = document.getElementById('close-menu-icon');
+
+        toggle?.addEventListener('click', () => {
+          const isOpen = !menu?.classList.contains('hidden');
+          menu?.classList.toggle('hidden');
+          hamburgerIcon?.classList.toggle('hidden', !isOpen);
+          closeIcon?.classList.toggle('hidden', isOpen);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', initMobileMenu);
+      document.addEventListener('astro:page-load', initMobileMenu);
+    </script>
+
+    <style>
+      .nav-link:hover {
+        color: var(--c-text) !important;
+      }
+    </style>
+  </body>
+</html>

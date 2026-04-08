@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  currentPath?: string;
+  seriesName?: string;
+}
+
+const { currentPath, seriesName } = Astro.props;
+
+let seriesStructure: {
+  title: string;
+  overview: { title: string; href: string };
+  episodes: { title: string; href: string; order: number }[];
+} | null = null;
+
+if (seriesName) {
+  const allPosts = await getCollection('blog', ({ data }) => data.visible === true);
+
+  const seriesPosts = allPosts
+    .filter(post => post.data.series === seriesName || post.id.startsWith(seriesName + '/'))
+    .sort((a, b) => (a.data.seriesOrder || 0) - (b.data.seriesOrder || 0));
+
+  const mainPost = seriesPosts.find(post => post.id === `${seriesName}.md` || (!post.data.parent && !post.id.includes('/')));
+  const episodePosts = seriesPosts.filter(post => post.id.includes('/') || post.data.parent);
+
+  if (mainPost || episodePosts.length > 0) {
+    seriesStructure = {
+      title: mainPost?.data.title || seriesName,
+      overview: {
+        title: 'Overview',
+        href: `/blog/${seriesName}/`,
+      },
+      episodes: episodePosts.map(post => ({
+        title: post.data.title,
+        href: `/blog/${post.id.replace('.md', '')}/`,
+        order: post.data.seriesOrder || 0,
+      })),
+    };
+  }
+}
+
+function isActive(href: string, path?: string): boolean {
+  if (!path) return false;
+  return path === href || path === href.replace(/\/$/, '');
+}
+---
+
+{seriesStructure && (
+  <div class="rounded-lg p-4" style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border);">
+    <h3 class="text-sm font-semibold mb-3 uppercase tracking-wide" style="color: var(--c-text);">
+      {seriesStructure.title}
+    </h3>
+    <nav class="space-y-2">
+      <!-- Overview -->
+      <a
+        href={seriesStructure.overview.href}
+        class:list={[
+          'block py-2 px-3 text-sm rounded transition-colors duration-150',
+          { 'series-link-active': isActive(seriesStructure.overview.href, currentPath) },
+          { 'series-link': !isActive(seriesStructure.overview.href, currentPath) },
+        ]}
+        style={isActive(seriesStructure.overview.href, currentPath)
+          ? `background-color: var(--c-accent-muted); color: var(--c-accent); font-weight: 500;`
+          : `color: var(--c-text-muted);`}
+      >
+        {seriesStructure.overview.title}
+      </a>
+
+      <!-- Episodes -->
+      {seriesStructure.episodes.length > 0 && (
+        <div>
+          <h4 class="px-3 text-xs font-semibold uppercase tracking-wider mb-1 mt-3" style="color: var(--c-text-muted);">
+            Episodes
+          </h4>
+          {seriesStructure.episodes.map((episode) => (
+            <a
+              href={episode.href}
+              class:list={[
+                'block py-1.5 px-3 text-sm rounded transition-colors duration-150',
+                { 'series-link-active': isActive(episode.href, currentPath) },
+                { 'series-link': !isActive(episode.href, currentPath) },
+              ]}
+              style={isActive(episode.href, currentPath)
+                ? `background-color: var(--c-accent-muted); color: var(--c-accent); font-weight: 500;`
+                : `color: var(--c-text-muted);`}
+            >
+              {episode.title}
+            </a>
+          ))}
+        </div>
+      )}
+    </nav>
+  </div>
+)}
+
+<style>
+  .series-link:hover {
+    background-color: var(--c-bg-alt);
+    color: var(--c-text);
+  }
+</style>

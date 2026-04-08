@@ -1,0 +1,327 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { personalInfo, summary, experience, education, skillCategories, formatDateRange } from '../data/cv-data';
+---
+
+<Layout title="CV">
+  <div class="cv-container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <!-- Header -->
+    <header class="cv-header">
+      <h1 class="text-3xl font-bold mb-1" style="color: var(--c-text)">{personalInfo.name}</h1>
+      <p class="text-sm mb-3" style="color: var(--c-text-muted)">{personalInfo.location}</p>
+      <div class="contact-links flex flex-wrap gap-4 text-sm">
+        <a
+          href={personalInfo.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors duration-150 hover:opacity-80"
+          style="color: var(--c-text-muted)"
+        >
+          LinkedIn
+        </a>
+        <span style="color: var(--c-border)">·</span>
+        <a
+          href={personalInfo.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors duration-150 hover:opacity-80"
+          style="color: var(--c-text-muted)"
+        >
+          GitHub
+        </a>
+      </div>
+    </header>
+
+    <!-- Summary -->
+    <section class="cv-section">
+      <h2 class="text-lg font-semibold mb-3" style="color: var(--c-text)">Summary</h2>
+      <p class="summary-text text-sm leading-relaxed" style="color: var(--c-text-muted)">
+        {summary}
+      </p>
+    </section>
+
+    <!-- Experience -->
+    <section class="cv-section">
+      <h2 class="text-lg font-semibold mb-5" style="color: var(--c-text)">Experience</h2>
+      <div class="space-y-6">
+        {experience.map((job) => (
+          <div class="experience-item pb-6 last:pb-0" style="border-bottom: 1px solid var(--c-border)">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
+              <div>
+                <h3 class="text-base font-semibold" style="color: var(--c-text)">{job.company}</h3>
+                <p class="role text-sm" style="color: var(--c-text-secondary)">{job.role}</p>
+                <p class="location text-xs" style="color: var(--c-text-muted)">{job.location}</p>
+              </div>
+              <span class="date-range text-xs mt-1 sm:mt-0 tabular-nums" style="color: var(--c-text-muted)">
+                {formatDateRange(job.startDate, job.endDate)}
+              </span>
+            </div>
+            <ul class="achievement-list space-y-1.5 mt-3">
+              {job.achievements.map((achievement) => (
+                <li class="achievement-item text-sm pl-4 relative leading-relaxed" style="color: var(--c-text-muted)">
+                  <span class="absolute left-0" style="color: var(--c-border)">·</span>
+                  {achievement}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="cv-section">
+      <h2 class="text-lg font-semibold mb-4" style="color: var(--c-text)">Technical Skills</h2>
+      <div class="skills-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Object.entries(skillCategories).map(([category, skills]) => (
+          <div class="skill-category">
+            <h3 class="text-xs font-semibold uppercase tracking-wide mb-1.5" style="color: var(--c-text-secondary)">{category}</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--c-text-muted)">
+              {skills.join(', ')}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section class="cv-section">
+      <h2 class="text-lg font-semibold mb-4" style="color: var(--c-text)">Education</h2>
+      <div class="space-y-3">
+        {education.map((edu) => (
+          <div class="education-item">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+              <div>
+                <h3 class="text-base font-semibold" style="color: var(--c-text)">{edu.institution}</h3>
+                <p class="degree text-sm" style="color: var(--c-text-muted)">{edu.degree}</p>
+              </div>
+              <span class="education-date text-xs mt-1 sm:mt-0 tabular-nums" style="color: var(--c-text-muted)">
+                {edu.startYear}–{edu.endYear}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  @media print {
+    * {
+      -webkit-print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    @page {
+      size: A4;
+      margin: 0.75in;
+    }
+
+    body {
+      font-size: 11pt !important;
+      line-height: 1.3 !important;
+    }
+
+    nav, .theme-toggle, header nav, .header-nav {
+      display: none !important;
+    }
+
+    .cv-container {
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: white !important;
+    }
+
+    .cv-header {
+      background: white !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 0 1rem 0 !important;
+      margin-bottom: 1.5rem !important;
+      text-align: center !important;
+      border-bottom: 2px solid #000 !important;
+    }
+
+    .cv-header h1 {
+      font-size: 24pt !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .cv-header .contact-links {
+      display: flex !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+      gap: 1rem !important;
+      font-size: 10pt !important;
+    }
+
+    .cv-header .contact-links a,
+    .cv-header .contact-links span {
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      color: #000 !important;
+      text-decoration: none !important;
+      box-shadow: none !important;
+    }
+
+    .cv-section {
+      background: white !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin-bottom: 1.5rem !important;
+      page-break-inside: avoid;
+    }
+
+    .cv-section h2 {
+      font-size: 14pt !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      margin-bottom: 0.75rem !important;
+      border-bottom: 1px solid #000 !important;
+      padding-bottom: 0.25rem !important;
+    }
+
+    .section-icon,
+    .experience-number,
+    .education-number,
+    svg {
+      display: none !important;
+    }
+
+    .experience-item {
+      background: white !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin-bottom: 1rem !important;
+      margin-left: 0 !important;
+      page-break-inside: avoid;
+    }
+
+    .experience-item h3 {
+      font-size: 12pt !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .experience-item .role {
+      font-size: 11pt !important;
+      font-weight: normal !important;
+      font-style: italic !important;
+      color: #000 !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .experience-item .date-range {
+      font-size: 10pt !important;
+      color: #000 !important;
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .experience-item .location {
+      font-size: 10pt !important;
+      color: #000 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .achievement-list {
+      margin-left: 1rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .achievement-item {
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      margin-bottom: 0.25rem !important;
+      list-style: disc !important;
+      color: #000 !important;
+    }
+
+    .achievement-item::before {
+      display: none !important;
+    }
+
+    .skills-grid {
+      display: block !important;
+      columns: 2 !important;
+      column-gap: 2rem !important;
+    }
+
+    .skill-category {
+      background: white !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin-bottom: 1rem !important;
+      break-inside: avoid;
+    }
+
+    .skill-category h3 {
+      font-size: 11pt !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .education-item {
+      background: white !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin-bottom: 1rem !important;
+      margin-left: 0 !important;
+    }
+
+    .education-item h3 {
+      font-size: 11pt !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .education-item .degree {
+      font-size: 10pt !important;
+      color: #000 !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .education-item .education-date {
+      font-size: 10pt !important;
+      color: #000 !important;
+      background: none !important;
+      padding: 0 !important;
+    }
+
+    .summary-text {
+      color: #000 !important;
+      font-size: 11pt !important;
+      line-height: 1.4 !important;
+      text-align: justify !important;
+    }
+
+    .timeline-line {
+      display: none !important;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  }
+</style>

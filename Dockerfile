@@ -2,16 +2,13 @@
 FROM node:20-alpine AS base
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 
 # Set working directory
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
-COPY packages/config/package.json ./packages/config/
-COPY apps/web/package.json ./apps/web/
-COPY apps/api/package.json ./apps/api/
+COPY package.json pnpm-lock.yaml* ./
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -26,7 +23,7 @@ RUN pnpm build
 FROM nginx:alpine AS production
 
 # Copy built files to nginx
-COPY --from=base /app/apps/web/dist /usr/share/nginx/html
+COPY --from=base /app/dist /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY <<EOF /etc/nginx/conf.d/default.conf

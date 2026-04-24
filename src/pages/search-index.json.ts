@@ -13,9 +13,9 @@ interface SearchItem {
   seriesOrder?: number;
   date: string;
   url: string;
-  type: 'series-overview' | 'series-episode' | 'individual' | 'project' | 'cv';
+  type: 'series-overview' | 'series-episode' | 'individual' | 'project' | 'cv' | 'now';
   author: string;
-  category?: 'blog' | 'project' | 'cv';
+  category?: 'blog' | 'project' | 'cv' | 'now';
 }
 
 function extractContentPreview(content: string, maxLength: number = 300): string {
@@ -80,7 +80,10 @@ export const GET: APIRoute = async () => {
 
     // Index blog posts
     try {
-      const posts = await getCollection('blog', ({ data }) => data.draft !== true && data.visible === true);
+      const posts = await getCollection(
+        'blog',
+        ({ data }) => data.draft !== true && data.visible === true
+      );
 
       const blogItems: SearchItem[] = posts.map((post) => {
         const rawContent = post.body || '';
@@ -100,7 +103,7 @@ export const GET: APIRoute = async () => {
           url: `/blog/${post.slug}/`,
           type: getContentType(post),
           author: post.data.author || 'Rodrigo Sasaki',
-          category: 'blog'
+          category: 'blog',
         };
       });
 
@@ -128,7 +131,7 @@ export const GET: APIRoute = async () => {
           url: `/projects/${project.slug}/`,
           type: 'project',
           author: 'Rodrigo Sasaki',
-          category: 'project'
+          category: 'project',
         };
       });
 
@@ -146,20 +149,32 @@ Summary:
 ${summary}
 
 Experience:
-${experience.map(job => `
+${experience
+  .map(
+    (job) => `
 ${job.company} - ${job.role} (${job.location})
 ${job.achievements.join(' ')}
-`).join('')}
+`
+  )
+  .join('')}
 
 Education:
-${education.map(edu => `
+${education
+  .map(
+    (edu) => `
 ${edu.institution} - ${edu.degree} (${edu.startYear}-${edu.endYear})
-`).join('')}
+`
+  )
+  .join('')}
 
 Technical Skills:
-${Object.entries(skillCategories).map(([category, skills]) => `
+${Object.entries(skillCategories)
+  .map(
+    ([category, skills]) => `
 ${category}: ${skills.join(', ')}
-`).join('')}
+`
+  )
+  .join('')}
     `.trim();
 
     const cvItem: SearchItem = {
@@ -173,10 +188,26 @@ ${category}: ${skills.join(', ')}
       url: '/cv/',
       type: 'cv',
       author: 'Rodrigo Sasaki',
-      category: 'cv'
+      category: 'cv',
     };
 
     searchItems.push(cvItem);
+
+    // Index /now — the living snapshot
+    const nowItem: SearchItem = {
+      id: 'now',
+      title: 'Now',
+      description: "A living snapshot of what I'm building, writing, and reading.",
+      content: 'now what I am currently working on building writing reading elsewhere snapshot',
+      contentPreview: "A living snapshot of what I'm building, writing, and reading right now.",
+      tags: ['now', 'snapshot'],
+      date: new Date().toISOString(),
+      url: '/now/',
+      type: 'now',
+      author: 'Rodrigo Sasaki',
+      category: 'now',
+    };
+    searchItems.push(nowItem);
 
     // Sort by relevance: CV first, then projects, then blog posts by date
     const sortedItems = searchItems.sort((a, b) => {
@@ -191,17 +222,20 @@ ${category}: ${skills.join(', ')}
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600',
-        'Access-Control-Allow-Origin': '*'
-      }
+        // 5 min browser cache, stale-while-revalidate for another 5. Lets
+        // the index stay warm without stranding users on stale results
+        // after a rename/publish.
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=300',
+        'Access-Control-Allow-Origin': '*',
+      },
     });
   } catch (error) {
     console.error('Error generating search index:', error);
     return new Response(JSON.stringify({ error: 'Failed to generate search index' }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 };

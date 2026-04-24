@@ -8,7 +8,7 @@
       type="text"
       id="magical-search-input"
       placeholder="Search..."
-      class="w-32 sm:w-40 lg:w-48 px-3 py-1.5 pl-8 text-sm rounded-lg focus:outline-none focus:w-56 lg:focus:w-64 transition-all duration-300 ease-out"
+      class="w-24 sm:w-40 lg:w-48 px-3 py-1.5 pl-8 text-sm rounded-lg focus:outline-none focus:w-48 sm:focus:w-56 lg:focus:w-64 transition-all duration-300 ease-out"
       style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border); color: var(--c-text);"
     />
     <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
@@ -17,7 +17,7 @@
       </svg>
     </div>
     <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-      <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs font-mono rounded" style="color: var(--c-text-muted); background-color: var(--c-bg-alt); border: 1px solid var(--c-border);">/</kbd>
+      <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs font-mono rounded" style="color: var(--c-text-muted); background-color: var(--c-bg-alt); border: 1px solid var(--c-border);">⌘K</kbd>
     </div>
   </div>
 
@@ -35,8 +35,8 @@
           <button class="search-suggestion text-xs px-2 py-1 rounded-full transition-all duration-150" style="background-color: var(--c-tag-bg); color: var(--c-tag-text);" data-query="experience">
             experience
           </button>
-          <button class="search-suggestion text-xs px-2 py-1 rounded-full transition-all duration-150" style="background-color: var(--c-tag-bg); color: var(--c-tag-text);" data-query="Vision">
-            Vision
+          <button class="search-suggestion text-xs px-2 py-1 rounded-full transition-all duration-150" style="background-color: var(--c-tag-bg); color: var(--c-tag-text);" data-query="vision">
+            vision
           </button>
           <button class="search-suggestion text-xs px-2 py-1 rounded-full transition-all duration-150" style="background-color: var(--c-tag-bg); color: var(--c-tag-text);" data-query="Node.js">
             Node.js
@@ -248,6 +248,10 @@ class MagicalSearchManager {
         e.preventDefault();
         this.navigateResults(-1);
       } else if (e.key === 'Enter') {
+        // Only act on Enter when results are actually visible — avoids
+        // "blind jump" to the first hit while the dropdown is hidden.
+        const resultsVisible = !this.searchResults.classList.contains('hidden');
+        if (!resultsVisible) return;
         e.preventDefault();
         if (this.selectedIndex >= 0 && this.currentResults[this.selectedIndex]) {
           const result = this.currentResults[this.selectedIndex];
@@ -267,6 +271,15 @@ class MagicalSearchManager {
 
   setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
+      const isMeta = e.metaKey || e.ctrlKey;
+      if (isMeta && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        this.searchInput.focus();
+        this.searchInput.select();
+        this.showResults();
+        return;
+      }
+
       if (e.key === '/' && !this.isInputFocused()) {
         e.preventDefault();
         this.searchInput.focus();
@@ -420,7 +433,8 @@ class MagicalSearchManager {
     const badges: Record<string, { label: string; weight: string }> = {
       'cv': { label: 'CV', weight: 'font-semibold' },
       'project': { label: 'Project', weight: 'font-medium' },
-      'blog': { label: 'Blog', weight: 'font-medium' }
+      'blog': { label: 'Blog', weight: 'font-medium' },
+      'now': { label: 'Now', weight: 'font-medium' }
     };
 
     if (!category || !badges[category]) return '';

@@ -1,5 +1,5 @@
 ---
-title: "Vision Datadog Exporter"
+title: "vision datadog exporter"
 description: "Production-ready Datadog integration for Vision with circuit breakers, batching, OpenTelemetry compliance, and comprehensive monitoring capabilities."
 tags: ["Datadog", "Vision", "Observability", "Production", "Monitoring", "OpenTelemetry"]
 parent: "vision"

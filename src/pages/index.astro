@@ -1,198 +1,464 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { snap } from '../data/now';
 
-const allProjects = await getCollection('projects', ({ data }) => data.visible === true);
-const featuredProjects = allProjects
-  .filter(p => p.data.featured)
-  .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
-  .slice(0, 2);
-
+// Real content
 const allPosts = await getCollection('blog', ({ data }) => data.visible === true);
 const recentPosts = allPosts
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-  .slice(0, 3);
+  .slice(0, 5);
+const latestPost = recentPosts[0];
+const essayCount = allPosts.length;
+
+const allProjects = await getCollection('projects', ({ data }) => data.visible === true);
+const topLevelProjects = allProjects.filter(p => !p.data.parent);
+const projectCount = topLevelProjects.length;
+
+// Condensed "Now · live" sidebar: one line per populated block. Derives from
+// the same snap data as the /now page, so nothing can drift. We skip the
+// `elsewhere` block here because it's work/personal context — better
+// expanded on /now than flashed in the home sidebar.
+const nowRows = snap.blocks
+  .filter(b => b.label !== 'elsewhere')
+  .map(b => {
+    const first = b.items[0];
+    return {
+      kind: b.label,
+      text: first ? first.name : 'nothing right now',
+      muted: !first,
+    };
+  });
+
+// Workspace tree (real essays + projects)
+type TreeItem = { label: string; depth: number; muted: boolean; href?: string };
+const tree: TreeItem[] = [
+  { label: '▾ essays/',   depth: 0, muted: false },
+  ...recentPosts.slice(0, 5).map(p => ({
+    label: `   ${p.slug}.md`, depth: 1, muted: true, href: `/blog/${p.slug}/`,
+  })),
+  { label: '▾ projects/',  depth: 0, muted: false },
+  ...topLevelProjects.slice(0, 4).map(p => ({
+    label: `   ${p.slug}.md`, depth: 1, muted: true, href: `/projects/${p.slug}/`,
+  })),
+  { label: '▸ cv/',        depth: 0, muted: false, href: '/cv/' },
+];
+
+// Recent commits (derived from the 5 most recent essays; real dates, compact labels)
+function ago(iso: string): string {
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+  if (d < 1) return 'today';
+  if (d < 7) return `${d}d ago`;
+  if (d < 30) return `${Math.floor(d / 7)}w ago`;
+  if (d < 365) return `${Math.floor(d / 30)}mo ago`;
+  return `${Math.floor(d / 365)}y ago`;
+}
+function shortHash(seedStr: string): string {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = (h * 31 + seedStr.charCodeAt(i)) | 0;
+  const hex = (h >>> 0).toString(16).padStart(7, '0');
+  return hex.slice(0, 7);
+}
+// Conventional-commits style: `essay(slug): action`. No em-dashes.
+const commits = recentPosts.slice(0, 5).map((p, i) => ({
+  hash: shortHash(p.slug),
+  t: ago(p.data.date),
+  msg: `essay(${p.slug}): ${i === 0 ? 'publish' : i === 1 ? 'revise' : 'add'}`,
+  accent: ['green', 'amber', 'green', 'blue', 'amber'][i % 5],
+}));
+
+const LATEST_DATE = latestPost ? new Date(latestPost.data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
 ---
 
-<Layout title="Home">
-  <!-- Hero Section -->
-  <section class="py-16 lg:py-24">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-2xl">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-5" style="color: var(--c-text)">
-          Rodrigo Sasaki
-        </h1>
-
-        <h2 class="text-lg md:text-xl mb-4 font-medium" style="color: var(--c-text-secondary)">
-          Software Engineer
-        </h2>
-
-        <p class="text-base mb-10 leading-relaxed max-w-xl" style="color: var(--c-text-muted)">
-          I like thinking about code and about systems. Here I'll share some of my work and my thoughts on software engineering.
-        </p>
-
-        <div class="flex flex-wrap gap-3">
-          <a
-            href="/projects/"
-            class="inline-flex items-center px-5 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
-            style="background-color: var(--c-text); color: var(--c-bg)"
-          >
-            View Projects
-            <svg class="ml-2 w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
+<Layout
+  title="Home"
+  active="home"
+  statusLeft="readme · 1:1"
+  statusCenter="✓ 0 errors"
+>
+  <div class="home-grid">
+    <!-- Left sidebar: file tree + now -->
+    <aside class="home-sidebar">
+      <div class="home-section-label">Workspace</div>
+      <div class="home-tree">
+        {tree.map(item => item.href ? (
+          <a href={item.href} class="home-tree__row" data-muted={item.muted ? 'true' : 'false'}>
+            {item.depth > 0 && <span class="home-tree__leaf" aria-hidden="true">◆</span>}
+            <span class="home-tree__label">{item.label}</span>
           </a>
-
-          <a
-            href="/blog/"
-            class="inline-flex items-center px-5 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
-            style="border: 1px solid var(--c-border); color: var(--c-text-secondary)"
-          >
-            Read Blog
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Projects -->
-  <section class="py-16" style="border-top: 1px solid var(--c-border)">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-baseline justify-between mb-10">
-        <h2 class="text-2xl font-bold" style="color: var(--c-text)">
-          Featured Projects
-        </h2>
-        <a href="/projects/" class="text-sm transition-colors duration-150" style="color: var(--c-text-muted)">
-          View all &rarr;
-        </a>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6">
-        {featuredProjects.map((project, i) => (
-          <a href={`/projects/${project.slug}/`} class="group block">
-            <article
-              class="p-6 rounded-lg transition-all duration-250"
-              style={`border: 1px solid var(--c-border); background-color: ${i === 0 ? 'var(--c-bg-alt)' : 'var(--c-bg-card)'}`}
-            >
-              <h3 class="text-lg font-semibold mb-2 group-hover:opacity-80 transition-colors duration-150" style="color: var(--c-text)">
-                {project.data.title}
-              </h3>
-
-              <p class="text-sm mb-4 leading-relaxed" style="color: var(--c-text-muted)">
-                {project.data.description}
-              </p>
-
-              <div class="flex flex-wrap gap-1.5">
-                {project.data.tags?.slice(0, 3).map((tag: string) => (
-                  <span
-                    class="text-xs px-2 py-0.5 rounded"
-                    style="background-color: var(--c-tag-bg); color: var(--c-tag-text)"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </article>
-          </a>
+        ) : (
+          <div class="home-tree__row" data-muted={item.muted ? 'true' : 'false'}>
+            {item.depth > 0 && <span class="home-tree__leaf" aria-hidden="true">◆</span>}
+            <span class="home-tree__label">{item.label}</span>
+          </div>
         ))}
       </div>
-    </div>
-  </section>
 
-  <!-- Recent Writing -->
-  <section class="py-16" style="border-top: 1px solid var(--c-border)">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-baseline justify-between mb-10">
-        <h2 class="text-2xl font-bold" style="color: var(--c-text)">
-          Recent Writing
-        </h2>
-        <a href="/blog/" class="text-sm transition-colors duration-150" style="color: var(--c-text-muted)">
-          View all &rarr;
+      <div class="home-section-divider"></div>
+      <a href="/now/" class="home-section-label home-section-label--link">
+        Now · live <span aria-hidden="true">→</span>
+      </a>
+      <div class="home-now">
+        {nowRows.map(n => (
+          <div class="home-now__item">
+            <div class="home-now__kind">// {n.kind}</div>
+            <div class="home-now__text" data-muted={n.muted ? 'true' : 'false'}>{n.text}</div>
+          </div>
+        ))}
+      </div>
+    </aside>
+
+    <!-- Center: hero + quick actions + commits -->
+    <section class="home-center">
+      <div class="home-prompt">
+        <span class="home-prompt__sigil">$</span> cat about.md
+      </div>
+
+      <pre class="home-frontmatter">---
+name:    Rodrigo Sasaki
+role:    Senior Software Engineer
+since:   2009
+tz:      America/Sao_Paulo  // UTC-3
+---</pre>
+
+      <h1 class="home-headline">
+        I build software that <span class="home-headline__accent">stays simple</span> on purpose.<br />
+        I write about how hard that is.
+      </h1>
+
+      <p class="home-lede">
+        15+ years in backend and infrastructure. Now learning to
+        leverage AI to its full potential.
+      </p>
+
+      <div class="home-actions">
+        {latestPost && (
+          <a href={`/blog/${latestPost.slug}/`} class="home-action" data-accent="green">
+            <div class="home-action__kind">→ read</div>
+            <div class="home-action__label">Latest essay</div>
+            <div class="home-action__sub">{latestPost.slug}.md</div>
+          </a>
+        )}
+        <a href="/projects/vision/" class="home-action" data-accent="amber">
+          <div class="home-action__kind">→ try</div>
+          <div class="home-action__label">Install vision</div>
+          <div class="home-action__sub">npm i @rodrigopsasaki/vision</div>
         </a>
+        <a href="/cv/" class="home-action" data-accent="blue">
+          <div class="home-action__kind">→ hire</div>
+          <div class="home-action__label">Read the CV</div>
+          <div class="home-action__sub">cv.md · PDF available</div>
+        </a>
+      </div>
+
+      <div class="home-section-label home-commits__label">Recent commits</div>
+      <div class="home-commits">
+        {commits.map(c => (
+          <div class="home-commits__row">
+            <span class="home-commits__hash" data-accent={c.accent}>{c.hash}</span>
+            <span class="home-commits__time">{c.t}</span>
+            <span class="home-commits__msg">{c.msg}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Right rail: latest + stats + mosaic -->
+    <aside class="home-rail">
+      {latestPost && (
+        <div>
+          <div class="home-section-label">// latest essay</div>
+          <a href={`/blog/${latestPost.slug}/`} class="home-rail__title">
+            {latestPost.data.title}
+          </a>
+          <div class="home-rail__sub">{latestPost.data.description}</div>
+          <div class="home-rail__meta">
+            {LATEST_DATE} · <a href={`/blog/${latestPost.slug}/`} class="home-rail__cta">open →</a>
+          </div>
+        </div>
+      )}
+
+      <div>
+        <div class="home-section-label">// by the numbers</div>
+        <div class="home-stats">
+          <div class="home-stats__cell">
+            <div class="home-stats__num">15+</div>
+            <div class="home-stats__lbl">yrs exp</div>
+          </div>
+          <div class="home-stats__cell">
+            <div class="home-stats__num">{essayCount}</div>
+            <div class="home-stats__lbl">essays</div>
+          </div>
+          <div class="home-stats__cell">
+            <div class="home-stats__num">{projectCount}</div>
+            <div class="home-stats__lbl">OSS libs</div>
+          </div>
+          <div class="home-stats__cell">
+            <div class="home-stats__num">5</div>
+            <div class="home-stats__lbl">roles</div>
+          </div>
+        </div>
       </div>
 
       <div>
-        {recentPosts.map((post) => (
-          <a
-            href={`/blog/${post.slug}/`}
-            class="group block py-5 first:pt-0 last:pb-0"
-            style="border-bottom: 1px solid var(--c-border)"
-          >
-            <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4">
-              <div class="flex-1 min-w-0">
-                {post.data.series && (
-                  <span class="inline-block text-xs font-medium mr-2" style="color: var(--c-accent)">
-                    Series
-                  </span>
-                )}
-                <h3 class="text-base font-medium group-hover:opacity-80 transition-colors duration-150 inline" style="color: var(--c-text)">
-                  {post.data.title}
-                </h3>
-              </div>
-
-              {post.data.date && (
-                <time class="text-sm flex-shrink-0 tabular-nums" style="color: var(--c-text-muted)">
-                  {new Date(post.data.date).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
-                </time>
-              )}
-            </div>
-
-            <p class="text-sm mt-1 leading-relaxed line-clamp-1" style="color: var(--c-text-muted)">
-              {post.data.description}
-            </p>
-          </a>
-        ))}
+        <div class="home-section-label">// elsewhere</div>
+        <ul class="home-links">
+          <li><a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer">github.com/rodrigopsasaki <span aria-hidden="true">↗</span></a></li>
+          <li><a href="https://www.linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer">linkedin/in/rodrigopsasaki <span aria-hidden="true">↗</span></a></li>
+        </ul>
       </div>
-    </div>
-  </section>
-
-  <!-- Connect Section -->
-  <section class="py-16" style="border-top: 1px solid var(--c-border)">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-xl">
-        <h2 class="text-2xl font-bold mb-3" style="color: var(--c-text)">
-          Let's Connect
-        </h2>
-        <p class="text-sm mb-6" style="color: var(--c-text-muted)">
-          Interested in collaborating or discussing software engineering ideas?
-        </p>
-
-        <div class="flex flex-wrap gap-3">
-          <a
-            href="/cv/"
-            class="inline-flex items-center px-4 py-2 text-sm rounded-md font-medium transition-colors duration-150"
-            style="background-color: var(--c-tag-bg); color: var(--c-text-secondary)"
-          >
-            View CV
-          </a>
-
-          <a
-            href="https://github.com/rodrigopsasaki"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center px-4 py-2 text-sm rounded-md font-medium transition-colors duration-150"
-            style="background-color: var(--c-tag-bg); color: var(--c-text-secondary)"
-          >
-            <svg class="mr-1.5 w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            GitHub
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+    </aside>
+  </div>
 </Layout>
 
 <style>
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .home-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 280px;
+    min-height: calc(100vh - 40px - 28px);
   }
+  @media (max-width: 1024px) {
+    .home-grid { grid-template-columns: 200px minmax(0, 1fr); }
+    .home-rail { display: none; }
+  }
+  @media (max-width: 767px) {
+    .home-grid { grid-template-columns: 1fr; }
+    .home-sidebar { display: none; }
+  }
+
+  /* ───── Sidebar ───────────────────────────────────────────── */
+  .home-sidebar {
+    border-right: 1px solid var(--c-border);
+    padding: 16px 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .home-section-label {
+    padding: 0 16px 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+  a.home-section-label--link {
+    display: block;
+    transition: color 0.15s;
+  }
+  a.home-section-label--link:hover { color: var(--c-text); }
+  .home-section-divider {
+    border-top: 1px solid var(--c-border);
+    margin: 20px 0 10px;
+  }
+
+  .home-tree { padding: 0 12px; }
+  .home-tree__row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 6px;
+    color: var(--c-text);
+    border-radius: 3px;
+    cursor: default;
+  }
+  .home-tree__row[data-muted="true"] { color: var(--c-text-secondary); }
+  a.home-tree__row { cursor: pointer; }
+  a.home-tree__row:hover { color: var(--c-text); background: var(--c-border-soft); }
+  .home-tree__leaf { color: var(--c-text-muted); }
+
+  .home-now {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .home-now__kind {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--c-accent);
+  }
+  .home-now__text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--c-text-secondary);
+  }
+  .home-now__text[data-muted="true"] {
+    color: var(--c-text-muted);
+    font-style: italic;
+  }
+
+  /* ───── Center ────────────────────────────────────────────── */
+  .home-center {
+    padding: 64px 56px;
+    max-width: 960px;
+  }
+  @media (max-width: 767px) {
+    .home-center { padding: 32px 20px; }
+  }
+
+  .home-prompt {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--c-text-muted);
+    margin-bottom: 24px;
+  }
+  .home-prompt__sigil { color: var(--c-accent-amber); }
+
+  .home-frontmatter {
+    margin: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--c-text-muted);
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .home-headline {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: clamp(30px, 5vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 32px 0 0;
+    color: var(--c-text);
+    text-wrap: balance;
+  }
+  .home-headline__accent { color: var(--c-accent); }
+
+  .home-lede {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--c-text-secondary);
+    margin: 28px 0 0;
+    max-width: 680px;
+    text-wrap: pretty;
+  }
+
+  .home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 36px 0 0;
+  }
+  .home-action {
+    flex: 1 1 220px;
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    padding: 16px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .home-action:hover { transform: translateY(-2px); border-color: var(--c-border-strong); }
+  .home-action[data-accent="green"] { border-left: 2px solid var(--c-accent); }
+  .home-action[data-accent="amber"] { border-left: 2px solid var(--c-accent-amber); }
+  .home-action[data-accent="blue"]  { border-left: 2px solid var(--c-accent-blue); }
+  .home-action__kind {
+    color: var(--c-text-muted);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .home-action__label {
+    color: var(--c-text);
+    font-size: 15px;
+    margin: 6px 0 4px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .home-action__sub {
+    color: var(--c-text-secondary);
+    font-size: 12px;
+  }
+
+  .home-commits__label { margin-top: 48px; padding-left: 0; }
+  .home-commits {
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .home-commits__row {
+    display: grid;
+    grid-template-columns: 80px 70px 1fr;
+    gap: 14px;
+    color: var(--c-text-secondary);
+  }
+  .home-commits__hash[data-accent="green"] { color: var(--c-accent); }
+  .home-commits__hash[data-accent="amber"] { color: var(--c-accent-amber); }
+  .home-commits__hash[data-accent="blue"]  { color: var(--c-accent-blue); }
+  .home-commits__time { color: var(--c-text-muted); }
+
+  /* ───── Right rail ────────────────────────────────────────── */
+  .home-rail {
+    border-left: 1px solid var(--c-border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .home-rail .home-section-label { padding: 0 0 10px; }
+
+  .home-rail__title {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--c-text);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .home-rail__title:hover { color: var(--c-accent); }
+  .home-rail__sub {
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+  .home-rail__meta {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--c-text-muted);
+  }
+  .home-rail__cta { color: var(--c-accent); }
+  .home-rail__cta:hover { color: var(--c-accent-hover); }
+
+  .home-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .home-stats__cell {
+    border-left: 1px solid var(--c-border);
+    padding-left: 10px;
+  }
+  .home-stats__num {
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--c-text);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .home-stats__lbl {
+    font-size: 10px;
+    color: var(--c-text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .home-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .home-links a {
+    color: var(--c-text-secondary);
+    transition: color 0.15s;
+  }
+  .home-links a:hover { color: var(--c-accent); }
 </style>

@@ -1,5 +1,5 @@
 ---
-title: "Vision"
+title: "vision"
 description: "A structured observability framework for Node.js that treats production monitoring as a first-class citizen, not an afterthought."
 tags: ["TypeScript", "Observability", "Node.js", "Monitoring", "Production", "Framework"]
 github: "https://github.com/rodrigopsasaki/vision"

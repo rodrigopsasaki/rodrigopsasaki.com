@@ -1,5 +1,5 @@
 ---
-title: "Vision NestJS Integration"
+title: "vision nestjs"
 description: "Complete guide to integrating Vision observability with NestJS applications, featuring decorator-based configuration, dependency injection, and enterprise-grade patterns."
 tags: ["NestJS", "Vision", "Observability", "Decorators", "TypeScript", "Enterprise"]
 parent: "vision"

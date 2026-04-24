@@ -1,327 +1,275 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { personalInfo, summary, experience, education, skillCategories, formatDateRange } from '../data/cv-data';
+import { personalInfo, summary, experience, education, skillCategories, calculateYearsOfExperience } from '../data/cv-data';
+
+function ym(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+}
+
+// Group achievements as arrow-bulleted, mono-styled list
+const yearsExp = calculateYearsOfExperience(experience[experience.length - 1].startDate);
 ---
 
-<Layout title="CV">
-  <div class="cv-container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-    <!-- Header -->
-    <header class="cv-header">
-      <h1 class="text-3xl font-bold mb-1" style="color: var(--c-text)">{personalInfo.name}</h1>
-      <p class="text-sm mb-3" style="color: var(--c-text-muted)">{personalInfo.location}</p>
-      <div class="contact-links flex flex-wrap gap-4 text-sm">
-        <a
-          href={personalInfo.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="transition-colors duration-150 hover:opacity-80"
-          style="color: var(--c-text-muted)"
-        >
-          LinkedIn
-        </a>
-        <span style="color: var(--c-border)">·</span>
-        <a
-          href={personalInfo.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="transition-colors duration-150 hover:opacity-80"
-          style="color: var(--c-text-muted)"
-        >
-          GitHub
-        </a>
+<Layout
+  title="CV"
+  description="Senior Software Engineer, 15 years of experience."
+  active="cv"
+  statusLeft="cv/rodrigo-sasaki.yaml"
+  statusCenter="YAML · UTF-8"
+>
+  <!-- Breadcrumb / download -->
+  <div class="cv-crumb">
+    <span>cv/</span>
+    <span aria-hidden="true">›</span>
+    <span class="cv-crumb__current">rodrigo-sasaki.yaml</span>
+    <div class="cv-crumb__spacer"></div>
+    <button type="button" class="cv-crumb__print" onclick="window.print()">download .pdf</button>
+  </div>
+
+  <section class="cv-header">
+    <h1 class="cv-header__name">
+      <span class="cv-header__key">name:</span> {personalInfo.name}
+    </h1>
+    <div class="cv-header__yaml">
+      <div><span class="cv-header__key">role:</span>       Senior Software Engineer</div>
+      <div><span class="cv-header__key">years:</span>      <span class="cv-header__accent">{yearsExp}</span></div>
+      <div><span class="cv-header__key">location:</span>   {personalInfo.location} · Remote-friendly</div>
+      <div>
+        <span class="cv-header__key">links:</span>      [
+        <a href={personalInfo.github} class="cv-header__link" target="_blank" rel="noopener noreferrer">github</a>,{' '}
+        <a href={personalInfo.linkedin} class="cv-header__link" target="_blank" rel="noopener noreferrer">linkedin</a>
+        ]
       </div>
-    </header>
+    </div>
+    <p class="cv-header__bio">{summary}</p>
+  </section>
 
-    <!-- Summary -->
-    <section class="cv-section">
-      <h2 class="text-lg font-semibold mb-3" style="color: var(--c-text)">Summary</h2>
-      <p class="summary-text text-sm leading-relaxed" style="color: var(--c-text-muted)">
-        {summary}
-      </p>
-    </section>
+  <div class="cv-grid">
+    <div class="cv-main">
+      <h2 class="cv-section-heading"># experience</h2>
+      {experience.map((e) => (
+        <div class="cv-job" data-current={e.endDate === null ? 'true' : 'false'}>
+          <div class="cv-job__dot" aria-hidden="true"></div>
+          <div class="cv-job__head">
+            <span class="cv-job__co">{e.company}</span>
+            <span class="cv-job__dot-sep" aria-hidden="true">·</span>
+            <span class="cv-job__role">{e.role}</span>
+            <div class="cv-job__spacer"></div>
+            <span class="cv-job__dates">{ym(e.startDate)} → {e.endDate ? ym(e.endDate) : 'present'}</span>
+          </div>
+          <div class="cv-job__loc">{e.location}</div>
+          <ul class="cv-job__list">
+            {e.achievements.map(a => (
+              <li class="cv-job__item"><span class="cv-job__arrow" aria-hidden="true">→</span>{a}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
 
-    <!-- Experience -->
-    <section class="cv-section">
-      <h2 class="text-lg font-semibold mb-5" style="color: var(--c-text)">Experience</h2>
-      <div class="space-y-6">
-        {experience.map((job) => (
-          <div class="experience-item pb-6 last:pb-0" style="border-bottom: 1px solid var(--c-border)">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
-              <div>
-                <h3 class="text-base font-semibold" style="color: var(--c-text)">{job.company}</h3>
-                <p class="role text-sm" style="color: var(--c-text-secondary)">{job.role}</p>
-                <p class="location text-xs" style="color: var(--c-text-muted)">{job.location}</p>
-              </div>
-              <span class="date-range text-xs mt-1 sm:mt-0 tabular-nums" style="color: var(--c-text-muted)">
-                {formatDateRange(job.startDate, job.endDate)}
-              </span>
-            </div>
-            <ul class="achievement-list space-y-1.5 mt-3">
-              {job.achievements.map((achievement) => (
-                <li class="achievement-item text-sm pl-4 relative leading-relaxed" style="color: var(--c-text-muted)">
-                  <span class="absolute left-0" style="color: var(--c-border)">·</span>
-                  {achievement}
-                </li>
-              ))}
-            </ul>
+    <div class="cv-side">
+      <h2 class="cv-section-heading"># stack</h2>
+      {Object.entries(skillCategories).map(([cat, items]) => (
+        <div class="cv-stack">
+          <div class="cv-stack__cat">{cat.toLowerCase()}:</div>
+          <div class="cv-stack__items">
+            {items.map(i => <span class="cv-stack__pill">{i}</span>)}
+          </div>
+        </div>
+      ))}
+
+      <h2 class="cv-section-heading cv-section-heading--second"># education</h2>
+      <div class="cv-edu">
+        {education.map(ed => (
+          <div class="cv-edu__item">
+            <div class="cv-edu__inst">{ed.institution}</div>
+            <div class="cv-edu__deg">{ed.degree} · {ed.startYear}–{ed.endYear}</div>
           </div>
         ))}
       </div>
-    </section>
-
-    <!-- Skills -->
-    <section class="cv-section">
-      <h2 class="text-lg font-semibold mb-4" style="color: var(--c-text)">Technical Skills</h2>
-      <div class="skills-grid grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Object.entries(skillCategories).map(([category, skills]) => (
-          <div class="skill-category">
-            <h3 class="text-xs font-semibold uppercase tracking-wide mb-1.5" style="color: var(--c-text-secondary)">{category}</h3>
-            <p class="text-sm leading-relaxed" style="color: var(--c-text-muted)">
-              {skills.join(', ')}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Education -->
-    <section class="cv-section">
-      <h2 class="text-lg font-semibold mb-4" style="color: var(--c-text)">Education</h2>
-      <div class="space-y-3">
-        {education.map((edu) => (
-          <div class="education-item">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start">
-              <div>
-                <h3 class="text-base font-semibold" style="color: var(--c-text)">{edu.institution}</h3>
-                <p class="degree text-sm" style="color: var(--c-text-muted)">{edu.degree}</p>
-              </div>
-              <span class="education-date text-xs mt-1 sm:mt-0 tabular-nums" style="color: var(--c-text-muted)">
-                {edu.startYear}–{edu.endYear}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+    </div>
   </div>
 </Layout>
 
 <style>
+  .cv-crumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-bottom: 1px solid var(--c-border);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--c-text-muted);
+  }
+  .cv-crumb__current { color: var(--c-text-secondary); }
+  .cv-crumb__spacer { flex: 1; }
+  .cv-crumb__print {
+    background: transparent;
+    border: 0;
+    color: var(--c-accent);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+  }
+  .cv-crumb__print:hover { color: var(--c-accent-hover); }
+
+  .cv-header {
+    padding: 48px 56px 32px;
+  }
+  @media (max-width: 767px) { .cv-header { padding: 32px 20px 16px; } }
+
+  .cv-header__name {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    color: var(--c-text);
+  }
+  .cv-header__key { color: var(--c-text-muted); }
+  .cv-header__accent { color: var(--c-accent); }
+  .cv-header__yaml {
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--c-text-secondary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    line-height: 1.9;
+  }
+  .cv-header__link { color: var(--c-accent-blue); }
+  .cv-header__link:hover { color: var(--c-accent); }
+  .cv-header__bio {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--c-text);
+    margin-top: 24px;
+    max-width: 700px;
+    line-height: 1.6;
+  }
+
+  .cv-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+    padding: 24px 56px 56px;
+  }
+  @media (max-width: 1024px) { .cv-grid { gap: 28px; } }
+  @media (max-width: 767px) {
+    .cv-grid { grid-template-columns: 1fr; padding: 16px 20px 40px; }
+  }
+
+  .cv-section-heading {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    color: var(--c-text-muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+  .cv-section-heading--second { margin-top: 32px; }
+
+  /* ───── Experience timeline ───────────────────────────────── */
+  .cv-job {
+    position: relative;
+    border-left: 2px solid var(--c-border);
+    padding-left: 20px;
+    margin-bottom: 28px;
+  }
+  .cv-job[data-current="true"] { border-left-color: var(--c-accent); }
+  .cv-job__dot {
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c-text-muted);
+  }
+  .cv-job[data-current="true"] .cv-job__dot { background: var(--c-accent); }
+
+  .cv-job__head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .cv-job__co {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--c-text);
+  }
+  .cv-job__dot-sep { color: var(--c-text-muted); font-size: 12px; }
+  .cv-job__role {
+    font-size: 13px;
+    color: var(--c-text-secondary);
+    font-family: 'Inter', sans-serif;
+  }
+  .cv-job__spacer { flex: 1; }
+  .cv-job__dates {
+    font-size: 11px;
+    color: var(--c-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cv-job__loc {
+    font-size: 11px;
+    color: var(--c-text-muted);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .cv-job__list {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    color: var(--c-text-secondary);
+    line-height: 1.6;
+  }
+  .cv-job__item {
+    margin-bottom: 4px;
+    padding-left: 16px;
+    position: relative;
+  }
+  .cv-job__arrow {
+    position: absolute;
+    left: 0;
+    color: var(--c-accent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* ───── Side: stack + education ───────────────────────────── */
+  .cv-stack { margin-bottom: 20px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .cv-stack__cat {
+    font-size: 12px;
+    color: var(--c-text-muted);
+    margin-bottom: 6px;
+  }
+  .cv-stack__items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cv-stack__pill {
+    font-size: 12px;
+    padding: 3px 10px;
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    color: var(--c-text);
+  }
+
+  .cv-edu__item {
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .cv-edu__inst { color: var(--c-text); }
+  .cv-edu__deg  { color: var(--c-text-muted); font-size: 12px; }
+
   @media print {
-    * {
-      -webkit-print-color-adjust: exact !important;
-      color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    @page {
-      size: A4;
-      margin: 0.75in;
-    }
-
-    body {
-      font-size: 11pt !important;
-      line-height: 1.3 !important;
-    }
-
-    nav, .theme-toggle, header nav, .header-nav {
-      display: none !important;
-    }
-
-    .cv-container {
-      max-width: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      background: white !important;
-    }
-
-    .cv-header {
-      background: white !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      padding: 0 0 1rem 0 !important;
-      margin-bottom: 1.5rem !important;
-      text-align: center !important;
-      border-bottom: 2px solid #000 !important;
-    }
-
-    .cv-header h1 {
-      font-size: 24pt !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .cv-header .contact-links {
-      display: flex !important;
-      justify-content: center !important;
-      flex-wrap: wrap !important;
-      gap: 1rem !important;
-      font-size: 10pt !important;
-    }
-
-    .cv-header .contact-links a,
-    .cv-header .contact-links span {
-      background: none !important;
-      border: none !important;
-      padding: 0 !important;
-      color: #000 !important;
-      text-decoration: none !important;
-      box-shadow: none !important;
-    }
-
-    .cv-section {
-      background: white !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      margin-bottom: 1.5rem !important;
-      page-break-inside: avoid;
-    }
-
-    .cv-section h2 {
-      font-size: 14pt !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      margin-bottom: 0.75rem !important;
-      border-bottom: 1px solid #000 !important;
-      padding-bottom: 0.25rem !important;
-    }
-
-    .section-icon,
-    .experience-number,
-    .education-number,
-    svg {
-      display: none !important;
-    }
-
-    .experience-item {
-      background: white !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      margin-bottom: 1rem !important;
-      margin-left: 0 !important;
-      page-break-inside: avoid;
-    }
-
-    .experience-item h3 {
-      font-size: 12pt !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .experience-item .role {
-      font-size: 11pt !important;
-      font-weight: normal !important;
-      font-style: italic !important;
-      color: #000 !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .experience-item .date-range {
-      font-size: 10pt !important;
-      color: #000 !important;
-      background: none !important;
-      border: none !important;
-      padding: 0 !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .experience-item .location {
-      font-size: 10pt !important;
-      color: #000 !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .achievement-list {
-      margin-left: 1rem !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .achievement-item {
-      background: none !important;
-      border: none !important;
-      padding: 0 !important;
-      margin-bottom: 0.25rem !important;
-      list-style: disc !important;
-      color: #000 !important;
-    }
-
-    .achievement-item::before {
-      display: none !important;
-    }
-
-    .skills-grid {
-      display: block !important;
-      columns: 2 !important;
-      column-gap: 2rem !important;
-    }
-
-    .skill-category {
-      background: white !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      margin-bottom: 1rem !important;
-      break-inside: avoid;
-    }
-
-    .skill-category h3 {
-      font-size: 11pt !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .education-item {
-      background: white !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      margin-bottom: 1rem !important;
-      margin-left: 0 !important;
-    }
-
-    .education-item h3 {
-      font-size: 11pt !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .education-item .degree {
-      font-size: 10pt !important;
-      color: #000 !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .education-item .education-date {
-      font-size: 10pt !important;
-      color: #000 !important;
-      background: none !important;
-      padding: 0 !important;
-    }
-
-    .summary-text {
-      color: #000 !important;
-      font-size: 11pt !important;
-      line-height: 1.4 !important;
-      text-align: justify !important;
-    }
-
-    .timeline-line {
-      display: none !important;
-    }
-
-    .page-break {
-      page-break-before: always;
-    }
+    .workshop-nav, .workshop-status, .cv-crumb { display: none !important; }
+    .cv-header, .cv-grid { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
   }
 </style>

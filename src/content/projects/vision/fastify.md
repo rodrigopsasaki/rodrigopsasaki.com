@@ -1,5 +1,5 @@
 ---
-title: "Vision Fastify Integration"
+title: "vision fastify"
 description: "High-performance observability for Fastify applications with multiple configuration variants optimized for different use cases."
 tags: ["Fastify", "Vision", "Observability", "Plugin", "Performance", "TypeScript"]
 parent: "vision"

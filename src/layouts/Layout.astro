@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import '../styles/prose.css';
 import { SEO as AstroSEO } from 'astro-seo';
-import ThemeToggle from '../components/ThemeToggle.astro';
 import SearchBar from '../components/SearchBar.astro';
+import { ClientRouter } from 'astro:transitions';
 
 export interface Props {
   title: string;
@@ -17,6 +17,14 @@ export interface Props {
   };
   noindex?: boolean;
   nofollow?: boolean;
+  /** Which top-level tab is active ("home" by default) */
+  active?: 'home' | 'essays' | 'projects' | 'cv' | 'now';
+  /** Optional status-bar middle text (e.g., "readme · 1:1"). */
+  statusLeft?: string;
+  /** Optional status-bar center text. */
+  statusCenter?: string;
+  /** Optional status-bar right text; defaults to São Paulo clock. */
+  statusRight?: string;
 }
 
 const {
@@ -26,6 +34,10 @@ const {
   article,
   noindex = false,
   nofollow = false,
+  active = 'home',
+  statusLeft,
+  statusCenter,
+  statusRight,
 } = Astro.props;
 
 const fullTitle = title === 'Home'
@@ -33,6 +45,14 @@ const fullTitle = title === 'Home'
   : `${title} | Rodrigo Sasaki`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
+
+const tabs = [
+  { key: 'home',     label: 'home.md',     href: '/' },
+  { key: 'now',      label: 'now.md',      href: '/now/' },
+  { key: 'essays',   label: 'essays.md',   href: '/blog/' },
+  { key: 'projects', label: 'projects.md', href: '/projects/' },
+  { key: 'cv',       label: 'cv.md',       href: '/cv/' },
+] as const;
 ---
 
 <!DOCTYPE html>
@@ -43,6 +63,9 @@ const imageURL = new URL(image, Astro.site);
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- RSS auto-discovery -->
+    <link rel="alternate" type="application/rss+xml" title="Rodrigo Sasaki" href="/rss.xml" />
 
     <AstroSEO
       title={fullTitle}
@@ -85,39 +108,61 @@ const imageURL = new URL(image, Astro.site);
       }}
       extend={{
         meta: [
-          {
-            name: 'author',
-            content: article?.author || 'Rodrigo Sasaki',
-          },
-          {
-            name: 'robots',
-            content: `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`,
-          },
-          ...(article?.tags ? [{
-            name: 'keywords',
-            content: article.tags.join(', '),
-          }] : []),
+          { name: 'author', content: article?.author || 'Rodrigo Sasaki' },
+          { name: 'robots', content: `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}` },
+          ...(article?.tags ? [{ name: 'keywords', content: article.tags.join(', ') }] : []),
         ],
       }}
     />
 
-    <!-- Fonts -->
+    <!-- Fonts: Inter for UI, JetBrains Mono for body + chrome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Theme initialization script (runs before render to prevent flash) -->
+    <!-- Theme: auto by default, locked-in the moment the user clicks the toggle.
+         - No stored choice → follow the OS live (tracks prefers-color-scheme).
+         - Stored choice     → honor it, ignore OS changes.
+         Re-applies on every view-transition swap because ClientRouter
+         doesn't re-execute <head> scripts. -->
     <script is:inline>
-      (function() {
-        const theme = localStorage.getItem('theme') || 'system';
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = theme === 'dark' || (theme === 'system' && systemDark);
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
 
-        if (isDark) {
-          document.documentElement.classList.add('dark');
+        function readStored() {
+          try { return localStorage.getItem('theme'); } catch (_) { return null; }
         }
+        function resolveDark() {
+          var stored = readStored();
+          return stored ? (stored === 'dark') : mq.matches;
+        }
+        function applyTheme() {
+          document.documentElement.classList.toggle('dark', resolveDark());
+        }
+
+        applyTheme();
+
+        // Follow the OS as long as the user hasn't picked manually.
+        if (mq.addEventListener) {
+          mq.addEventListener('change', function () {
+            if (!readStored()) applyTheme();
+          });
+        }
+
+        // Astro ClientRouter hooks
+        document.addEventListener('astro:after-swap', applyTheme);
+        document.addEventListener('astro:before-swap', function (e) {
+          if (e && e.newDocument && e.newDocument.documentElement) {
+            e.newDocument.documentElement.classList.toggle('dark', resolveDark());
+          }
+        });
+
+        // Expose the resolver so the toggle logic below can read it.
+        window.__resolveDark = resolveDark;
       })();
     </script>
+
+    <ClientRouter fallback="swap" />
 
     <!-- Copy code functionality -->
     <script>
@@ -125,128 +170,410 @@ const imageURL = new URL(image, Astro.site);
       initCopyCodeButtons();
     </script>
   </head>
-  <body class="min-h-screen transition-colors duration-300" style="background-color: var(--c-bg); color: var(--c-text);">
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 backdrop-blur-sm" style="background-color: color-mix(in srgb, var(--c-bg) 95%, transparent); border-bottom: 1px solid var(--c-border);">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-14">
-          <!-- Logo -->
-          <div class="flex items-center">
-            <a href="/" class="nav-link font-serif font-semibold text-lg transition-colors duration-150" style="color: var(--c-text);">
-              Rodrigo Sasaki
-            </a>
-          </div>
+  <body class="min-h-screen flex flex-col workshop-body" style="background-color: var(--c-bg); color: var(--c-text);">
+    <!-- Skip-to-content for keyboard + screen-reader users -->
+    <a href="#main-content" class="workshop-skip">Skip to content</a>
 
-          <!-- Right side: links + search + theme -->
-          <div class="flex items-center gap-2 sm:gap-3">
-            <!-- Desktop nav links -->
-            <div class="hidden md:flex items-center gap-6">
-              <a href="/projects/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
-                Projects
-              </a>
-              <a href="/blog/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
-                Blog
-              </a>
-              <a href="/cv/" class="nav-link text-sm transition-colors duration-150" style="color: var(--c-text-muted);">
-                CV
-              </a>
-            </div>
-
-            <SearchBar />
-            <ThemeToggle />
-
-            <!-- Mobile hamburger -->
-            <button
-              id="mobile-menu-toggle"
-              class="md:hidden p-1.5 rounded-md transition-colors duration-150"
-              style="color: var(--c-text-muted);"
-              aria-label="Toggle menu"
-            >
-              <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-              <svg id="close-menu-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Mobile nav links -->
-        <div id="mobile-menu" class="hidden md:hidden pb-4">
-          <div class="flex flex-col gap-1">
-            <a href="/projects/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
-              Projects
-            </a>
-            <a href="/blog/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
-              Blog
-            </a>
-            <a href="/cv/" class="nav-link block py-2 px-3 text-sm rounded-md transition-colors duration-150" style="color: var(--c-text-muted);">
-              CV
-            </a>
-          </div>
-        </div>
+    <!-- IDE tab nav -->
+    <nav class="workshop-nav" aria-label="Primary">
+      <!-- Window title block -->
+      <div class="workshop-nav__brand">
+        <span class="workshop-nav__dot" aria-hidden="true"></span>
+        <a href="/" class="workshop-nav__user">rodrigopsasaki</a>
+        <span class="workshop-nav__cwd" aria-hidden="true">~/</span>
       </div>
+
+      <!-- Tabs -->
+      <div class="workshop-nav__tabs">
+        {tabs.map(t => (
+          <a
+            href={t.href}
+            class:list={['workshop-nav__tab', { 'is-active': t.key === active }]}
+            aria-current={t.key === active ? 'page' : undefined}
+          >
+            {t.label}
+          </a>
+        ))}
+      </div>
+
+      <div class="workshop-nav__spacer"></div>
+
+      <!-- Search -->
+      <div class="workshop-nav__cell workshop-nav__search">
+        <SearchBar />
+      </div>
+
+      <!-- Theme toggle (two-word, workshop style) -->
+      <button
+        id="theme-toggle"
+        class="workshop-nav__cell workshop-nav__theme"
+        aria-label="Toggle theme"
+        type="button"
+      >
+        <span class="theme-label" data-mode="light">light</span>
+        <span class="theme-sep" aria-hidden="true">·</span>
+        <span class="theme-label" data-mode="dark">dark</span>
+      </button>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="mobile-menu-toggle"
+        class="workshop-nav__cell workshop-nav__hamburger md:hidden"
+        aria-label="Toggle menu"
+        type="button"
+      >
+        <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-menu-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </nav>
 
-    <main class="relative">
+    <!-- Mobile nav drawer -->
+    <div id="mobile-menu" class="hidden md:hidden workshop-mobile-menu">
+      {tabs.map(t => (
+        <a
+          href={t.href}
+          class:list={['workshop-mobile-menu__item', { 'is-active': t.key === active }]}
+        >
+          {t.label}
+        </a>
+      ))}
+      <!-- Theme toggle lives here on mobile — the inline one is hidden below md. -->
+      <button
+        id="theme-toggle-mobile"
+        class="workshop-mobile-menu__item workshop-mobile-menu__theme"
+        aria-label="Toggle theme"
+        type="button"
+      >
+        <span class="theme-label" data-mode="light">light</span>
+        <span class="theme-sep" aria-hidden="true">·</span>
+        <span class="theme-label" data-mode="dark">dark</span>
+      </button>
+    </div>
+
+    <main id="main-content" class="flex-1 min-w-0">
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer style="border-top: 1px solid var(--c-border);" class="mt-8">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div class="text-sm" style="color: var(--c-text-muted);">
-            &copy; {new Date().getFullYear()} Rodrigo Sasaki
-          </div>
-          <div class="flex items-center gap-6 text-sm">
-            <a
-              href="https://github.com/rodrigopsasaki"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="nav-link transition-colors duration-150"
-              style="color: var(--c-text-muted);"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://linkedin.com/in/rodrigopsasaki"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="nav-link transition-colors duration-150"
-              style="color: var(--c-text-muted);"
-            >
-              LinkedIn
-            </a>
-          </div>
-        </div>
+    <!-- Status bar (sticky bottom) -->
+    <footer class="workshop-status">
+      <div class="workshop-status__branch">
+        <span class="workshop-status__branch-dot" aria-hidden="true"></span>
+        main
+      </div>
+      {statusLeft && <div class="workshop-status__cell">{statusLeft}</div>}
+      {statusCenter && <div class="workshop-status__cell">{statusCenter}</div>}
+      <div class="workshop-status__spacer"></div>
+      <div class="workshop-status__cell workshop-status__links">
+        <a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer">github</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer">linkedin</a>
+      </div>
+      <div class="workshop-status__cell workshop-status__clock">
+        {statusRight ?? 'São Paulo · ' }
+        {!statusRight && <span id="workshop-clock">--:-- BRT</span>}
       </div>
     </footer>
 
-    <!-- Mobile menu toggle script -->
-    <script>
-      function initMobileMenu() {
-        const toggle = document.getElementById('mobile-menu-toggle');
-        const menu = document.getElementById('mobile-menu');
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const closeIcon = document.getElementById('close-menu-icon');
+    <!-- Mobile menu + theme + clock. All document-level delegation so it
+         is safe across Astro's ClientRouter page swaps (no double-binding,
+         no stale listeners). -->
+    <script is:inline>
+      (function () {
+        if (window.__workshopChromeBooted) return;
+        window.__workshopChromeBooted = true;
 
-        toggle?.addEventListener('click', () => {
-          const isOpen = !menu?.classList.contains('hidden');
-          menu?.classList.toggle('hidden');
-          hamburgerIcon?.classList.toggle('hidden', !isOpen);
-          closeIcon?.classList.toggle('hidden', isOpen);
+        function paintTheme() {
+          var isDark = document.documentElement.classList.contains('dark');
+          // Paint both the desktop toggle and the drawer toggle.
+          document.querySelectorAll('#theme-toggle .theme-label, #theme-toggle-mobile .theme-label').forEach(function (el) {
+            var mode = el.getAttribute('data-mode');
+            var active = (mode === 'dark' && isDark) || (mode === 'light' && !isDark);
+            el.setAttribute('data-active', active ? 'true' : 'false');
+          });
+        }
+
+        // One delegated listener handles all nav clicks regardless of DOM swaps.
+        document.addEventListener('click', function (e) {
+          var themeBtn = e.target.closest && (
+            e.target.closest('#theme-toggle') ||
+            e.target.closest('#theme-toggle-mobile')
+          );
+          if (themeBtn) {
+            e.preventDefault();
+            var wasDark = document.documentElement.classList.contains('dark');
+            if (wasDark) document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            try { localStorage.setItem('theme', wasDark ? 'light' : 'dark'); } catch (_) {}
+            paintTheme();
+            return;
+          }
+
+          var mobileBtn = e.target.closest && e.target.closest('#mobile-menu-toggle');
+          if (mobileBtn) {
+            var menu = document.getElementById('mobile-menu');
+            var ham  = document.getElementById('hamburger-icon');
+            var close= document.getElementById('close-menu-icon');
+            var wasHidden = menu && menu.classList.contains('hidden');
+            if (menu) menu.classList.toggle('hidden');
+            if (ham)   ham.classList.toggle('hidden', wasHidden);
+            if (close) close.classList.toggle('hidden', !wasHidden);
+            return;
+          }
         });
-      }
 
-      document.addEventListener('DOMContentLoaded', initMobileMenu);
-      document.addEventListener('astro:page-load', initMobileMenu);
+        function tickClock() {
+          var clock = document.getElementById('workshop-clock');
+          if (!clock) return;
+          var t = new Date().toLocaleTimeString('en-US', {
+            hour12: false, hour: '2-digit', minute: '2-digit',
+            timeZone: 'America/Sao_Paulo',
+          });
+          clock.textContent = t + ' BRT';
+        }
+
+        function onReady() {
+          paintTheme();
+          tickClock();
+        }
+        onReady();
+        setInterval(tickClock, 30000);
+
+        // After each ClientRouter swap, repaint + re-tick (elements are new).
+        document.addEventListener('astro:page-load', onReady);
+      })();
     </script>
 
     <style>
-      .nav-link:hover {
-        color: var(--c-text) !important;
+      /* Skip-to-content — visually hidden until focused */
+      .workshop-skip {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 100;
+        padding: 8px 12px;
+        background: var(--c-accent);
+        color: var(--c-on-accent);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 3px;
+        transform: translateY(-200%);
+        transition: transform 0.15s;
+      }
+      .workshop-skip:focus { transform: translateY(0); }
+
+      /* Smooth theme-switch fade. Applied to surfaces that reference the
+       * theme tokens directly. Honors prefers-reduced-motion. */
+      .workshop-body,
+      .workshop-nav,
+      .workshop-status,
+      .workshop-mobile-menu {
+        transition: background-color 160ms ease, color 160ms ease,
+                    border-color 160ms ease;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .workshop-body,
+        .workshop-nav,
+        .workshop-status,
+        .workshop-mobile-menu { transition: none; }
+      }
+
+      /* ───── Nav ───────────────────────────────────────────────── */
+      .workshop-nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: flex;
+        align-items: stretch;
+        height: 40px;
+        background: var(--c-bg-alt);
+        border-bottom: 1px solid var(--c-border);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 12px;
+        /* visible so absolute-positioned children (search dropdown) escape */
+        overflow: visible;
+      }
+
+      .workshop-nav__brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 16px;
+        border-right: 1px solid var(--c-border);
+        flex-shrink: 0;
+      }
+      .workshop-nav__dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--c-accent);
+      }
+      .workshop-nav__user {
+        color: var(--c-text);
+        font-weight: 500;
+      }
+      .workshop-nav__cwd {
+        color: var(--c-text-muted);
+      }
+
+      .workshop-nav__tabs {
+        display: flex;
+        align-items: stretch;
+        /* If tabs overflow at tight widths, let them scroll locally. */
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .workshop-nav__tabs::-webkit-scrollbar { display: none; }
+      @media (max-width: 767px) {
+        .workshop-nav__tabs { display: none; }
+      }
+      .workshop-nav__tab {
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        color: var(--c-text-secondary);
+        border-right: 1px solid var(--c-border);
+        border-top: 1px solid transparent;
+        margin-top: -1px;
+        transition: color 0.15s, background-color 0.15s;
+        white-space: nowrap;
+      }
+      .workshop-nav__tab:hover {
+        color: var(--c-text);
+        background: color-mix(in srgb, var(--c-bg) 50%, transparent);
+      }
+      .workshop-nav__tab.is-active {
+        color: var(--c-text);
+        background: var(--c-bg);
+        border-top-color: var(--c-accent);
+      }
+
+      .workshop-nav__spacer { flex: 1; }
+
+      .workshop-nav__cell {
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        border-left: 1px solid var(--c-border);
+        color: var(--c-text-muted);
+        gap: 6px;
+      }
+      .workshop-nav__theme {
+        background: transparent;
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+        cursor: pointer;
+      }
+      .workshop-nav__theme .theme-label[data-active="true"] { color: var(--c-text); }
+      .workshop-nav__theme .theme-sep { color: var(--c-text-muted); }
+      /* Hide inline theme toggle on mobile — drawer gets it instead. */
+      @media (max-width: 767px) {
+        .workshop-nav__theme { display: none; }
+        /* Trim brand on narrow viewports so the row fits. */
+        .workshop-nav__cwd { display: none; }
+      }
+      .workshop-nav__hamburger {
+        background: transparent;
+        cursor: pointer;
+      }
+      /* Hamburger only makes sense when tabs are hidden (below md). */
+      @media (min-width: 768px) {
+        .workshop-nav__hamburger { display: none; }
+      }
+
+      /* ───── Mobile drawer ────────────────────────────────────── */
+      .workshop-mobile-menu.hidden { display: none; }
+      .workshop-mobile-menu {
+        display: flex;
+        flex-direction: column;
+        background: var(--c-bg-alt);
+        border-bottom: 1px solid var(--c-border);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 13px;
+      }
+      @media (min-width: 768px) {
+        .workshop-mobile-menu { display: none; }
+      }
+      .workshop-mobile-menu__item {
+        padding: 10px 16px;
+        color: var(--c-text-secondary);
+        border-top: 1px solid var(--c-border-soft);
+      }
+      .workshop-mobile-menu__item.is-active {
+        color: var(--c-text);
+        border-left: 2px solid var(--c-accent);
+      }
+      .workshop-mobile-menu__theme {
+        background: transparent;
+        border-top: 1px solid var(--c-border);
+        border-right: none;
+        border-bottom: none;
+        width: 100%;
+        text-align: left;
+        display: flex;
+        gap: 6px;
+        cursor: pointer;
+        color: var(--c-text-muted);
+      }
+      .workshop-mobile-menu__theme .theme-label[data-active="true"] { color: var(--c-text); }
+      .workshop-mobile-menu__theme .theme-sep { color: var(--c-text-muted); }
+
+      /* ───── Status bar ───────────────────────────────────────── */
+      .workshop-status {
+        position: sticky;
+        bottom: 0;
+        display: flex;
+        align-items: stretch;
+        height: 28px;
+        background: var(--c-bg-alt);
+        border-top: 1px solid var(--c-border);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 11px;
+        color: var(--c-text-muted);
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .workshop-status::-webkit-scrollbar { display: none; }
+      .workshop-status__branch {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px;
+        border-right: 1px solid var(--c-border);
+        color: var(--c-accent);
+        flex-shrink: 0;
+      }
+      .workshop-status__branch-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--c-accent);
+        border-radius: 50%;
+      }
+      .workshop-status__cell {
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        border-right: 1px solid var(--c-border);
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+      .workshop-status__spacer { flex: 1; }
+      .workshop-status__links {
+        gap: 8px;
+        border-left: 1px solid var(--c-border);
+      }
+      .workshop-status__links a { color: var(--c-text-muted); transition: color 0.15s; }
+      .workshop-status__links a:hover { color: var(--c-accent); }
+      @media (max-width: 640px) { .workshop-status__links { display: none; } }
+
+      .workshop-status__clock {
+        border-right: none;
+        border-left: 1px solid var(--c-border);
       }
     </style>
   </body>

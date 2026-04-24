@@ -1,46 +1,85 @@
-/* Theme: CSS custom properties for light/dark mode */
+/* Theme — "The Workshop" (Direction B)
+ *
+ * Two palettes, same bones:
+ *   light → warm paper (a programmer's printout, not glare-white)
+ *   dark  → terminal ground, near-black
+ *
+ * Accents are shifted down in lightness on paper so they still read as
+ * "terminal" colors without vibrating on cream.
+ */
+
 :root {
-  --c-bg: #fafaf9;
-  --c-bg-alt: #f5f5f4;
-  --c-bg-code: #f3f4f6;
-  --c-bg-card: #ffffff;
-  --c-text: #1c1917;
-  --c-text-secondary: #57534e;
-  --c-text-muted: #a8a29e;
-  --c-border: rgba(0, 0, 0, 0.08);
-  --c-border-strong: rgba(0, 0, 0, 0.15);
-  --c-accent: #2563eb;
-  --c-accent-hover: #1d4ed8;
-  --c-accent-muted: #dbeafe;
-  --c-accent-secondary: #e6db74;
-  --c-selection-bg: #bfdbfe;
-  --c-selection-text: #1c1917;
-  --c-blockquote-border: #2563eb;
-  --c-tag-bg: #f3f4f6;
-  --c-tag-text: #57534e;
-  --c-badge-bg: #dbeafe;
-  --c-badge-text: #1e40af;
+  /* surfaces */
+  --c-bg:      #f4efe6;
+  --c-bg-alt:  #ece4d2;
+  --c-bg-card: #faf5eb;
+  --c-bg-code: #ece4d2;
+
+  /* text */
+  --c-text:           #1a1814;
+  --c-text-secondary: #5c584f;
+  --c-text-muted:     #948c7d;
+
+  /* rules */
+  --c-border:        rgba(26, 24, 20, 0.12);
+  --c-border-strong: rgba(26, 24, 20, 0.22);
+  --c-border-soft:   rgba(26, 24, 20, 0.05);
+
+  /* accents — terminal colors, shifted down for paper */
+  --c-accent:        oklch(0.48 0.14 150);   /* green */
+  --c-accent-amber:  oklch(0.55 0.15 70);    /* amber */
+  --c-accent-blue:   oklch(0.48 0.14 240);   /* blue */
+  --c-accent-red:    oklch(0.52 0.18 25);    /* red */
+
+  --c-accent-hover:  oklch(0.42 0.14 150);
+  --c-accent-muted:  color-mix(in oklab, oklch(0.48 0.14 150) 15%, transparent);
+  --c-on-accent:     #f4efe6;
+
+  --c-selection-bg:   color-mix(in oklab, oklch(0.48 0.14 150) 25%, transparent);
+  --c-selection-text: #1a1814;
+
+  /* back-compat tokens kept for prose.css + legacy fragments */
+  --c-blockquote-border: var(--c-accent-amber);
+  --c-tag-bg:    var(--c-bg-card);
+  --c-tag-text:  var(--c-text-secondary);
+  --c-badge-bg:  var(--c-accent-muted);
+  --c-badge-text: var(--c-accent);
+
+  /* code-block surface for the dedicated tabbed editor — always dark */
+  --c-code-bg:   #0a0a0c;
 }
 
 .dark {
-  --c-bg: #1a1a1e;
-  --c-bg-alt: #222228;
-  --c-bg-code: #222228;
-  --c-bg-card: #242428;
-  --c-text: #e4e4e7;
-  --c-text-secondary: #a1a1aa;
-  --c-text-muted: #71717a;
-  --c-border: rgba(255, 255, 255, 0.08);
-  --c-border-strong: rgba(255, 255, 255, 0.15);
-  --c-accent: #60a5fa;
-  --c-accent-hover: #93bbfc;
-  --c-accent-muted: rgba(96, 165, 250, 0.15);
-  --c-accent-secondary: #e6db74;
-  --c-selection-bg: rgba(96, 165, 250, 0.3);
-  --c-selection-text: #e4e4e7;
-  --c-blockquote-border: #e6db74;
-  --c-tag-bg: rgba(255, 255, 255, 0.06);
-  --c-tag-text: #a1a1aa;
-  --c-badge-bg: rgba(96, 165, 250, 0.15);
-  --c-badge-text: #93c5fd;
+  --c-bg:      #0e0e10;
+  --c-bg-alt:  #17171a;
+  --c-bg-card: #1c1c20;
+  --c-bg-code: #17171a;
+
+  --c-text:           #e6e4df;
+  --c-text-secondary: #9a9690;
+  --c-text-muted:     #5c5a55;
+
+  --c-border:        rgba(230, 228, 223, 0.10);
+  --c-border-strong: rgba(230, 228, 223, 0.20);
+  --c-border-soft:   rgba(230, 228, 223, 0.05);
+
+  --c-accent:        oklch(0.78 0.14 150);
+  --c-accent-amber:  oklch(0.82 0.14 80);
+  --c-accent-blue:   oklch(0.78 0.11 230);
+  --c-accent-red:    oklch(0.72 0.16 25);
+
+  --c-accent-hover:  oklch(0.85 0.14 150);
+  --c-accent-muted:  color-mix(in oklab, oklch(0.78 0.14 150) 18%, transparent);
+  --c-on-accent:     #0e0e10;
+
+  --c-selection-bg:   color-mix(in oklab, oklch(0.78 0.14 150) 30%, transparent);
+  --c-selection-text: #e6e4df;
+
+  --c-blockquote-border: var(--c-accent-amber);
+  --c-tag-bg:    var(--c-bg-card);
+  --c-tag-text:  var(--c-text-secondary);
+  --c-badge-bg:  var(--c-accent-muted);
+  --c-badge-text: var(--c-accent);
+
+  --c-code-bg:   #0a0a0c;
 }

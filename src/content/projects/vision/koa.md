@@ -1,5 +1,5 @@
 ---
-title: "Vision Koa Integration"
+title: "vision koa"
 description: "Complete guide to integrating Vision observability with Koa applications, including middleware setup, async/await support, and modern Node.js patterns."
 tags: ["Koa", "Vision", "Observability", "Middleware", "TypeScript", "Async/Await"]
 parent: "vision"

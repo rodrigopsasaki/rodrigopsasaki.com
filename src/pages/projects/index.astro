@@ -3,97 +3,274 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects', ({ data }) => data.visible === true);
-// Filter out integration pages (those with a parent field)
-const topLevelProjects = projects.filter(project => !project.data.parent);
-const sortedProjects = topLevelProjects.sort((a, b) => {
+const topLevel = projects.filter(p => !p.data.parent);
+const sorted = topLevel.sort((a, b) => {
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
   return (a.data.order ?? 999) - (b.data.order ?? 999);
 });
+
+// Derive integrations list from child collection entries where possible
+function integrationsFor(slug: string): string[] {
+  return projects
+    .filter(p => p.data.parent === slug)
+    .map(p => p.data.title);
+}
+
+function npmNameFor(slug: string): string {
+  // Map real npm names for known projects; fall back to a plausible scope.
+  const known: Record<string, string> = {
+    'vision':  '@rodrigopsasaki/vision',
+    'runic':   'run-user-nested-invokable-commands',
+    'phyxius': '@phyxiusjs/handler',
+  };
+  return known[slug] ?? `@rodrigopsasaki/${slug}`;
+}
+
+// Optional aside shown as a muted comment under the install line.
+// For projects with unusual npm names, this is where the joke lives.
+function asideFor(slug: string): string | null {
+  const asides: Record<string, string> = {
+    'runic': 'sorry, all the good names were already taken',
+  };
+  return asides[slug] ?? null;
+}
 ---
 
-<Layout title="Projects">
-  <div class="min-h-screen">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <!-- Header -->
-      <div class="mb-10">
-        <h1 class="text-3xl font-bold" style="color: var(--c-text)">
-          Projects
-        </h1>
-      </div>
+<Layout
+  title="Projects"
+  description="Libraries I maintain and use in production."
+  active="projects"
+  statusLeft="projects · list view"
+  statusCenter={`${sorted.length} repos`}
+>
+  <section class="projects-hero">
+    <div class="projects-hero__crumb">// projects/</div>
+    <h1 class="projects-hero__title">
+      <span class="projects-hero__sigil">$</span> ls ~/projects
+    </h1>
+    <p class="projects-hero__sub">
+      Libraries I maintain and use in production every day. Each is an opinion
+      about how a thing should work, written down.
+    </p>
+  </section>
 
-      <!-- Projects List -->
-      <div class="space-y-6">
-        {sortedProjects.length === 0 ? (
-          <p style="color: var(--c-text-muted)">
-            No projects yet.
-          </p>
-        ) : (
-          sortedProjects.map((project) => (
-            <article class="pb-6" style="border-bottom: 1px solid var(--c-border)">
-              <!-- Project title and links -->
-              <div class="flex items-start justify-between gap-4 mb-2">
-                <h2 class="text-base font-semibold" style="color: var(--c-text)">
-                  <a
-                    href={`/projects/${project.slug}/`}
-                    class="transition-colors duration-150 hover:opacity-80"
-                    style="color: var(--c-text)"
-                  >
-                    {project.data.title}
-                  </a>
-                </h2>
+  <div class="projects-grid">
+    {sorted.map(p => {
+      const ints = integrationsFor(p.slug);
+      const npm = npmNameFor(p.slug);
+      const aside = asideFor(p.slug);
+      return (
+        <a href={`/projects/${p.slug}/`} class="projects-card">
+          <!-- Traffic-light title bar -->
+          <div class="projects-card__titlebar">
+            <div class="projects-card__lights" aria-hidden="true">
+              <span class="projects-card__light projects-card__light--red"></span>
+              <span class="projects-card__light projects-card__light--amber"></span>
+              <span class="projects-card__light projects-card__light--green"></span>
+            </div>
+            <span class="projects-card__path">~/github/rodrigopsasaki/{p.slug}</span>
+            <div class="projects-card__titlebar-spacer"></div>
+            {p.data.featured && <span class="projects-card__star">★ featured</span>}
+          </div>
 
-                <div class="flex gap-2 flex-shrink-0">
-                  {project.data.github && (
-                    <a
-                      href={project.data.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="transition-colors duration-150 p-0.5 hover:opacity-80"
-                      aria-label="GitHub repository"
-                      style="color: var(--c-text-muted)"
-                    >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
-                      </svg>
-                    </a>
-                  )}
-                  {project.data.demo && (
-                    <a
-                      href={project.data.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="transition-colors duration-150 p-0.5 hover:opacity-80"
-                      aria-label="Live demo"
-                      style="color: var(--c-text-muted)"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                      </svg>
-                    </a>
-                  )}
+          <!-- Body -->
+          <div class="projects-card__body">
+            <h2 class="projects-card__title">{p.data.title}</h2>
+            <p class="projects-card__sub">{p.data.description}</p>
+
+            <div class="projects-card__install">
+              <div class="projects-card__install-cmt"># install</div>
+              <div>
+                <span class="projects-card__install-sigil">$</span>{' '}
+                <span class="projects-card__install-cmd">npm install</span>{' '}
+                <span class="projects-card__install-pkg">{npm}</span>
+              </div>
+              {aside && (
+                <div class="projects-card__install-aside"># {aside}</div>
+              )}
+            </div>
+
+            <div class="projects-card__tags">
+              {p.data.tags.map(t => <span class="projects-card__tag">{t}</span>)}
+            </div>
+
+            {ints.length > 0 && (
+              <div class="projects-card__ints">
+                <div class="projects-card__ints-label">Integrations</div>
+                <div class="projects-card__ints-list">
+                  {ints.map(i => <span class="projects-card__int">{i}</span>)}
                 </div>
               </div>
+            )}
 
-              <p class="text-sm mb-3 leading-relaxed" style="color: var(--c-text-muted)">
-                {project.data.description}
-              </p>
-
-              <!-- Tags -->
-              <div class="flex flex-wrap gap-1.5">
-                {project.data.tags.map((tag: string) => (
-                  <span
-                    class="text-xs px-2 py-0.5 rounded"
-                    style="background-color: var(--c-tag-bg); color: var(--c-tag-text)"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))
-        )}
-      </div>
-    </div>
+            <div class="projects-card__actions">
+              <span class="projects-card__cta">$ open docs</span>
+              {p.data.github && <span class="projects-card__cta projects-card__cta--ghost">git clone ↗</span>}
+            </div>
+          </div>
+        </a>
+      );
+    })}
   </div>
 </Layout>
+
+<style>
+  .projects-hero {
+    padding: 56px 56px 16px;
+    max-width: 1100px;
+  }
+  @media (max-width: 767px) { .projects-hero { padding: 32px 20px 8px; } }
+
+  .projects-hero__crumb {
+    color: var(--c-text-muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .projects-hero__title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: clamp(28px, 4.5vw, 44px);
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--c-text);
+  }
+  .projects-hero__sigil { color: var(--c-accent); }
+  .projects-hero__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--c-text-secondary);
+    margin-top: 18px;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .projects-grid {
+    padding: 16px 56px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 960px) { .projects-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .projects-grid { padding: 16px 20px 40px; } }
+
+  .projects-card {
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .projects-card:hover {
+    border-color: var(--c-border-strong);
+    transform: translateY(-2px);
+  }
+
+  .projects-card__titlebar {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--c-border);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--c-text-muted);
+  }
+  .projects-card__lights { display: flex; gap: 6px; margin-right: 12px; }
+  .projects-card__light { width: 9px; height: 9px; border-radius: 50%; display: block; }
+  .projects-card__light--red   { background: var(--c-accent-red); }
+  .projects-card__light--amber { background: var(--c-accent-amber); }
+  .projects-card__light--green { background: var(--c-accent); }
+  .projects-card__path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .projects-card__titlebar-spacer { flex: 1; }
+  .projects-card__star { color: var(--c-accent-amber); flex-shrink: 0; }
+
+  .projects-card__body { padding: 24px; }
+  .projects-card__title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 28px;
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    color: var(--c-text);
+  }
+  .projects-card__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--c-text-secondary);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .projects-card__install {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .projects-card__install-cmt { color: var(--c-text-muted); }
+  .projects-card__install-sigil { color: var(--c-accent-amber); }
+  .projects-card__install-cmd   { color: var(--c-text); }
+  .projects-card__install-pkg   { color: var(--c-accent); }
+  .projects-card__install-aside {
+    color: var(--c-text-muted);
+    font-style: italic;
+    /* One blank line between the command and the aside — mirrors how you'd
+     * space a comment from the line above in a real shell script. */
+    margin-top: 1.7em;
+  }
+
+  .projects-card__tags {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .projects-card__tag {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--c-border);
+    color: var(--c-text-secondary);
+  }
+
+  .projects-card__ints { margin-top: 16px; font-size: 11px; color: var(--c-text-muted); }
+  .projects-card__ints-label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .projects-card__ints-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .projects-card__int {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    padding: 2px 8px;
+    border-left: 2px solid var(--c-accent);
+    background: var(--c-bg);
+    color: var(--c-text-secondary);
+  }
+
+  .projects-card__actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .projects-card__cta {
+    padding: 6px 12px;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: 500;
+  }
+  .projects-card__cta--ghost {
+    background: transparent;
+    border: 1px solid var(--c-border);
+    color: var(--c-text-secondary);
+  }
+</style>

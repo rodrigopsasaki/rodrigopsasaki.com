@@ -1,5 +1,5 @@
 ---
-title: "Prisma Integration"
+title: "vision prisma"
 description: "Automatic database operation observability for Prisma with zero configuration. Every query, mutation, and transaction automatically instrumented with rich context."
 tags: ["Prisma", "Database", "ORM", "Observability", "TypeScript", "SQL", "Performance"]
 npm: "https://www.npmjs.com/package/@rodrigopsasaki/vision-prisma"

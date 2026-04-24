@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => data.visible === true);
   return projects.map((project) => ({
@@ -14,325 +13,221 @@ export async function getStaticPaths() {
 const project = Astro.props;
 const { Content } = await project.render();
 
-// Check if this is a nested project (has parent field)
 const hasParent = !!project.data.parent;
+const allProjects = await getCollection('projects', ({ data }) => data.visible === true);
+const parentProject = hasParent ? (allProjects.find(p => p.slug === project.data.parent) ?? null) : null;
+const rootSlug = hasParent && parentProject ? parentProject.slug : project.slug;
+const hasEcosystem = allProjects.some(p => p.data.parent === rootSlug);
 
-// For nested projects, get parent info
-let parentProject = null;
-if (hasParent) {
-  const allProjects = await getCollection('projects', ({ data }) => data.visible === true);
-  parentProject = allProjects.find(p => p.slug === project.data.parent) ?? null;
+// Ecosystem siblings (for the left docs-tree sidebar)
+const siblings = hasEcosystem ? allProjects.filter(p => p.data.parent === rootSlug) : [];
+
+// Group siblings for the tree view — the design shows category folders
+// (web frameworks, data, exporters). We derive groups from tags when present.
+function groupForSibling(s: typeof allProjects[number]): string {
+  const tags = (s.data.tags ?? []).map(t => t.toLowerCase());
+  if (tags.some(t => ['datadog', 'exporter', 'exporters'].includes(t))) return 'exporters';
+  if (tags.some(t => ['prisma', 'typeorm', 'database', 'data'].includes(t))) return 'data';
+  return 'integrations';
 }
+const grouped = siblings.reduce<Record<string, typeof siblings>>((acc, s) => {
+  const g = groupForSibling(s);
+  (acc[g] ||= []).push(s);
+  return acc;
+}, {});
 
-// Check if this is the Vision project or a Vision sub-page
-const isVisionProject = project.slug === 'vision' || project.data.parent === 'vision';
+const breadcrumb = hasParent && parentProject
+  ? `${parentProject.slug}/${project.slug}.md`
+  : `${project.slug}.md`;
 ---
 
-<Layout title={project.data.title} description={project.data.description}>
-  <div class="min-h-screen">
-    <div class={isVisionProject ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" : "max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
-
-      {/* Breadcrumbs for nested projects */}
-      {hasParent && parentProject && (
-        <nav class="flex items-center gap-1 text-sm mb-6" aria-label="Breadcrumb">
-          <a href="/projects/" class="transition-colors duration-150 hover:opacity-80" style="color: var(--c-text-muted)">
-            Projects
-          </a>
-          <span style="color: var(--c-text-muted)">/</span>
-          <a href={`/projects/${parentProject.slug}/`} class="transition-colors duration-150 hover:opacity-80" style="color: var(--c-text-muted)">
-            {parentProject.data.title}
-          </a>
-          <span style="color: var(--c-text-muted)">/</span>
-          <span style="color: var(--c-text-secondary)">{project.data.title}</span>
-        </nav>
-      )}
-
-      <div class={isVisionProject ? "flex gap-8 lg:gap-12" : ""}>
-        {/* Sidebar for Vision ecosystem */}
-        {isVisionProject && (
-          <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
-            <div class="sticky top-24 h-[calc(100vh-8rem)] flex flex-col">
-              {/* Table of Contents */}
-              {project.slug === 'vision' ? (
-                <div class="flex-1 min-h-0 mb-4">
-                  <div class="rounded-lg p-4 h-full flex flex-col" style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border)">
-                    <h3 class="text-sm font-semibold mb-3 uppercase tracking-wide" style="color: var(--c-text)">
-                      Table of Contents
-                    </h3>
-                    <nav class="flex-1 overflow-y-auto space-y-1" id="toc-nav">
-                      <!-- ToC will be populated by JavaScript -->
-                    </nav>
-                  </div>
-                </div>
-              ) : (
-                <div class="rounded-lg p-4 mb-4" style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border)">
-                  <h3 class="text-sm font-semibold mb-3 uppercase tracking-wide" style="color: var(--c-text)">
-                    Table of Contents
-                  </h3>
-                  <nav class="space-y-1" id="toc-nav">
-                    <!-- ToC will be populated by JavaScript -->
-                  </nav>
-                </div>
-              )}
-
-              {/* Vision Integrations Navigation */}
-              {project.slug === 'vision' && (
-                <div class="rounded-lg p-4" style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border)">
-                  <h3 class="text-sm font-semibold mb-3 uppercase tracking-wide" style="color: var(--c-text)">Ecosystem</h3>
-                  <nav class="space-y-1">
-                    <a href="/projects/vision/" class="block py-1.5 px-3 text-sm rounded transition-colors" style="color: var(--c-text-secondary)">Getting Started</a>
-                    <div class="mt-2">
-                      <h4 class="px-3 text-xs font-semibold uppercase tracking-wider mb-1" style="color: var(--c-text-muted)">Web Frameworks</h4>
-                      <a href="/projects/vision/express/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">Express</a>
-                      <a href="/projects/vision/fastify/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">Fastify</a>
-                      <a href="/projects/vision/koa/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">Koa</a>
-                      <a href="/projects/vision/nestjs/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">NestJS</a>
-                    </div>
-                    <div class="mt-2">
-                      <h4 class="px-3 text-xs font-semibold uppercase tracking-wider mb-1" style="color: var(--c-text-muted)">Data</h4>
-                      <a href="/projects/vision/prisma/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">Prisma</a>
-                    </div>
-                    <div class="mt-2">
-                      <h4 class="px-3 text-xs font-semibold uppercase tracking-wider mb-1" style="color: var(--c-text-muted)">Exporters</h4>
-                      <a href="/projects/vision/datadog-exporter/" class="block py-1 px-3 text-sm rounded transition-colors" style="color: var(--c-text-muted)">Datadog</a>
-                    </div>
-                  </nav>
-                </div>
-              )}
-            </div>
-          </aside>
-        )}
-
-        <!-- Main Content -->
-        <div class="flex-1 min-w-0">
-          <article class="max-w-4xl">
-            <!-- Header Section -->
-            <header class="mb-12">
-              <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: var(--c-text)">
-                {project.data.title}
-              </h1>
-              <p class="text-xl md:text-2xl mb-6 leading-relaxed" style="color: var(--c-text-muted)">
-                {project.data.description}
-              </p>
-
-              <!-- Tags -->
-              <div class="flex flex-wrap gap-2 mb-6">
-                {project.data.tags.map((tag: string) => (
-                  <span
-                    class="text-xs px-3 py-1 rounded-full font-medium"
-                    style="background-color: var(--c-tag-bg); color: var(--c-tag-text)"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <!-- Links -->
-              <div class="flex flex-wrap gap-4">
-                {project.data.github && (
-                  <a
-                    href={project.data.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
-                    style="background-color: var(--c-text); color: var(--c-bg)"
-                  >
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                    View on GitHub
-                  </a>
-                )}
-                {project.data.npm && (
-                  <a
-                    href={project.data.npm}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
-                    style="background-color: var(--c-accent); color: var(--c-bg)"
-                  >
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331z"/>
-                    </svg>
-                    npm
-                  </a>
-                )}
-                {project.data.demo && (
-                  <a
-                    href={project.data.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
-                    style="background-color: var(--c-accent); color: var(--c-bg)"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                    Live Demo
-                  </a>
-                )}
-              </div>
-            </header>
-
-            {/* Mobile ToC Toggle */}
-            {isVisionProject && (
-              <div class="lg:hidden mb-6">
-                <button
-                  id="mobile-toc-toggle"
-                  class="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
-                  style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border); color: var(--c-text)"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                  </svg>
-                  Table of Contents
-                </button>
-                <div id="mobile-toc" class="hidden mt-4 p-4 rounded-lg" style="background-color: var(--c-bg-alt); border: 1px solid var(--c-border)">
-                  <nav class="space-y-1" id="mobile-toc-nav">
-                    <!-- Mobile ToC will be populated by JavaScript -->
-                  </nav>
-                </div>
-              </div>
-            )}
-
-            <!-- Content Section -->
-            <div id="main-content" class="prose max-w-none">
-              <Content />
-            </div>
-          </article>
-        </div>
-      </div>
-    </div>
+<Layout
+  title={project.data.title}
+  description={project.data.description}
+  active="projects"
+  statusLeft={`projects/${breadcrumb}`}
+  statusCenter={project.data.tags.slice(0, 3).join(' · ')}
+>
+  <!-- Breadcrumb strip -->
+  <div class="project-crumb">
+    <a href="/projects/">projects/</a>
+    <span aria-hidden="true">›</span>
+    {hasParent && parentProject && (
+      <>
+        <a href={`/projects/${parentProject.slug}/`}>{parentProject.slug}/</a>
+        <span aria-hidden="true">›</span>
+      </>
+    )}
+    <span class="project-crumb__current">README.md</span>
   </div>
 
-  {/* JavaScript for ToC generation and functionality */}
-  {isVisionProject && (
-    <script>
-      document.addEventListener('DOMContentLoaded', function(): void {
-        function generateTOC(): void {
-          const content = document.getElementById('main-content');
-          const tocNav = document.getElementById('toc-nav');
-          const mobileTocNav = document.getElementById('mobile-toc-nav');
+  <div class="project-grid" data-has-ecosystem={hasEcosystem ? 'true' : 'false'}>
+    {hasEcosystem && (
+      <aside class="project-aside">
+        <div class="project-section-label">{rootSlug} / docs</div>
+        <nav class="project-tree" aria-label="Ecosystem navigation">
+          <a
+            href={`/projects/${rootSlug}/`}
+            class="project-tree__row"
+            data-active={!hasParent ? 'true' : 'false'}
+            data-folder="true"
+          >
+            ▾ getting-started.md
+          </a>
 
-          if (!content || !tocNav || !mobileTocNav) return;
-
-          const headings = content.querySelectorAll('h2, h3, h4');
-
-          if (headings.length === 0) return;
-
-          let tocHTML = '';
-
-          headings.forEach((heading: Element): void => {
-            const textContent = heading.textContent;
-            if (!textContent) return;
-
-            const id = textContent.toLowerCase()
-              .replace(/[^\w\s-]/g, '')
-              .replace(/\s+/g, '-')
-              .replace(/--+/g, '-')
-              .trim();
-
-            heading.id = id;
-
-            const level = parseInt(heading.tagName.substring(1));
-            const text = textContent;
-
-            let indentClass = '';
-            if (level === 3) indentClass = 'ml-3';
-            else if (level === 4) indentClass = 'ml-6';
-
-            tocHTML += `
-              <div class="${indentClass}">
-                <a href="#${id}" class="block py-1 px-2 rounded text-sm transition-colors duration-200" style="color: var(--c-text-muted)" data-heading-id="${id}">
-                  ${text}
+          {Object.entries(grouped).map(([group, items]) => (
+            <>
+              <div class="project-tree__folder">▾ {group}</div>
+              {items.map(s => (
+                <a
+                  href={`/projects/${s.slug}/`}
+                  class="project-tree__row"
+                  data-active={project.slug === s.slug ? 'true' : 'false'}
+                >
+                  &nbsp;&nbsp;&nbsp;{s.slug.replace(`${rootSlug}-`, '').replace(/^.*\//, '')}.md
                 </a>
-              </div>
-            `;
-          });
+              ))}
+            </>
+          ))}
+        </nav>
+      </aside>
+    )}
 
-          tocNav.innerHTML = tocHTML;
-          mobileTocNav.innerHTML = tocHTML;
-        }
+    <article class="project-body">
+      <div class="project-body__header">
+        <h1 class="project-body__title">{project.data.title}</h1>
+        <span class="project-body__meta">MIT · {project.data.tags.find(t => t.toLowerCase() === 'typescript') ? 'TypeScript' : project.data.tags[0]}</span>
+      </div>
+      <p class="project-body__sub">{project.data.description}</p>
 
-        function setupSmoothScroll(): void {
-          document.addEventListener('click', function(e: Event): void {
-            const target = e.target as HTMLElement;
-            if (target && target.matches && target.matches('a[href^="#"]')) {
-              e.preventDefault();
-              const href = target.getAttribute('href');
-              if (!href) return;
+      <div class="project-badges">
+        {project.data.tags.slice(0, 4).map(t => (
+          <span class="project-badge">{t}</span>
+        ))}
+        {project.data.github && <a href={project.data.github} class="project-badge project-badge--link" target="_blank" rel="noopener noreferrer">↗ github</a>}
+        {project.data.npm && <a href={project.data.npm} class="project-badge project-badge--link" target="_blank" rel="noopener noreferrer">↗ npm</a>}
+        {project.data.demo && <a href={project.data.demo} class="project-badge project-badge--link" target="_blank" rel="noopener noreferrer">↗ demo</a>}
+      </div>
 
-              const targetId = href.substring(1);
-              const targetElement = document.getElementById(targetId);
-
-              if (targetElement) {
-                const offsetTop = targetElement.offsetTop - 100;
-                window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-                updateActiveHeading(targetId);
-
-                const mobileMenu = document.getElementById('mobile-toc');
-                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                  mobileMenu.classList.add('hidden');
-                }
-              }
-            }
-          });
-        }
-
-        function updateActiveHeading(activeId: string): void {
-          document.querySelectorAll('[data-heading-id]').forEach((link: Element): void => {
-            (link as HTMLElement).style.backgroundColor = '';
-            (link as HTMLElement).style.color = 'var(--c-text-muted)';
-            (link as HTMLElement).style.fontWeight = '';
-          });
-
-          document.querySelectorAll(`[data-heading-id="${activeId}"]`).forEach((link: Element): void => {
-            (link as HTMLElement).style.backgroundColor = 'var(--c-accent-muted)';
-            (link as HTMLElement).style.color = 'var(--c-accent)';
-            (link as HTMLElement).style.fontWeight = '500';
-          });
-        }
-
-        function setupScrollSpy(): void {
-          const headings = document.querySelectorAll('#main-content h2, #main-content h3, #main-content h4');
-          let currentActive = '';
-
-          function updateActiveOnScroll(): void {
-            const scrollPosition = window.scrollY + 150;
-
-            for (let i = headings.length - 1; i >= 0; i--) {
-              const heading = headings[i] as HTMLElement;
-              if (heading.offsetTop <= scrollPosition) {
-                const newActive = heading.id;
-                if (newActive !== currentActive) {
-                  currentActive = newActive;
-                  updateActiveHeading(currentActive);
-                }
-                break;
-              }
-            }
-          }
-
-          window.addEventListener('scroll', updateActiveOnScroll);
-          updateActiveOnScroll();
-        }
-
-        function setupMobileToggle(): void {
-          const toggleButton = document.getElementById('mobile-toc-toggle');
-          const mobileMenu = document.getElementById('mobile-toc');
-
-          if (toggleButton && mobileMenu) {
-            toggleButton.addEventListener('click', function(): void {
-              mobileMenu.classList.toggle('hidden');
-            });
-          }
-        }
-
-        generateTOC();
-        setupSmoothScroll();
-        setupScrollSpy();
-        setupMobileToggle();
-      });
-    </script>
-  )}
+      <div id="main-content" class="prose max-w-none workshop-prose">
+        <Content />
+      </div>
+    </article>
+  </div>
 </Layout>
+
+<style>
+  .project-crumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-bottom: 1px solid var(--c-border);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--c-text-muted);
+  }
+  .project-crumb a { color: var(--c-text-muted); }
+  .project-crumb a:hover { color: var(--c-text); }
+  .project-crumb__current { color: var(--c-text); }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .project-grid[data-has-ecosystem="true"] {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  @media (max-width: 767px) {
+    .project-grid[data-has-ecosystem="true"] { grid-template-columns: 1fr; }
+    .project-aside { display: none; }
+  }
+
+  .project-aside {
+    border-right: 1px solid var(--c-border);
+    padding: 24px 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .project-section-label {
+    padding: 0 16px 10px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+  .project-tree { padding: 0 12px; }
+  .project-tree__folder {
+    padding: 3px 10px;
+    color: var(--c-text);
+    margin-top: 8px;
+  }
+  .project-tree__row {
+    display: block;
+    padding: 3px 10px;
+    color: var(--c-text-secondary);
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .project-tree__row:hover { color: var(--c-text); }
+  .project-tree__row[data-folder="true"] { color: var(--c-text); }
+  .project-tree__row[data-active="true"] {
+    color: var(--c-text);
+    border-left-color: var(--c-accent);
+    background: var(--c-bg-card);
+  }
+
+  .project-body {
+    padding: 40px 56px;
+    max-width: 860px;
+  }
+  @media (max-width: 767px) { .project-body { padding: 32px 20px; } }
+
+  .project-body__header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .project-body__title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 52px);
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: var(--c-accent);
+  }
+  .project-body__meta {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--c-text-muted);
+  }
+  .project-body__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    color: var(--c-text-secondary);
+    margin: 0 0 20px;
+    font-style: italic;
+  }
+
+  .project-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .project-badge {
+    padding: 4px 10px;
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--c-text-secondary);
+  }
+  .project-badge--link:hover { color: var(--c-accent); border-color: var(--c-accent); }
+
+</style>

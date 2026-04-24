@@ -151,3 +151,152 @@
 .prose code::after {
   content: none;
 }
+
+/* ─────────────────────────────────────────────────────────────
+ * Workshop overrides — applied when .workshop-prose is present.
+ * Drops the serif display face in favor of mono-forward headings,
+ * Inter body, and an amber `#` prefix on H2/H3 that echoes the
+ * `#` in mono source files.
+ * ───────────────────────────────────────────────────────────── */
+.workshop-prose {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--c-text);
+  max-width: none;
+}
+.workshop-prose h1,
+.workshop-prose h2,
+.workshop-prose h3,
+.workshop-prose h4 {
+  /* Account for the 40px sticky nav so TOC jumps don't tuck under it */
+  scroll-margin-top: 72px;
+}
+.workshop-prose h1,
+.workshop-prose h2,
+.workshop-prose h3,
+.workshop-prose h4 {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-weight: 500;
+  color: var(--c-text);
+  letter-spacing: -0.01em;
+}
+.workshop-prose h2 {
+  font-size: 24px;
+  margin: 40px 0 16px;
+  padding: 0;
+  border: 0;
+}
+.workshop-prose h2::before {
+  content: '# ';
+  color: var(--c-accent-amber);
+}
+.workshop-prose h3 {
+  font-size: 19px;
+  margin: 28px 0 10px;
+  padding: 0;
+  border: 0;
+}
+.workshop-prose h3::before {
+  content: '## ';
+  color: var(--c-accent-amber);
+}
+.workshop-prose h4 {
+  font-size: 16px;
+  margin: 24px 0 8px;
+}
+.workshop-prose h4::before {
+  content: '### ';
+  color: var(--c-accent-amber);
+}
+
+/* Blockquotes — thin amber rule, no fill, italic. Quiet; doesn't compete
+ * with code blocks or callouts. */
+.workshop-prose blockquote {
+  border-left: 2px solid var(--c-accent-amber);
+  background: transparent;
+  padding: 0.1em 0 0.1em 1.25em;
+  margin: 1.5em 0;
+  font-style: italic;
+  font-size: 1em;
+  color: var(--c-text-secondary);
+  line-height: 1.65;
+}
+.workshop-prose blockquote p { color: inherit; margin-top: 0.5em; }
+.workshop-prose blockquote p:first-child { margin-top: 0; }
+.workshop-prose blockquote ul,
+.workshop-prose blockquote ol {
+  margin-top: 0.5em;
+  padding-left: 1em;
+}
+
+/* Links — ink text with a muted underline. Green only on hover, so a
+ * reference list (many adjacent links) reads as text, not highlights. */
+.workshop-prose a {
+  color: var(--c-text);
+  text-decoration: underline;
+  text-decoration-color: var(--c-border-strong);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.workshop-prose a:hover {
+  color: var(--c-accent);
+  text-decoration-color: var(--c-accent);
+}
+
+/* Ordered lists used as references — tighten spacing */
+.workshop-prose ol { padding-left: 1.5em; }
+.workshop-prose ol > li { margin-top: 0.6em; }
+.workshop-prose ol > li::marker {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.9em;
+}
+
+.workshop-prose code:not(pre code) {
+  background: var(--c-bg-card);
+  color: var(--c-accent);
+  border: 1px solid var(--c-border);
+  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+  /* Let long inline snippets break instead of blowing out the viewport. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Code blocks — always dark, Workshop chrome. A subtle top border in green
+ * echoes the "good state" vocabulary used elsewhere. */
+.workshop-prose pre {
+  background: var(--c-code-bg) !important;
+  border: 1px solid var(--c-border-strong);
+  border-top: 2px solid var(--c-accent);
+  border-radius: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 14px 16px !important;
+  color: #e6e4df !important;
+  /* Keep wide code from blowing out the parent on mobile: clamp width,
+   * scroll internally. Long lines get their own horizontal scrollbar,
+   * the page itself stays narrow. */
+  max-width: 100%;
+  overflow-x: auto;
+}
+.workshop-prose pre code { color: inherit; }
+/* Force dark Shiki tokens regardless of site theme */
+.workshop-prose .astro-code,
+.workshop-prose .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+.workshop-prose strong { color: var(--c-text); font-weight: 600; }
+
+/* Honor reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .workshop-prose a { transition: none; }
+}
+

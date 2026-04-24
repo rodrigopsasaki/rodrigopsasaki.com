@@ -1,5 +1,5 @@
 ---
-title: "Vision Express.js Integration"
+title: "vision express.js"
 description: "Complete guide to integrating Vision observability with Express.js applications, including middleware setup, configuration options, and production examples."
 tags: ["Express.js", "Vision", "Observability", "Middleware", "TypeScript"]
 parent: "vision"

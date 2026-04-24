@@ -1,5 +1,5 @@
 ---
-title: "TypeORM Integration"
+title: "vision typeorm"
 description: "Complete TypeORM integration with Vision observability. Automatic instrumentation for entities, repositories, queries, and transactions with zero configuration required."
 tags: ["TypeORM", "Database", "ORM", "Observability", "TypeScript", "SQL", "Entities", "Decorators"]
 npm: "https://www.npmjs.com/package/@rodrigopsasaki/vision-typeorm"

@@ -1,0 +1,137 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 / not found"
+  description="The page you're looking for wasn't here when we looked."
+  noindex
+  active="home"
+  statusLeft="404.md"
+  statusCenter="event: route.lookup · status: not_found"
+>
+  <section class="nf">
+    <div class="nf__log">
+      <div class="nf__log-ts">[{new Date().toISOString()}]</div>
+      <div class="nf__log-line">
+        <span class="nf__log-level">ERROR</span>
+        <span class="nf__log-key">event:</span> route.lookup
+      </div>
+      <div class="nf__log-line">
+        <span class="nf__log-indent"></span>
+        <span class="nf__log-key">status:</span> <span class="nf__log-status">not_found</span>
+      </div>
+      <div class="nf__log-line">
+        <span class="nf__log-indent"></span>
+        <span class="nf__log-key">path:</span>   <span id="nf-path" class="nf__log-path">/</span>
+      </div>
+      <div class="nf__log-line">
+        <span class="nf__log-indent"></span>
+        <span class="nf__log-key">reason:</span> no handler matched
+      </div>
+    </div>
+
+    <h1 class="nf__title">
+      <span class="nf__title-code">404</span>
+      <span class="nf__title-sep"> · </span>
+      not found
+    </h1>
+
+    <p class="nf__copy">
+      This route doesn't exist. Or it did, and I deleted it. Either way, the
+      request ran clean; there just wasn't anything to return.
+    </p>
+    <p class="nf__copy">
+      Classification without action. That's this whole essay over
+      <a href="/blog/know-where-you-are/">here</a>.
+    </p>
+
+    <div class="nf__actions">
+      <a href="/" class="nf__cta">$ cd /</a>
+      <a href="/blog/" class="nf__cta nf__cta--ghost">browse essays</a>
+      <a href="/projects/" class="nf__cta nf__cta--ghost">browse projects</a>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  // Paint the actual bad path into the log, client-side.
+  (function () {
+    var el = document.getElementById('nf-path');
+    if (el) el.textContent = window.location.pathname || '/';
+  })();
+</script>
+
+<style>
+  .nf {
+    padding: 64px 56px;
+    max-width: 860px;
+  }
+  @media (max-width: 767px) { .nf { padding: 40px 20px; } }
+
+  .nf__log {
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-accent-red);
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--c-text-secondary);
+  }
+  .nf__log-ts {
+    color: var(--c-text-muted);
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .nf__log-line { display: flex; gap: 6px; flex-wrap: wrap; }
+  .nf__log-level { color: var(--c-accent-red); }
+  .nf__log-key { color: var(--c-text-muted); min-width: 0; }
+  .nf__log-status { color: var(--c-accent-red); }
+  .nf__log-path { color: var(--c-accent-amber); word-break: break-all; }
+  .nf__log-indent { display: inline-block; width: 3.5em; }
+
+  .nf__title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 48px 0 0;
+    color: var(--c-text);
+  }
+  .nf__title-code { color: var(--c-accent-red); }
+  .nf__title-sep  { color: var(--c-text-muted); }
+
+  .nf__copy {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--c-text-secondary);
+    margin: 20px 0 0;
+    max-width: 620px;
+  }
+  .nf__copy a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .nf__copy a:hover { color: var(--c-accent-hover); }
+
+  .nf__actions {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .nf__cta {
+    padding: 8px 14px;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: 500;
+  }
+  .nf__cta--ghost {
+    background: transparent;
+    border: 1px solid var(--c-border);
+    color: var(--c-text-secondary);
+  }
+  .nf__cta--ghost:hover { border-color: var(--c-accent); color: var(--c-text); }
+</style>

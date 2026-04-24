@@ -9,13 +9,25 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
-  h1, h2, h3 {
-    font-family: 'Source Serif 4', Georgia, serif;
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    /* Prevent stray horizontal scroll from a too-wide nav row on narrow
+     * viewports. Individual scroll zones (tabs, code blocks) keep their own. */
+    overflow-x: hidden;
   }
 
-  h1 { line-height: 1.1; }
+  /* Workshop headings — mono, medium weight, tight tracking */
+  h1, h2, h3, h4 {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  h1 { line-height: 1.15; }
   h2 { line-height: 1.2; }
   h3 { line-height: 1.3; }
 
@@ -24,13 +36,22 @@
     color: var(--c-selection-text);
   }
 
-  body {
-    background-color: var(--c-bg);
-    color: var(--c-text);
+  kbd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--c-border);
+    background: var(--c-bg-card);
+    color: var(--c-text-secondary);
   }
 }
 
-/* Code block copy button */
+/* Mono/sans utilities used across pages */
+.font-mono-ui { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; }
+.font-sans-ui { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+/* Code block copy button (re-homed onto the new palette) */
 .code-block-wrapper {
   position: relative;
 }
@@ -51,7 +72,7 @@
   align-items: center;
   gap: 0.375rem;
   z-index: 10;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 .code-block-wrapper:hover .copy-button,
 .copy-button:hover {

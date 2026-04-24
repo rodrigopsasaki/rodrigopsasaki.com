@@ -1,0 +1,185 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { snap } from '../data/now';
+
+function formatTs(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+}
+---
+
+<Layout
+  title="Now"
+  description="A living snapshot of what I'm building, writing, and reading."
+  active="now"
+  statusLeft="now.yaml"
+  statusCenter="snapshot · hand-edited"
+>
+  <section class="now-hero">
+    <div class="now-hero__line">
+      <span class="now-hero__ts">{formatTs(snap.timestamp)}</span>
+      <span class="now-hero__dot">·</span>
+      <span>{snap.location}</span>
+      <span class="now-hero__dot">·</span>
+      <span class="now-hero__status">{snap.status}</span>
+    </div>
+    <h1 class="now-hero__title">
+      <span class="now-hero__sigil">$</span> cat now.yaml
+    </h1>
+    <p class="now-hero__sub">
+      A snapshot of what I'm doing right now. Updated by hand, not a feed.
+      Inspired by <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer">nownownow.com</a>.
+      If it's stale, I'm busy living. That's the point.
+    </p>
+  </section>
+
+  <div class="now-grid">
+    {snap.blocks.map(block => (
+      <section class="now-block" data-accent={block.accent ?? 'none'}>
+        <div class="now-block__label">{block.label}:</div>
+        {block.items.length === 0 ? (
+          <div class="now-block__empty">nothing right now</div>
+        ) : (
+          <ul class="now-block__list">
+            {block.items.map(i => {
+              const isExternal = !!i.href && /^https?:/.test(i.href);
+              return (
+                <li class="now-block__item">
+                  <span class="now-block__arrow">→</span>
+                  <span>
+                    {i.href ? (
+                      <a
+                        href={i.href}
+                        class="now-block__name now-block__name--link"
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noopener noreferrer' : undefined}
+                      >
+                        {i.name}{isExternal && <span aria-hidden="true"> ↗</span>}
+                      </a>
+                    ) : (
+                      <span class="now-block__name">{i.name}</span>
+                    )}
+                    <span class="now-block__detail"> · {i.detail}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+    ))}
+  </div>
+</Layout>
+
+<style>
+  .now-hero {
+    padding: 56px 56px 24px;
+    max-width: 1100px;
+  }
+  @media (max-width: 767px) { .now-hero { padding: 32px 20px 16px; } }
+
+  .now-hero__line {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--c-text-muted);
+    margin-bottom: 10px;
+  }
+  .now-hero__ts { color: var(--c-text-secondary); }
+  .now-hero__dot { margin: 0 8px; }
+  .now-hero__status { color: var(--c-accent); }
+
+  .now-hero__title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: clamp(28px, 4.5vw, 44px);
+    margin: 0;
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    color: var(--c-text);
+  }
+  .now-hero__sigil { color: var(--c-accent); }
+
+  .now-hero__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--c-text-secondary);
+    margin-top: 18px;
+    max-width: 640px;
+    line-height: 1.6;
+  }
+  .now-hero__sub a { color: var(--c-accent); }
+  .now-hero__sub a:hover { color: var(--c-accent-hover); }
+
+  .now-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 16px 56px 56px;
+    max-width: 1100px;
+  }
+  @media (max-width: 767px) {
+    .now-grid { grid-template-columns: 1fr; padding: 16px 20px 40px; }
+  }
+
+  .now-block {
+    padding: 20px;
+    background: var(--c-bg-card);
+    border: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-border-strong);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .now-block[data-accent="green"] { border-left-color: var(--c-accent); }
+  .now-block[data-accent="amber"] { border-left-color: var(--c-accent-amber); }
+  .now-block[data-accent="blue"]  { border-left-color: var(--c-accent-blue); }
+
+  .now-block__label {
+    font-size: 13px;
+    color: var(--c-text-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .now-block__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .now-block__item {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--c-text-secondary);
+    margin-bottom: 8px;
+  }
+  .now-block__item:last-child { margin-bottom: 0; }
+
+  .now-block__empty {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--c-text-muted);
+    font-style: italic;
+  }
+  .now-block__arrow {
+    color: var(--c-accent);
+    flex-shrink: 0;
+  }
+  .now-block[data-accent="amber"] .now-block__arrow { color: var(--c-accent-amber); }
+  .now-block[data-accent="blue"]  .now-block__arrow { color: var(--c-accent-blue); }
+  .now-block__name { color: var(--c-text); }
+  .now-block__name--link {
+    text-decoration: underline;
+    text-decoration-color: var(--c-border-strong);
+    text-underline-offset: 3px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+  }
+  .now-block__name--link:hover {
+    color: var(--c-accent);
+    text-decoration-color: var(--c-accent);
+  }
+  .now-block__detail {
+    color: var(--c-text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    margin-left: 4px;
+  }
+</style>

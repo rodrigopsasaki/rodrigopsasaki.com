@@ -6,6 +6,7 @@ export const personalInfo = {
   location: "São Paulo, Brazil",
   linkedin: "https://www.linkedin.com/in/rodrigopsasaki",
   github: "https://github.com/rodrigopsasaki",
+  preston: "https://preston.bot/",
 };
 
 export const summary = `Senior Software Engineer with 15 years of experience delivering scalable systems, improving software performance, and contributing across product, infrastructure, and CI/CD pipelines. Experienced in early-stage environments, end-to-end architecture, and production ownership. Pragmatic, fast-moving, and focused on product impact.`;

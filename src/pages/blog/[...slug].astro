@@ -1,10 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PrestonEssayNote from '../../components/PrestonEssayNote.astro';
 import { getCollection } from 'astro:content';
 import { getSeriesNavigation } from '../../utils/series';
+import { isBlogVisible } from '../../utils/blog-visibility';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => data.visible === true);
+  const posts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: post,
@@ -14,7 +16,7 @@ export async function getStaticPaths() {
 const post = Astro.props;
 const { Content, headings } = await post.render();
 
-const allPosts = await getCollection('blog', ({ data }) => data.visible === true);
+const allPosts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
 const { prev: prevPost, next: nextPost, seriesPosts, isInSeries, seriesName } = getSeriesNavigation(allPosts, post);
 
 const wordCount = post.body.split(/\s+/).length;
@@ -28,6 +30,8 @@ const articleData = {
   author: post.data.author || 'Rodrigo Sasaki',
   tags: post.data.tags || [],
 };
+
+const isPrestonEssay = articleData.tags.some((tag) => tag.toLowerCase() === 'preston');
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -140,6 +144,8 @@ function formatIso(iso: string): string {
       <div class="prose max-w-none workshop-prose">
         <Content />
       </div>
+
+      {isPrestonEssay && <PrestonEssayNote />}
 
       {(prevPost || nextPost) && (
         <div class="essay-next">

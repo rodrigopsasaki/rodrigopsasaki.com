@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { isBlogVisible } from './blog-visibility';
 
 type BlogPost = CollectionEntry<'blog'>;
 
@@ -34,7 +35,11 @@ export function getSeriesNavigation(allPosts: BlogPost[], currentPost: BlogPost)
   }
 
   const seriesPosts = allPosts
-    .filter((p) => p.data.visible && (p.data.series === seriesName || p.id.startsWith(seriesName + '/')))
+    .filter(
+      (p) =>
+        isBlogVisible(p.data, import.meta.env.DEV) &&
+        (p.data.series === seriesName || p.id.startsWith(seriesName + '/'))
+    )
     .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
 
   const isInSeries = seriesPosts.length > 1;

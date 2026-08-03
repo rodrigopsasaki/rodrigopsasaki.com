@@ -1,12 +1,10 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
+import { isBlogVisible } from '../utils/blog-visibility';
 
 export async function GET(context: APIContext) {
-  const posts = await getCollection(
-    'blog',
-    ({ data }) => data.visible === true && data.draft !== true
-  );
+  const posts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
 
   const items = posts
     .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())

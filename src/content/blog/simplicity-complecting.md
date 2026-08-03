@@ -6,7 +6,7 @@ tags: ["simplicity", "abstractions", "architecture", "complexity"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 seriesOrder: 3
-visible: false
+visibility: "hidden"
 ---
 
 We are complexity factories.

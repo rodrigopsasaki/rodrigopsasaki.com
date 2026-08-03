@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" aria-labelledby="title description">
+  <title id="title">One business decision has consequences throughout an organization</title>
+  <desc id="description">The decision that a trial begins at account creation supports billing, lifecycle messaging, analytics, support guidance, tests, and future review judgments.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b4b50" />
+    </marker>
+  </defs>
+  <rect width="720" height="350" fill="#17171a" />
+  <rect x="0.5" y="0.5" width="719" height="349" fill="none" stroke="#343438" />
+  <text x="36" y="36" fill="#77736c" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">ONE DECISION, MANY MATERIALIZATIONS</text>
+  <g stroke="#3e3e43" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <path d="M 274 175 C 328 175, 328 76, 388 76" />
+    <path d="M 274 175 C 328 175, 328 126, 388 126" />
+    <path d="M 274 175 C 328 175, 328 176, 388 176" />
+    <path d="M 274 175 C 328 175, 328 226, 388 226" />
+    <path d="M 274 175 C 328 175, 328 276, 388 276" />
+  </g>
+  <g font-family="Inter, system-ui, sans-serif">
+    <rect x="36" y="112" width="238" height="126" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+    <text x="56" y="143" fill="#77736c" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">BUSINESS DECISION</text>
+    <text x="56" y="177" fill="#e6e4df" font-size="16">A free trial begins when</text>
+    <text x="56" y="202" fill="#e6e4df" font-size="16">an account is created.</text>
+    <circle cx="406" cy="76" r="6" fill="#4fd1a1" />
+    <text x="424" y="81" fill="#e6e4df" font-size="14">billing expiration</text>
+    <circle cx="406" cy="126" r="6" fill="#4fd1a1" />
+    <text x="424" y="131" fill="#e6e4df" font-size="14">lifecycle email schedule</text>
+    <circle cx="406" cy="176" r="6" fill="#4fd1a1" />
+    <text x="424" y="181" fill="#e6e4df" font-size="14">conversion analytics</text>
+    <circle cx="406" cy="226" r="6" fill="#4fd1a1" />
+    <text x="424" y="231" fill="#e6e4df" font-size="14">support guidance</text>
+    <circle cx="406" cy="276" r="6" fill="#4fd1a1" />
+    <text x="424" y="269" fill="#e6e4df" font-size="14">tests and future reviews</text>
+    <text x="424" y="288" fill="#77736c" font-size="12">reasonable consequences of the same rule</text>
+    <text x="36" y="322" fill="#c3bfb8" font-size="15">The document is one expression. The decision already lives throughout the system.</text>
+  </g>
+</svg>

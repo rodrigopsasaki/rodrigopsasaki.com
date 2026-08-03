@@ -6,7 +6,7 @@ tags: ["simplicity", "architecture", "philosophy", "software design"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 seriesOrder: 0
-visible: true  
+visibility: "published"
 ---
 
 > How do we convince people that in programming, simplicity and clarity —in short: what mathematicians call "elegance"— are not a dispensable luxury, but a crucial matter that decides between success and failure?

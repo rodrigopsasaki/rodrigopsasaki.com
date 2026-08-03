@@ -6,7 +6,7 @@ tags: ["simplicity", "reliability", "testing", "architecture"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 seriesOrder: 1
-visible: false 
+visibility: "hidden"
 ---
 
 There's a lie we tell ourselves: "We handle complexity well."

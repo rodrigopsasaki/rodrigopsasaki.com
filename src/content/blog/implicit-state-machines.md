@@ -4,7 +4,7 @@ description: "How well-intentioned conditional checks evolve into something you 
 date: "2026-01-02"
 tags: ["simplicity", "state machines", "typescript", "software design", "maintainability"]
 author: "Rodrigo Sasaki"
-visible: true
+visibility: "published"
 ---
 
 Ever had some code that was genuinely straightforward at the start?

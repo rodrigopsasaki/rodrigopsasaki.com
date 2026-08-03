@@ -6,7 +6,7 @@ tags: ["simplicity", "architecture", "case-study", "design"]
 author: "Rodrigo Sasaki"
 series: "simplicity"
 seriesOrder: 4
-visible: false
+visibility: "hidden"
 ---
 
 Let me tell you about a queue that didn't stay a queue.

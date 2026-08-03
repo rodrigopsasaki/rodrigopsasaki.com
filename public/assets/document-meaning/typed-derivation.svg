@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">The trial decision represented as a typed derivation graph</title>
+  <desc id="description">Standing claims ground an access decision and a trial policy. Those decisions compose into a visible rule. A new enterprise requirement creates a tension with the access decision. A human decision supersedes it, producing a revised trial rule and marking downstream consequences for reconsideration.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b5b62" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#65a7e8" />
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a985d6" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="760" fill="#17171a" />
+  <rect x="0.5" y="0.5" width="1199" height="759" fill="none" stroke="#343438" />
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#aaa69f">
+    <text x="40" y="42">THE STANDING DERIVATION</text>
+    <text x="40" y="410">A NEW CLAIM CHANGES THE WALK</text>
+  </g>
+  <line x1="40" y1="382" x2="1160" y2="382" stroke="#343438" />
+
+  <g fill="none" stroke="#65a7e8" stroke-width="2.2" marker-end="url(#arrow-blue)">
+    <path d="M 290 123 C 320 123, 326 123, 356 123" />
+    <path d="M 290 283 C 320 283, 326 283, 356 283" />
+    <path d="M 626 123 C 670 123, 670 187, 714 200" />
+    <path d="M 626 283 C 670 283, 670 231, 714 218" />
+  </g>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="#65a7e8">
+    <text x="302" y="112">GROUNDS</text>
+    <text x="302" y="272">GROUNDS</text>
+    <text x="650" y="159">GROUNDS</text>
+  </g>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <g>
+      <rect x="40" y="72" width="250" height="102" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+      <text x="60" y="99" fill="#4fd1a1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C1 · VALUE · STANDS</text>
+      <text x="60" y="130" fill="#e6e4df" font-size="15">Users should reach a usable</text>
+      <text x="60" y="153" fill="#e6e4df" font-size="15">product with minimal friction.</text>
+    </g>
+
+    <g>
+      <rect x="40" y="232" width="250" height="102" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+      <text x="60" y="259" fill="#4fd1a1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C2 · CONSTRAINT · STANDS</text>
+      <text x="60" y="290" fill="#e6e4df" font-size="15">The model funds seven days</text>
+      <text x="60" y="313" fill="#e6e4df" font-size="15">of actual product use.</text>
+    </g>
+
+    <g>
+      <rect x="356" y="72" width="270" height="102" rx="4" fill="#101012" stroke="#65a7e8" stroke-width="2" />
+      <text x="376" y="99" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C3 · DECISION · STANDS</text>
+      <text x="376" y="130" fill="#e6e4df" font-size="15">Account creation grants</text>
+      <text x="376" y="153" fill="#e6e4df" font-size="15">access immediately.</text>
+    </g>
+
+    <g>
+      <rect x="356" y="232" width="270" height="102" rx="4" fill="#101012" stroke="#65a7e8" stroke-width="2" />
+      <text x="376" y="259" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C4 · POLICY · STANDS</text>
+      <text x="376" y="290" fill="#e6e4df" font-size="15">The trial follows the beginning</text>
+      <text x="376" y="313" fill="#e6e4df" font-size="15">of usable access.</text>
+    </g>
+
+    <g>
+      <rect x="714" y="150" width="276" height="126" rx="4" fill="#101012" stroke="#a985d6" stroke-width="2" />
+      <text x="734" y="179" fill="#a985d6" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C5 · COMPOSITION · STANDS</text>
+      <text x="734" y="213" fill="#e6e4df" font-size="16">A free trial begins when</text>
+      <text x="734" y="238" fill="#e6e4df" font-size="16">an account is created.</text>
+      <text x="734" y="261" fill="#aaa69f" font-size="13">draws on C3 + C4</text>
+    </g>
+
+    <g fill="#e6e4df" font-size="14">
+      <circle cx="1050" cy="162" r="6" fill="#4fd1a1" />
+      <text x="1068" y="167">billing</text>
+      <circle cx="1050" cy="212" r="6" fill="#4fd1a1" />
+      <text x="1068" y="217">lifecycle</text>
+      <circle cx="1050" cy="262" r="6" fill="#4fd1a1" />
+      <text x="1068" y="267">analytics</text>
+    </g>
+    <g fill="none" stroke="#4b4b50" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 990 213 C 1014 213, 1014 162, 1038 162" />
+      <path d="M 990 213 C 1014 213, 1014 212, 1038 212" />
+      <path d="M 990 213 C 1014 213, 1014 262, 1038 262" />
+    </g>
+
+    <g>
+      <rect x="40" y="460" width="276" height="112" rx="4" fill="#101012" stroke="#d5a84b" stroke-width="2" />
+      <text x="60" y="488" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C6 · REQUIREMENT · STANDS</text>
+      <text x="60" y="521" fill="#e6e4df" font-size="15">An account must exist before</text>
+      <text x="60" y="544" fill="#e6e4df" font-size="15">enterprise access should begin.</text>
+    </g>
+
+    <g>
+      <!-- A tension is a relation between claims, not a conclusion reached by either one. -->
+      <path d="M 316 480 L 329 451" fill="none" stroke="#101012" stroke-width="7" stroke-linecap="round" />
+      <path d="M 316 480 L 329 451" fill="none" stroke="#d5a84b" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 329 409 L 329 198 L 356 166" fill="none" stroke="#101012" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 329 409 L 329 198 L 356 166" fill="none" stroke="#d5a84b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="316" cy="480" r="4" fill="#d5a84b" />
+      <circle cx="356" cy="166" r="4" fill="#d5a84b" />
+      <path d="M 350 394 L 386 430 L 350 466 L 314 430 Z" fill="#101012" stroke="#d5a84b" stroke-width="2" />
+      <path d="M 337 417 L 363 443 M 363 417 L 337 443" stroke="#d5a84b" stroke-width="2" />
+      <text x="395" y="426" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">TENSION</text>
+      <text x="395" y="448" fill="#c3bfb8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C6 ↔ C3</text>
+    </g>
+
+    <g>
+      <rect x="430" y="460" width="300" height="112" rx="4" fill="#101012" stroke="#a985d6" stroke-width="2" />
+      <text x="450" y="488" fill="#a985d6" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C7 · HUMAN DECISION · RATIFIED</text>
+      <text x="450" y="521" fill="#e6e4df" font-size="15">Account creation records the customer.</text>
+      <text x="450" y="544" fill="#e6e4df" font-size="15">Activation grants access.</text>
+    </g>
+
+    <path d="M 700 460 C 690 400, 680 250, 626 150" fill="none" stroke="#a985d6" stroke-width="2" marker-end="url(#arrow-purple)" />
+    <rect x="630" y="350" width="116" height="24" rx="3" fill="#17171a" />
+    <text x="640" y="367" fill="#a985d6" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">SUPERSEDES C3</text>
+
+    <g>
+      <rect x="800" y="460" width="240" height="112" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+      <text x="820" y="488" fill="#4fd1a1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C8 · COMPOSITION · STANDS</text>
+      <text x="820" y="521" fill="#e6e4df" font-size="15">The trial begins when the</text>
+      <text x="820" y="544" fill="#e6e4df" font-size="15">workspace is activated.</text>
+    </g>
+
+    <g fill="none" stroke="#65a7e8" stroke-width="2.2" marker-end="url(#arrow-blue)">
+      <path d="M 730 516 C 756 516, 766 516, 800 516" />
+      <path d="M 626 283 C 746 283, 714 470, 800 498" />
+    </g>
+    <text x="741" y="503" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">GROUNDS</text>
+
+    <g>
+      <path d="M 1040 516 C 1054 516, 1060 516, 1080 516" fill="none" stroke="#d5a84b" stroke-width="2" marker-end="url(#arrow)" />
+      <rect x="1080" y="452" width="96" height="128" rx="4" fill="#101012" stroke="#d5a84b" stroke-width="2" />
+      <text x="1128" y="480" text-anchor="middle" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">C9+</text>
+      <text x="1128" y="507" text-anchor="middle" fill="#e6e4df" font-size="13">billing</text>
+      <text x="1128" y="528" text-anchor="middle" fill="#e6e4df" font-size="13">emails</text>
+      <text x="1128" y="549" text-anchor="middle" fill="#e6e4df" font-size="13">analytics</text>
+      <text x="1128" y="570" text-anchor="middle" fill="#aaa69f" font-size="12">reconsider</text>
+    </g>
+
+    <text x="40" y="655" fill="#c3bfb8" font-size="16">The claim survived as history. Its standing changed, the replacement kept the still-valid grounds, and the graph found what followed.</text>
+    <text x="40" y="688" fill="#aaa69f" font-size="14">The forward walk is not a search for similar words. It follows the claims that were actually allowed to depend on the superseded decision.</text>
+  </g>
+</svg>

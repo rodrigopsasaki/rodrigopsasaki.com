@@ -4,7 +4,7 @@ description: "Why identifying state and acting on it should be two separate oper
 date: "2026-04-07"
 tags: ["simplicity", "state machines", "typescript", "software design", "maintainability"]
 author: "Rodrigo Sasaki"
-visible: true
+visibility: "published"
 ---
 
 It's 4 AM. A 14-year-old is at an adult party. Someone needs to explain how this happened.

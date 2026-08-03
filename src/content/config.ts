@@ -1,5 +1,6 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'zod';
+import { BLOG_VISIBILITIES } from '../utils/blog-visibility';
 
 const blogSchema = z.object({
   title: z.string(),
@@ -7,8 +8,7 @@ const blogSchema = z.object({
   tags: z.array(z.string()),
   description: z.string(),
   lang: z.string().default('en'),
-  draft: z.boolean().default(false),
-  visible: z.boolean().default(false),
+  visibility: z.enum(BLOG_VISIBILITIES),
   author: z.string().optional(),
   lastModified: z.string().optional(),
   series: z.string().optional(),

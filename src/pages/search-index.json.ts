@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { personalInfo, summary, experience, education, skillCategories } from '../data/cv-data';
+import { isBlogVisible } from '../utils/blog-visibility';
 
 interface SearchItem {
   id: string;
@@ -80,9 +81,8 @@ export const GET: APIRoute = async () => {
 
     // Index blog posts
     try {
-      const posts = await getCollection(
-        'blog',
-        ({ data }) => data.draft !== true && data.visible === true
+      const posts = await getCollection('blog', ({ data }) =>
+        isBlogVisible(data, import.meta.env.DEV)
       );
 
       const blogItems: SearchItem[] = posts.map((post) => {

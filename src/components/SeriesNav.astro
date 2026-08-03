@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { isBlogVisible } from '../utils/blog-visibility';
 
 interface Props {
   currentPath?: string;
@@ -15,7 +16,9 @@ let seriesStructure: {
 } | null = null;
 
 if (seriesName) {
-  const allPosts = await getCollection('blog', ({ data }) => data.visible === true);
+  const allPosts = await getCollection('blog', ({ data }) =>
+    isBlogVisible(data, import.meta.env.DEV)
+  );
 
   const seriesPosts = allPosts
     .filter(post => post.data.series === seriesName || post.id.startsWith(seriesName + '/'))

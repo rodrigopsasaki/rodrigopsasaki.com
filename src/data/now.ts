@@ -17,22 +17,28 @@ export interface NowSnapshot {
 }
 
 export const snap: NowSnapshot = {
-  timestamp: '2026-04-23T22:00:00-03:00',
+  timestamp: '2026-08-03T14:00:00-03:00',
   location: 'São Paulo, BR',
-  status: 'building · studying',
+  status: 'building · writing',
 
   blocks: [
     {
       label: 'building', accent: 'green',
       items: [
+        { name: 'preston',   detail: 'mapping what software teams believe and why',          href: 'https://preston.bot/' },
         { name: 'phyxius',   detail: 'composable primitives for resilient Node.js systems', href: '/projects/phyxius/' },
         { name: 'runic',     detail: 'the filesystem-as-CLI, getting sharper',              href: '/projects/runic/' },
-        { name: 'this site', detail: 'redesign in flight, mono-forward' },
       ],
     },
     {
       label: 'writing', accent: 'amber',
-      items: [],
+      items: [
+        {
+          name: 'A document cannot be the belief',
+          detail: 'why decisions need their reasons and consequences attached',
+          href: '/blog/a-document-cannot-be-the-belief/',
+        },
+      ],
     },
     {
       label: 'watching', accent: 'blue',

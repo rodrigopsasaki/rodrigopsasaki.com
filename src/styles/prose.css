@@ -146,6 +146,32 @@
 .prose sup { font-size: 0.75em; }
 .prose sup a { text-decoration: none; }
 
+/* Bibliographic anchors */
+.prose sup.citation {
+  margin-left: 0.12em;
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+.prose sup.citation a {
+  color: var(--c-accent);
+  text-decoration: none;
+}
+
+.prose sup.citation a:hover {
+  color: var(--c-text);
+}
+
+.prose .reading-back {
+  margin-left: 0.35em;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  text-decoration: none;
+}
+
 /* Remove backtick pseudo-elements from Tailwind defaults */
 .prose code::before,
 .prose code::after {
@@ -299,4 +325,3 @@
 @media (prefers-reduced-motion: reduce) {
   .workshop-prose a { transition: none; }
 }
-

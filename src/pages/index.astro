@@ -2,9 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { snap } from '../data/now';
+import { isBlogVisible } from '../utils/blog-visibility';
 
 // Real content
-const allPosts = await getCollection('blog', ({ data }) => data.visible === true);
+const allPosts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
 const recentPosts = allPosts
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
   .slice(0, 5);
@@ -127,8 +128,9 @@ tz:      America/Sao_Paulo  // UTC-3
       </h1>
 
       <p class="home-lede">
-        15+ years in backend and infrastructure. Now learning to
-        leverage AI to its full potential.
+        15+ years in backend and infrastructure. Now building
+        <a href="https://preston.bot/" target="_blank" rel="noopener noreferrer">Preston <span aria-hidden="true">↗</span></a>,
+        a system that maps what software teams believe and why.
       </p>
 
       <div class="home-actions">
@@ -203,6 +205,7 @@ tz:      America/Sao_Paulo  // UTC-3
       <div>
         <div class="home-section-label">// elsewhere</div>
         <ul class="home-links">
+          <li><a href="https://preston.bot/" target="_blank" rel="noopener noreferrer">preston.bot <span aria-hidden="true">↗</span></a></li>
           <li><a href="https://github.com/rodrigopsasaki" target="_blank" rel="noopener noreferrer">github.com/rodrigopsasaki <span aria-hidden="true">↗</span></a></li>
           <li><a href="https://www.linkedin.com/in/rodrigopsasaki" target="_blank" rel="noopener noreferrer">linkedin/in/rodrigopsasaki <span aria-hidden="true">↗</span></a></li>
         </ul>
@@ -333,6 +336,16 @@ tz:      America/Sao_Paulo  // UTC-3
     margin: 28px 0 0;
     max-width: 680px;
     text-wrap: pretty;
+  }
+  .home-lede a {
+    color: var(--c-accent);
+    text-decoration: underline;
+    text-decoration-color: var(--c-border-strong);
+    text-underline-offset: 3px;
+  }
+  .home-lede a:hover {
+    color: var(--c-accent-hover);
+    text-decoration-color: var(--c-accent);
   }
 
   .home-actions {

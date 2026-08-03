@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title description">
+  <title id="title">The reasoning behind a business decision</title>
+  <desc id="description">A product value and a financial constraint each support a smaller decision. Immediate access at account creation and a trial clock based on usable access compose into a trial beginning at account creation. That visible rule then supports consequences throughout the company.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b4b50" />
+    </marker>
+  </defs>
+  <rect width="960" height="500" fill="#17171a" />
+  <rect x="0.5" y="0.5" width="959" height="499" fill="none" stroke="#343438" />
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#77736c">
+    <text x="34" y="36">REASONS</text>
+    <text x="258" y="36">SMALLER DECISIONS</text>
+    <text x="548" y="36">COMPOSITION</text>
+    <text x="808" y="36">CONSEQUENCES</text>
+  </g>
+
+  <g stroke="#45454a" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <path d="M 208 118 C 226 118, 230 118, 250 118" />
+    <path d="M 208 312 C 226 312, 230 312, 250 312" />
+    <path d="M 500 118 C 526 118, 522 196, 548 211" />
+    <path d="M 500 312 C 526 312, 522 240, 548 229" />
+    <path d="M 768 220 C 790 220, 786 102, 808 102" />
+    <path d="M 768 220 C 790 220, 788 181, 808 181" />
+    <path d="M 768 220 C 790 220, 788 260, 808 260" />
+    <path d="M 768 220 C 790 220, 786 339, 808 339" />
+  </g>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <circle cx="46" cy="96" r="6" fill="#4fd1a1" />
+    <text x="64" y="92" fill="#e6e4df" font-size="13">Users should reach a usable</text>
+    <text x="64" y="112" fill="#e6e4df" font-size="13">product with minimal friction.</text>
+    <text x="64" y="135" fill="#77736c" font-size="11">product value</text>
+
+    <circle cx="46" cy="290" r="6" fill="#4fd1a1" />
+    <text x="64" y="286" fill="#e6e4df" font-size="13">The model funds seven days</text>
+    <text x="64" y="306" fill="#e6e4df" font-size="13">of actual product use.</text>
+    <text x="64" y="329" fill="#77736c" font-size="11">financial constraint</text>
+
+    <rect x="250" y="64" width="250" height="108" rx="4" fill="#101012" stroke="#65a7e8" stroke-width="2" />
+    <text x="270" y="91" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">ACCESS BOUNDARY</text>
+    <text x="270" y="122" fill="#e6e4df" font-size="14">Creating an account grants</text>
+    <text x="270" y="144" fill="#e6e4df" font-size="14">access immediately.</text>
+
+    <rect x="250" y="258" width="250" height="108" rx="4" fill="#101012" stroke="#65a7e8" stroke-width="2" />
+    <text x="270" y="285" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">TRIAL POLICY</text>
+    <text x="270" y="316" fill="#e6e4df" font-size="14">The trial clock begins when</text>
+    <text x="270" y="338" fill="#e6e4df" font-size="14">usable access begins.</text>
+
+    <rect x="548" y="158" width="220" height="124" rx="4" fill="#101012" stroke="#a985d6" stroke-width="2" />
+    <text x="568" y="187" fill="#a985d6" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">VISIBLE RULE</text>
+    <text x="568" y="220" fill="#e6e4df" font-size="15">A free trial begins when</text>
+    <text x="568" y="244" fill="#e6e4df" font-size="15">an account is created.</text>
+    <text x="568" y="265" fill="#77736c" font-size="11">draws on both decisions</text>
+
+    <circle cx="820" cy="102" r="6" fill="#4fd1a1" />
+    <text x="838" y="107" fill="#e6e4df" font-size="13">billing</text>
+    <circle cx="820" cy="181" r="6" fill="#4fd1a1" />
+    <text x="838" y="186" fill="#e6e4df" font-size="13">lifecycle</text>
+    <circle cx="820" cy="260" r="6" fill="#4fd1a1" />
+    <text x="838" y="265" fill="#e6e4df" font-size="13">analytics</text>
+    <circle cx="820" cy="339" r="6" fill="#4fd1a1" />
+    <text x="838" y="344" fill="#e6e4df" font-size="13">reviews</text>
+
+    <text x="34" y="420" fill="#d2cfc9" font-size="16">A claim can be a consequence when you walk left and a reason when you walk right.</text>
+    <text x="34" y="451" fill="#aaa69f" font-size="14">Most artifacts preserve the visible rule and its outputs. Expertise reconstructs the chain that made the rule sensible.</text>
+  </g>
+</svg>

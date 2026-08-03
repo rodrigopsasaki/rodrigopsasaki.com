@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 620" role="img" aria-labelledby="title description">
+  <title id="title">A tension revises an upstream decision before propagating</title>
+  <desc id="description">The existing decision that account creation grants immediate access conflicts with a new enterprise requirement that accounts exist before access. A human revision separates account creation from activation. The unchanged policy that trials follow usable access then produces a revised trial rule, whose consequences require reconsideration.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b4b50" />
+    </marker>
+  </defs>
+  <rect width="1040" height="620" fill="#17171a" />
+  <rect x="0.5" y="0.5" width="1039" height="619" fill="none" stroke="#343438" />
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#77736c">
+    <text x="34" y="36">THE CONFLICT</text>
+    <text x="34" y="284">THE REVISION</text>
+    <text x="666" y="284">WHAT FOLLOWS</text>
+  </g>
+
+  <g stroke="#45454a" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <path d="M 310 130 C 338 130, 350 130, 380 130" />
+    <path d="M 650 130 C 620 130, 610 130, 580 130" />
+    <path d="M 480 174 C 480 208, 480 228, 480 258" />
+    <path d="M 638 348 C 660 348, 654 406, 676 421" />
+    <path d="M 254 420 C 402 520, 594 518, 676 449" />
+    <path d="M 884 430 C 906 430, 900 350, 922 350" />
+    <path d="M 884 430 C 906 430, 900 430, 922 430" />
+    <path d="M 884 430 C 906 430, 900 510, 922 510" />
+  </g>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <rect x="34" y="72" width="276" height="116" rx="4" fill="#101012" stroke="#d5a84b" stroke-width="2" />
+    <text x="54" y="100" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">EXISTING DECISION</text>
+    <text x="54" y="132" fill="#e6e4df" font-size="14">Creating an account grants</text>
+    <text x="54" y="154" fill="#e6e4df" font-size="14">access immediately.</text>
+    <text x="54" y="176" fill="#77736c" font-size="11">grounded by minimal friction</text>
+
+    <path d="M 443 93 L 480 130 L 443 167 L 406 130 Z" fill="#101012" stroke="#d5a84b" stroke-width="2" />
+    <path d="M 465 115 L 495 145 M 495 115 L 465 145" stroke="#d5a84b" stroke-width="2" />
+    <text x="451" y="195" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">TENSION</text>
+
+    <rect x="650" y="72" width="276" height="116" rx="4" fill="#101012" stroke="#65a7e8" stroke-width="2" />
+    <text x="670" y="100" fill="#65a7e8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">NEW REQUIREMENT</text>
+    <text x="670" y="132" fill="#e6e4df" font-size="14">An enterprise account must exist</text>
+    <text x="670" y="154" fill="#e6e4df" font-size="14">before access should begin.</text>
+    <text x="670" y="176" fill="#77736c" font-size="11">grounded by onboarding</text>
+
+    <rect x="322" y="304" width="316" height="108" rx="4" fill="#101012" stroke="#a985d6" stroke-width="2" />
+    <text x="342" y="331" fill="#a985d6" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">HUMAN REVISION</text>
+    <text x="342" y="362" fill="#e6e4df" font-size="14">Account creation records the customer.</text>
+    <text x="342" y="384" fill="#e6e4df" font-size="14">Workspace activation grants access.</text>
+
+    <rect x="34" y="340" width="220" height="108" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+    <text x="54" y="367" fill="#4fd1a1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">STILL STANDS</text>
+    <text x="54" y="398" fill="#e6e4df" font-size="14">The trial clock follows</text>
+    <text x="54" y="420" fill="#e6e4df" font-size="14">the beginning of usable access.</text>
+
+    <rect x="676" y="370" width="208" height="120" rx="4" fill="#101012" stroke="#4fd1a1" stroke-width="2" />
+    <text x="696" y="398" fill="#4fd1a1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">REVISED RULE</text>
+    <text x="696" y="430" fill="#e6e4df" font-size="14">The free trial begins at</text>
+    <text x="696" y="452" fill="#e6e4df" font-size="14">workspace activation.</text>
+    <text x="696" y="474" fill="#77736c" font-size="11">draws on both decisions</text>
+
+    <circle cx="932" cy="350" r="6" fill="#d5a84b" />
+    <text x="950" y="355" fill="#e6e4df" font-size="12">billing</text>
+    <circle cx="932" cy="430" r="6" fill="#d5a84b" />
+    <text x="950" y="435" fill="#e6e4df" font-size="12">emails</text>
+    <circle cx="932" cy="510" r="6" fill="#d5a84b" />
+    <text x="950" y="515" fill="#e6e4df" font-size="12">reviews</text>
+
+    <text x="34" y="552" fill="#d2cfc9" font-size="16">The new claim did not replace the visible rule directly. It challenged one of the decisions that produced it.</text>
+    <text x="34" y="583" fill="#aaa69f" font-size="14">The team resolved the tension. The revision then propagated through the still-standing trial policy to everything on the right.</text>
+  </g>
+</svg>

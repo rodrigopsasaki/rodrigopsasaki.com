@@ -1,8 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { isBlogVisible } from '../../utils/blog-visibility';
 
-const posts = await getCollection('blog', ({ data }) => data.draft !== true && data.visible === true);
+const posts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
 const sorted = posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
 // Compute reading time (~200 wpm)

@@ -146,25 +146,38 @@
 .prose sup { font-size: 0.75em; }
 .prose sup a { text-decoration: none; }
 
-/* Bibliographic anchors */
-.prose sup.citation {
-  margin-left: 0.12em;
-  font-family: var(--font-mono);
-  font-size: 0.62em;
-  line-height: 0;
-  vertical-align: super;
-}
-
-.prose sup.citation a {
+/* Footnotes: semantic labels in Markdown are the source of truth. */
+.prose [data-footnote-ref] {
   color: var(--c-accent);
+  font-family: var(--font-mono);
   text-decoration: none;
 }
 
-.prose sup.citation a:hover {
+.prose [data-footnote-ref]::before {
+  content: '[';
+}
+
+.prose [data-footnote-ref]::after {
+  content: ']';
+}
+
+.prose [data-footnote-ref]:hover {
   color: var(--c-text);
 }
 
-.prose .reading-back {
+.prose [data-footnotes] {
+  margin-top: 0;
+}
+
+.prose [data-footnotes] > h2 {
+  display: none;
+}
+
+.prose [data-footnotes] ol {
+  margin-top: 0;
+}
+
+.prose [data-footnote-backref] {
   margin-left: 0.35em;
   white-space: nowrap;
   font-family: var(--font-mono);

@@ -133,7 +133,7 @@ Only then does the change propagate to the trial rule. The separate decision tha
 
 This is not an unrelated rule replacing the old one. The downstream decision changed because one of the claims supporting it was superseded.
 
-The desire to minimize friction still has [standing](https://preston.bot/docs/standing). So does the seven-day financial constraint. So does the decision to measure the trial from usable access. The organization preserved all of that and revised the smallest part that could no longer hold.<sup class="citation" id="citation-5"><a href="#reading-5" aria-label="See reading note 5">[5]</a></sup>
+The desire to minimize friction still has [standing](https://preston.bot/docs/standing). So does the seven-day financial constraint. So does the decision to measure the trial from usable access. The organization preserved all of that and revised the smallest part that could no longer hold.<sup class="citation" id="citation-2"><a href="#reading-2" aria-label="See reading note 2">[2]</a></sup>
 
 ![An enterprise onboarding requirement creates a tension with immediate access at account creation. A human revision changes the access boundary, which then revises the trial rule and marks its consequences for reconsideration.](/assets/document-meaning/ground-shift.svg)
 
@@ -175,7 +175,7 @@ A team can write down what it believes.
 
 The document cannot _be_ the belief.
 
-The distinction from the beginning should be clearer now. The sentence inside the document is something that can be considered, supported, challenged, or corrected. It is a claim.<sup class="citation" id="citation-2"><a href="#reading-2" aria-label="See reading note 2">[2]</a></sup>
+The distinction from the beginning should be clearer now. The sentence inside the document is something that can be considered, supported, challenged, or corrected. It is a claim.<sup class="citation" id="citation-3"><a href="#reading-3" aria-label="See reading note 3">[3]</a></sup>
 
 Belief is the team’s current stance toward that claim. It means the claim is presently allowed to participate in judgment: people may reason from it, make decisions from it, and expect future work to respect what follows from it.
 
@@ -197,7 +197,7 @@ A document can preserve a claim. A belief is the current permission to reason fr
 
 The structure is not mystical, but it is hard to see at first.
 
-It is made from small claims and explicit relationships between them. Unlike a list, that representation knows that the enterprise requirement creates a tension with the access boundary rather than with the visible trial rule. It knows which decision a human superseded. It knows that the trial policy still stands, and it can walk forward from the revision to find the conclusions that depended on what changed.<sup class="citation" id="citation-3"><a href="#reading-3" aria-label="See reading note 3">[3]</a></sup>
+It is made from small claims and explicit relationships between them. Unlike a list, that representation knows that the enterprise requirement creates a tension with the access boundary rather than with the visible trial rule. It knows which decision a human superseded. It knows that the trial policy still stands, and it can walk forward from the revision to find the conclusions that depended on what changed.<sup class="citation" id="citation-5"><a href="#reading-5" aria-label="See reading note 5">[5]</a></sup>
 
 ![A typed derivation graph represents claims with standing, grounds, a tension, a human supersession, and forward propagation into revised consequences.](/assets/document-meaning/typed-derivation.svg)
 
@@ -228,15 +228,15 @@ We already model the artifacts. Why are we not modeling the thing people spend t
     <a href="https://plato.stanford.edu/archives/spr2023/entries/belief/index.html"><cite>Belief</cite>, Stanford Encyclopedia of Philosophy</a>. This is useful because it separates the content of a proposition from the attitude of taking it to be true. That distinction is the hinge of this essay: storing the sentence is not the same thing as maintaining the stance toward it. <a class="reading-back" href="#citation-1" aria-label="Return to citation 1">back to [1]</a>
   </li>
   <li id="reading-2">
-    <a href="https://plato.stanford.edu/archives/spr2022/entries/assertion/"><cite>Assertion</cite>, Stanford Encyclopedia of Philosophy</a>. The discussion of assertion as commitment is especially relevant. A claim enters a public space in which its author can be asked for grounds and other people can become entitled to reason from it. That is much richer than treating a claim as text in a field. <a class="reading-back" href="#citation-2" aria-label="Return to citation 2">back to [2]</a>
+    <a href="https://plato.stanford.edu/archives/spr2008/entries/logic-belief-revision/"><cite>Logic of Belief Revision</cite>, Stanford Encyclopedia of Philosophy</a>. Belief revision asks how to incorporate new information while giving up as little as necessary. It is the formal relative of what the trial example does: preserve what still stands and revise the smallest part that cannot. <a class="reading-back" href="#citation-2" aria-label="Return to citation 2">back to [2]</a>
   </li>
   <li id="reading-3">
-    <a href="https://www.csc2.ncsu.edu/faculty/jdoyle2/publications/ijcai77.pdf"><cite>A Truth Maintenance System</cite>, Jon Doyle</a>. Doyle's early TMS work treats recorded justifications as the basis for deciding which beliefs are supported. It supplies the computational move underneath the article: when support changes, belief and its consequences can be reconsidered without erasing the history that made them intelligible. <a class="reading-back" href="#citation-3" aria-label="Return to citation 3">back to [3]</a>
+    <a href="https://plato.stanford.edu/archives/spr2022/entries/assertion/"><cite>Assertion</cite>, Stanford Encyclopedia of Philosophy</a>. The discussion of assertion as commitment is especially relevant. A claim enters a public space in which its author can be asked for grounds and other people can become entitled to reason from it. That is much richer than treating a claim as text in a field. <a class="reading-back" href="#citation-3" aria-label="Return to citation 3">back to [3]</a>
   </li>
   <li id="reading-4">
     <a href="https://www.dekleer.org/Publications/An%20Assumption-Based%20TMS.pdf"><cite>An Assumption-Based TMS</cite>, Johan de Kleer</a>. De Kleer models beliefs as supported under explicit sets of assumptions rather than simply true or false. That is relevant to the essay's use of standing: what matters is not only the proposition, but the current support under which a system may reason from it. The paper also contains a distinction that deserves an essay of its own: lacking belief in a claim is not the same as believing its negation. <a class="reading-back" href="#citation-4" aria-label="Return to citation 4">back to [4]</a>
   </li>
   <li id="reading-5">
-    <a href="https://plato.stanford.edu/archives/spr2008/entries/logic-belief-revision/"><cite>Logic of Belief Revision</cite>, Stanford Encyclopedia of Philosophy</a>. Belief revision asks how to incorporate new information while giving up as little as necessary. It is the formal relative of what the trial example does: preserve what still stands and revise the smallest part that cannot. <a class="reading-back" href="#citation-5" aria-label="Return to citation 5">back to [5]</a>
+    <a href="https://www.csc2.ncsu.edu/faculty/jdoyle2/publications/ijcai77.pdf"><cite>A Truth Maintenance System</cite>, Jon Doyle</a>. Doyle's early TMS work treats recorded justifications as the basis for deciding which beliefs are supported. It supplies the computational move underneath the article: when support changes, belief and its consequences can be reconsidered without erasing the history that made them intelligible. <a class="reading-back" href="#citation-5" aria-label="Return to citation 5">back to [5]</a>
   </li>
 </ol>

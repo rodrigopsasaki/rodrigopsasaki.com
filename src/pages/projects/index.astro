@@ -4,7 +4,8 @@ import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects', ({ data }) => data.visible === true);
 const topLevel = projects.filter(p => !p.data.parent);
-const sorted = topLevel.sort((a, b) => {
+const flagship = topLevel.find(p => p.data.flagship) ?? null;
+const supporting = topLevel.filter(p => !p.data.flagship).sort((a, b) => {
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
   return (a.data.order ?? 999) - (b.data.order ?? 999);
@@ -39,10 +40,10 @@ function asideFor(slug: string): string | null {
 
 <Layout
   title="Projects"
-  description="Libraries I maintain and use in production."
+  description="Systems and tools I maintain, including Preston: persistent engineering memory for coding agents."
   active="projects"
   statusLeft="projects · list view"
-  statusCenter={`${sorted.length} repos`}
+  statusCenter={`${topLevel.length} projects`}
 >
   <section class="projects-hero">
     <div class="projects-hero__crumb">// projects/</div>
@@ -50,69 +51,163 @@ function asideFor(slug: string): string | null {
       <span class="projects-hero__sigil">$</span> ls ~/projects
     </h1>
     <p class="projects-hero__sub">
-      Libraries I maintain and use in production every day. Each is an opinion
-      about how a thing should work, written down.
+      Systems and tools I maintain. Each is an opinion about what software should remember, require,
+      or make impossible.
     </p>
   </section>
 
-  <div class="projects-grid">
-    {sorted.map(p => {
-      const ints = integrationsFor(p.slug);
-      const npm = npmNameFor(p.slug);
-      const aside = asideFor(p.slug);
-      return (
-        <a href={`/projects/${p.slug}/`} class="projects-card">
-          <!-- Traffic-light title bar -->
-          <div class="projects-card__titlebar">
-            <div class="projects-card__lights" aria-hidden="true">
-              <span class="projects-card__light projects-card__light--red"></span>
-              <span class="projects-card__light projects-card__light--amber"></span>
-              <span class="projects-card__light projects-card__light--green"></span>
+  {
+    flagship && (
+      <section class="projects-flagship" aria-labelledby="flagship-title">
+        <div class="projects-flagship__meta">
+          <span class="projects-flagship__pulse" aria-hidden="true" />
+          current work · in active development
+        </div>
+
+        <div class="projects-flagship__layout">
+          <div class="projects-flagship__copy">
+            <h2 id="flagship-title" class="projects-flagship__title">
+              {flagship.data.title}
+            </h2>
+            <p class="projects-flagship__lead">{flagship.data.description}</p>
+            <p class="projects-flagship__detail">
+              It turns code, decisions, and conversations into context that coding agents can
+              consult and PR reviews can enforce. Every conclusion keeps its <em>why</em>, all the
+              way down.
+            </p>
+
+            <div class="projects-flagship__tags">
+              {flagship.data.tags.map((t) => (
+                <span>{t}</span>
+              ))}
             </div>
-            <span class="projects-card__path">~/github/rodrigopsasaki/{p.slug}</span>
-            <div class="projects-card__titlebar-spacer"></div>
-            {p.data.featured && <span class="projects-card__star">★ featured</span>}
+
+            <div class="projects-flagship__actions">
+              <a href={flagship.data.demo} target="_blank" rel="noopener noreferrer">
+                open Preston <span aria-hidden="true">↗</span>
+              </a>
+              <a href="/blog/a-document-cannot-be-the-belief/" class="projects-flagship__essay">
+                read the idea behind it <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
 
-          <!-- Body -->
-          <div class="projects-card__body">
-            <h2 class="projects-card__title">{p.data.title}</h2>
-            <p class="projects-card__sub">{p.data.description}</p>
-
-            <div class="projects-card__install">
-              <div class="projects-card__install-cmt"># install</div>
-              <div>
-                <span class="projects-card__install-sigil">$</span>{' '}
-                <span class="projects-card__install-cmd">npm install</span>{' '}
-                <span class="projects-card__install-pkg">{npm}</span>
+          <div
+            class="projects-flagship__map"
+            aria-label="Preston connects team decisions and code evidence to future work"
+          >
+            <div class="projects-flagship__map-label">// one decision, carried forward</div>
+            <div class="projects-flagship__map-flow">
+              <div class="projects-flagship__sources">
+                <span class="projects-flagship__node projects-flagship__node--team">
+                  team decision
+                </span>
+                <span class="projects-flagship__node projects-flagship__node--code">
+                  code evidence
+                </span>
+                <span class="projects-flagship__node projects-flagship__node--history">
+                  past decisions
+                </span>
               </div>
-              {aside && (
-                <div class="projects-card__install-aside"># {aside}</div>
-              )}
+              <span class="projects-flagship__flow-arrow" aria-hidden="true">
+                →
+              </span>
+              <div class="projects-flagship__result">
+                <span class="projects-flagship__node projects-flagship__node--belief">
+                  what applies now
+                </span>
+                <span class="projects-flagship__output">
+                  <span aria-hidden="true">↳</span> coding agents
+                </span>
+                <span class="projects-flagship__output">
+                  <span aria-hidden="true">↳</span> PR reviews
+                </span>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
-            <div class="projects-card__tags">
-              {p.data.tags.map(t => <span class="projects-card__tag">{t}</span>)}
-            </div>
+  <section class="projects-supporting" aria-labelledby="supporting-title">
+    <div class="projects-supporting__header">
+      <div>
+        <div class="projects-supporting__eyebrow">// other work</div>
+        <h2 id="supporting-title">Libraries, foundations, and tools</h2>
+      </div>
+      <p>Foundations, experiments, and tools that remain useful on their own.</p>
+    </div>
 
-            {ints.length > 0 && (
-              <div class="projects-card__ints">
-                <div class="projects-card__ints-label">Integrations</div>
-                <div class="projects-card__ints-list">
-                  {ints.map(i => <span class="projects-card__int">{i}</span>)}
+    <div class="projects-grid">
+      {
+        supporting.map((p) => {
+          const ints = integrationsFor(p.slug);
+          const npm = npmNameFor(p.slug);
+          const aside = asideFor(p.slug);
+          return (
+            <a href={`/projects/${p.slug}/`} class="projects-card">
+              {/* Traffic-light title bar */}
+              <div class="projects-card__titlebar">
+                <div class="projects-card__lights" aria-hidden="true">
+                  <span class="projects-card__light projects-card__light--red" />
+                  <span class="projects-card__light projects-card__light--amber" />
+                  <span class="projects-card__light projects-card__light--green" />
+                </div>
+                <span class="projects-card__path">~/github/rodrigopsasaki/{p.slug}</span>
+                <div class="projects-card__titlebar-spacer" />
+              </div>
+
+              {/* Body */}
+              <div class="projects-card__body">
+                <div class="projects-card__heading">
+                  <h2 class="projects-card__title">{p.data.title}</h2>
+                  {p.slug === 'phyxius' && (
+                    <span class="projects-card__relationship">Preston runs on this</span>
+                  )}
+                </div>
+                <p class="projects-card__sub">{p.data.description}</p>
+
+                <div class="projects-card__install">
+                  <div class="projects-card__install-cmt"># install</div>
+                  <div>
+                    <span class="projects-card__install-sigil">$</span>{' '}
+                    <span class="projects-card__install-cmd">npm install</span>{' '}
+                    <span class="projects-card__install-pkg">{npm}</span>
+                  </div>
+                  {aside && <div class="projects-card__install-aside"># {aside}</div>}
+                </div>
+
+                <div class="projects-card__tags">
+                  {p.data.tags.map((t) => (
+                    <span class="projects-card__tag">{t}</span>
+                  ))}
+                </div>
+
+                {ints.length > 0 && (
+                  <div class="projects-card__ints">
+                    <div class="projects-card__ints-label">Integrations</div>
+                    <div class="projects-card__ints-list">
+                      {ints.map((i) => (
+                        <span class="projects-card__int">{i}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div class="projects-card__actions">
+                  <span class="projects-card__cta">$ open docs</span>
+                  {p.data.github && (
+                    <span class="projects-card__cta projects-card__cta--ghost">git clone ↗</span>
+                  )}
                 </div>
               </div>
-            )}
-
-            <div class="projects-card__actions">
-              <span class="projects-card__cta">$ open docs</span>
-              {p.data.github && <span class="projects-card__cta projects-card__cta--ghost">git clone ↗</span>}
-            </div>
-          </div>
-        </a>
-      );
-    })}
-  </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
 </Layout>
 
 <style>
@@ -145,6 +240,230 @@ function asideFor(slug: string): string | null {
     margin-top: 18px;
     max-width: 600px;
     line-height: 1.6;
+  }
+
+  .projects-flagship {
+    margin: 22px 56px 56px;
+    padding: 18px 24px 28px;
+    border: 1px solid var(--c-border-strong);
+    border-top: 2px solid var(--c-accent);
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--c-accent) 5%, transparent), transparent 45%),
+      var(--c-bg-card);
+  }
+  .projects-flagship__meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--c-border);
+    color: var(--c-text-muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .projects-flagship__pulse {
+    width: 7px;
+    height: 7px;
+    background: var(--c-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-accent) 14%, transparent);
+  }
+  .projects-flagship__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+    gap: clamp(40px, 7vw, 92px);
+    align-items: center;
+    padding-top: 28px;
+  }
+  .projects-flagship__title {
+    margin: 0;
+    color: var(--c-text);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .projects-flagship__lead {
+    max-width: 720px;
+    margin: 18px 0 0;
+    color: var(--c-text);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(19px, 2.2vw, 26px);
+    line-height: 1.42;
+  }
+  .projects-flagship__detail {
+    max-width: 680px;
+    margin: 14px 0 0;
+    color: var(--c-text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .projects-flagship__detail em {
+    color: var(--c-accent);
+    font-style: normal;
+  }
+  .projects-flagship__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 20px;
+  }
+  .projects-flagship__tags span {
+    padding: 3px 8px;
+    border: 1px solid var(--c-border);
+    color: var(--c-text-secondary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+  }
+  .projects-flagship__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-top: 26px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .projects-flagship__actions a:first-child {
+    padding: 9px 14px;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: 600;
+  }
+  .projects-flagship__essay {
+    color: var(--c-text-secondary);
+    border-bottom: 1px dotted var(--c-text-muted);
+  }
+  .projects-flagship__essay:hover {
+    color: var(--c-text);
+  }
+  .projects-flagship__map {
+    min-width: 0;
+    padding: 20px;
+    border-left: 1px solid var(--c-border);
+    background: color-mix(in srgb, var(--c-bg) 78%, transparent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+  }
+  .projects-flagship__map-label {
+    margin-bottom: 16px;
+    color: var(--c-text-muted);
+  }
+  .projects-flagship__map-flow {
+    display: grid;
+    grid-template-columns: minmax(108px, 1fr) 28px minmax(120px, 1fr);
+    align-items: center;
+    gap: 10px;
+  }
+  .projects-flagship__sources,
+  .projects-flagship__result {
+    display: grid;
+    gap: 9px;
+  }
+  .projects-flagship__node {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 8px;
+    border: 1px solid var(--c-border);
+    color: var(--c-text-secondary);
+  }
+  .projects-flagship__node--team {
+    border-color: var(--c-accent-amber);
+  }
+  .projects-flagship__node--code {
+    border-color: var(--c-accent-blue);
+  }
+  .projects-flagship__node--history {
+    border-color: var(--c-border-strong);
+  }
+  .projects-flagship__node--belief {
+    border-color: var(--c-accent);
+    color: var(--c-text);
+  }
+  .projects-flagship__flow-arrow {
+    color: var(--c-accent);
+    font-size: 18px;
+    text-align: center;
+  }
+  .projects-flagship__output {
+    display: flex;
+    gap: 7px;
+    padding-left: 8px;
+    color: var(--c-text-secondary);
+  }
+  .projects-flagship__output span {
+    color: var(--c-text-muted);
+  }
+
+  .projects-supporting {
+    border-top: 1px solid var(--c-border);
+  }
+  .projects-supporting__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 38px 56px 4px;
+  }
+  .projects-supporting__eyebrow {
+    color: var(--c-text-muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .projects-supporting__header h2 {
+    margin: 8px 0 0;
+    color: var(--c-text);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 500;
+  }
+  .projects-supporting__header p {
+    max-width: 420px;
+    margin: 4px 0 0;
+    color: var(--c-text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 900px) {
+    .projects-flagship__layout {
+      grid-template-columns: 1fr;
+    }
+    .projects-flagship__map {
+      max-width: 600px;
+    }
+  }
+  @media (max-width: 767px) {
+    .projects-flagship {
+      margin: 20px 20px 42px;
+      padding: 16px 18px 22px;
+    }
+    .projects-flagship__layout {
+      gap: 30px;
+      padding-top: 22px;
+    }
+    .projects-flagship__map {
+      padding: 16px 12px;
+    }
+    .projects-flagship__map-flow {
+      grid-template-columns: minmax(100px, 1fr) 18px minmax(108px, 1fr);
+      gap: 6px;
+    }
+    .projects-flagship__node {
+      padding: 4px 6px;
+    }
+    .projects-supporting__header {
+      display: block;
+      padding: 30px 20px 2px;
+    }
+    .projects-supporting__header p {
+      margin-top: 12px;
+    }
   }
 
   .projects-grid {
@@ -185,16 +504,30 @@ function asideFor(slug: string): string | null {
   .projects-card__light--green { background: var(--c-accent); }
   .projects-card__path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .projects-card__titlebar-spacer { flex: 1; }
-  .projects-card__star { color: var(--c-accent-amber); flex-shrink: 0; }
 
   .projects-card__body { padding: 24px; }
+  .projects-card__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
   .projects-card__title {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 28px;
     margin: 0;
     font-weight: 500;
-    letter-spacing: -0.012em;
+    letter-spacing: 0;
     color: var(--c-text);
+  }
+  .projects-card__relationship {
+    padding: 3px 7px;
+    border: 1px solid color-mix(in srgb, var(--c-accent) 45%, var(--c-border));
+    color: var(--c-accent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px;
+    line-height: 1.4;
+    white-space: nowrap;
   }
   .projects-card__sub {
     font-family: 'Inter', sans-serif;

@@ -24,6 +24,7 @@ const projectSchema = z.object({
   github: z.string().url().optional(),
   demo: z.string().url().optional(),
   npm: z.string().url().optional(),
+  flagship: z.boolean().default(false),
   featured: z.boolean().default(false),
   visible: z.boolean().default(false),
   order: z.number().optional(),

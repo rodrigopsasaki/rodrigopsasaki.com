@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="980" viewBox="0 0 760 980" role="img" aria-labelledby="title desc">
+  <title id="title">A new claim enters a truth-maintenance graph and asks for semantic relationships</title>
+  <desc id="desc">Tweety is a bird and birds normally fly support the standing belief that Tweety flies. When the new claim Tweety is a penguin arrives, an observer can propose two questions: whether penguin implies bird and whether penguin defeats the default that birds fly. A human or domain reasoner must answer and ratify those relationships before propagation becomes mechanical.</desc>
+
+  <defs>
+    <marker id="ah-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 1 1 L 6.5 4 L 1 7" fill="none" stroke="#65a7e8" stroke-width="1.1" stroke-opacity="0.9" stroke-linecap="round"/>
+    </marker>
+    <marker id="ah-gold" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 1 1 L 6.5 4 L 1 7" fill="none" stroke="#d5a84b" stroke-width="1.1" stroke-opacity="0.9" stroke-linecap="round"/>
+    </marker>
+    <marker id="ah-purple" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 1 1 L 6.5 4 L 1 7" fill="none" stroke="#a985d6" stroke-width="1.1" stroke-opacity="0.9" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect x="1" y="1" width="758" height="978" rx="8" fill="#141416" stroke="#28282c" stroke-width="1"/>
+  <text x="40" y="48" fill="#8a8883" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="600" letter-spacing="2.5">A NEW CLAIM ENTERS THE GRAPH</text>
+
+  <text x="40" y="92" fill="#6d6c68" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="1.5">WHAT ALREADY STANDS</text>
+
+  <rect x="40" y="112" width="290" height="112" rx="7" fill="#17171a" stroke="#4fd1a1" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="62" y="145" fill="#4fd1a1" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C1 · OBSERVATION</text>
+  <text x="62" y="190" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety is a bird.</text>
+
+  <rect x="40" y="254" width="290" height="112" rx="7" fill="#17171a" stroke="#65a7e8" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="62" y="287" fill="#65a7e8" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C2 · DEFAULT</text>
+  <text x="62" y="332" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Birds normally fly.</text>
+
+  <path d="M 330 168 C 385 168, 382 213, 426 213" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.55" marker-end="url(#ah-blue)"/>
+  <path d="M 330 310 C 385 310, 382 243, 426 243" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.55" marker-end="url(#ah-blue)"/>
+  <text x="352" y="181" fill="#65a7e8" fill-opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">supports</text>
+  <text x="352" y="303" fill="#65a7e8" fill-opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">supports</text>
+
+  <rect x="436" y="167" width="284" height="136" rx="7" fill="#17171a" stroke="#a985d6" stroke-width="1" stroke-opacity="0.55"/>
+  <text x="458" y="201" fill="#a985d6" fill-opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C3 · BELIEF · STANDS</text>
+  <text x="458" y="246" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety flies.</text>
+  <text x="458" y="278" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">because C1 + C2</text>
+
+  <line x1="40" y1="408" x2="720" y2="408" stroke="#28282c" stroke-width="1"/>
+  <text x="40" y="448" fill="#6d6c68" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="1.5">THE NEW CLAIM ASKS FOR RELATIONSHIPS</text>
+
+  <rect x="40" y="472" width="290" height="138" rx="7" fill="none" stroke="#d5a84b" stroke-width="6" stroke-opacity="0.1"/>
+  <rect x="40" y="472" width="290" height="138" rx="7" fill="#18160f" stroke="#d5a84b" stroke-width="1.2" stroke-opacity="0.8"/>
+  <text x="62" y="506" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C4 · OBSERVATION</text>
+  <text x="62" y="551" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety is a penguin.</text>
+  <text x="62" y="583" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">no edges yet</text>
+
+  <path d="M 330 514 C 365 514, 372 505, 400 505" fill="none" stroke="#d5a84b" stroke-width="1.25" stroke-opacity="0.75" stroke-dasharray="4 5" marker-end="url(#ah-gold)"/>
+  <path d="M 330 570 C 365 570, 372 627, 400 627" fill="none" stroke="#d5a84b" stroke-width="1.25" stroke-opacity="0.75" stroke-dasharray="4 5" marker-end="url(#ah-gold)"/>
+
+  <rect x="410" y="466" width="310" height="96" rx="7" fill="#18160f" stroke="#d5a84b" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="5 5"/>
+  <text x="432" y="498" fill="#d5a84b" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600" letter-spacing="1.2">CANDIDATE RELATION</text>
+  <text x="432" y="536" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="500">Does penguin imply bird?</text>
+
+  <rect x="410" y="584" width="310" height="104" rx="7" fill="#18160f" stroke="#d5a84b" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="5 5"/>
+  <text x="432" y="616" fill="#d5a84b" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600" letter-spacing="1.2">CANDIDATE RELATION</text>
+  <text x="432" y="651" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="500">Does it defeat</text>
+  <text x="432" y="677" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="500">“birds normally fly”?</text>
+
+  <rect x="40" y="760" width="680" height="138" rx="7" fill="#161419" stroke="#a985d6" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="64" y="796" fill="#a985d6" fill-opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">INTERPRETATION REQUIRED</text>
+  <text x="64" y="837" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="500">A human or domain reasoner answers the questions</text>
+  <text x="64" y="865" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="500">and ratifies typed edges.</text>
+  <text x="64" y="886" fill="#807e79" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">then propagation is mechanical</text>
+
+  <path d="M 470 760 C 470 724, 500 716, 500 694" fill="none" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.7" marker-end="url(#ah-purple)"/>
+  <path d="M 650 760 C 650 716, 670 595, 670 568" fill="none" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.7" marker-end="url(#ah-purple)"/>
+  <text x="427" y="728" fill="#a985d6" fill-opacity="0.8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">human needed here</text>
+
+  <line x1="40" y1="936" x2="68" y2="936" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.6"/>
+  <text x="78" y="941" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">committed edge</text>
+  <line x1="218" y1="936" x2="246" y2="936" stroke="#d5a84b" stroke-width="1.25" stroke-opacity="0.75" stroke-dasharray="4 5"/>
+  <text x="256" y="941" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">proposed relation</text>
+  <line x1="427" y1="936" x2="455" y2="936" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.7"/>
+  <text x="465" y="941" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">decision about the graph</text>
+</svg>

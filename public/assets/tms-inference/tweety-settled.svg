@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="704" viewBox="0 0 760 704" role="img" aria-labelledby="title desc">
+  <title id="title">The settled Tweety graph after the new edges are ratified</title>
+  <desc id="desc">The penguin claim is committed: it supports Tweety is a bird and stands as an exception that defeats the default that birds normally fly. The belief that Tweety flies loses standing but is kept as history, and the revised belief that Tweety does not fly stands, supported by the penguin claim and the ratified exception.</desc>
+
+  <defs>
+    <marker id="ah-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 1 1 L 6.5 4 L 1 7" fill="none" stroke="#65a7e8" stroke-width="1.1" stroke-opacity="0.9" stroke-linecap="round"/>
+    </marker>
+    <marker id="ah-gold" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 1 1 L 6.5 4 L 1 7" fill="none" stroke="#d5a84b" stroke-width="1.1" stroke-opacity="0.9" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect x="1" y="1" width="758" height="702" rx="8" fill="#141416" stroke="#28282c" stroke-width="1"/>
+  <text x="40" y="48" fill="#8a8883" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="600" letter-spacing="2.5">THE GRAPH, SETTLED</text>
+
+  <rect x="40" y="90" width="300" height="118" rx="7" fill="#17171a" stroke="#4fd1a1" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="62" y="122" fill="#4fd1a1" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C1 · OBSERVATION</text>
+  <text x="62" y="158" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety is a bird.</text>
+
+  <rect x="40" y="240" width="300" height="118" rx="7" fill="#17171a" stroke="#65a7e8" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="62" y="272" fill="#65a7e8" fill-opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C2 · DEFAULT</text>
+  <text x="62" y="308" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Birds normally fly.</text>
+
+  <rect x="450" y="90" width="280" height="140" rx="7" fill="#151517" stroke="#4a4950" stroke-width="1" stroke-opacity="0.8"/>
+  <text x="472" y="122" fill="#807e79" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C3 · BELIEF · OUT</text>
+  <text x="472" y="158" fill="#8e8c87" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety flies.</text>
+  <text x="472" y="206" fill="#6d6c68" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">support defeated</text>
+  <text x="472" y="222" fill="#6d6c68" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">kept as history</text>
+
+  <rect x="40" y="402" width="300" height="118" rx="7" fill="none" stroke="#d5a84b" stroke-width="6" stroke-opacity="0.1"/>
+  <rect x="40" y="402" width="300" height="118" rx="7" fill="#18160f" stroke="#d5a84b" stroke-width="1.2" stroke-opacity="0.8"/>
+  <text x="62" y="434" fill="#d5a84b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C4 · OBSERVATION · NEW</text>
+  <text x="62" y="470" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety is a penguin.</text>
+
+  <rect x="450" y="402" width="280" height="140" rx="7" fill="#17171a" stroke="#a985d6" stroke-width="1" stroke-opacity="0.55"/>
+  <text x="472" y="434" fill="#a985d6" fill-opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1.2">C5 · BELIEF · STANDS</text>
+  <text x="472" y="470" fill="#ece9e4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500">Tweety does not fly.</text>
+  <text x="472" y="522" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">because C4 + the exception</text>
+
+  <path d="M 340 149 C 395 149, 400 145, 444 145" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.28" stroke-dasharray="3 5"/>
+  <path d="M 340 299 C 400 299, 405 190, 442 172" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.28" stroke-dasharray="3 5"/>
+  <line x1="393" y1="236" x2="405" y2="248" stroke="#d5a84b" stroke-width="1.5" stroke-opacity="0.9"/>
+  <line x1="405" y1="236" x2="393" y2="248" stroke="#d5a84b" stroke-width="1.5" stroke-opacity="0.9"/>
+
+  <path d="M 60 402 C 24 368, 24 244, 60 210" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.55" marker-end="url(#ah-blue)"/>
+  <text x="74" y="384" fill="#65a7e8" fill-opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">supports</text>
+  <circle cx="33" cy="306" r="4.5" fill="#141416" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.9"/>
+
+  <path d="M 340 440 C 385 424, 396 330, 398 254" fill="none" stroke="#d5a84b" stroke-width="1.25" stroke-opacity="0.75" marker-end="url(#ah-gold)"/>
+  <text x="412" y="350" fill="#d5a84b" fill-opacity="0.8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">exception · defeats</text>
+  <circle cx="385" cy="369" r="4.5" fill="#141416" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.9"/>
+
+  <path d="M 340 480 C 390 480, 395 474, 440 474" fill="none" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.55" marker-end="url(#ah-blue)"/>
+  <text x="352" y="464" fill="#65a7e8" fill-opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">supports</text>
+
+  <rect x="40" y="576" width="400" height="68" rx="7" fill="#161419" stroke="#a985d6" stroke-width="1" stroke-opacity="0.4"/>
+  <circle cx="66" cy="602" r="4.5" fill="none" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.9"/>
+  <text x="82" y="607" fill="#a985d6" fill-opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600" letter-spacing="1">a human ratified these edges</text>
+  <text x="82" y="628" fill="#807e79" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">then propagation was mechanical</text>
+
+  <line x1="40" y1="668" x2="68" y2="668" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.6"/>
+  <text x="78" y="673" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">committed support</text>
+  <line x1="228" y1="668" x2="256" y2="668" stroke="#65a7e8" stroke-width="1.25" stroke-opacity="0.28" stroke-dasharray="3 5"/>
+  <text x="266" y="673" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">defeated support</text>
+  <line x1="416" y1="668" x2="444" y2="668" stroke="#d5a84b" stroke-width="1.25" stroke-opacity="0.75"/>
+  <text x="454" y="673" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">exception</text>
+  <circle cx="560" cy="668" r="4.5" fill="none" stroke="#a985d6" stroke-width="1.25" stroke-opacity="0.9"/>
+  <text x="574" y="673" fill="#8e8c87" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">human-ratified edge</text>
+</svg>

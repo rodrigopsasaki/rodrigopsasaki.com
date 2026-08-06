@@ -82,6 +82,7 @@ function formatIso(iso: string): string {
   <div class="essay-grid">
     <!-- Left: TOC + frontmatter -->
     <aside class="essay-aside essay-aside--left">
+      <div class="essay-aside__inner">
       <div class="essay-section-label">Outline</div>
       <nav class="essay-outline" aria-label="Table of contents">
         {outline.length === 0 ? (
@@ -130,6 +131,7 @@ function formatIso(iso: string): string {
           </nav>
         </>
       )}
+      </div>
     </aside>
 
     <!-- Center: article -->
@@ -169,6 +171,7 @@ function formatIso(iso: string): string {
 
     <!-- Right: margin meta -->
     <aside class="essay-aside essay-aside--right">
+      <div class="essay-aside__inner">
       <div>
         <div class="essay-section-label">Reading</div>
         <div class="essay-reading">
@@ -189,6 +192,7 @@ function formatIso(iso: string): string {
       <div>
         <div class="essay-section-label">Share</div>
         <div class="essay-share">rodrigopsasaki.com/blog/<br/>{post.slug}</div>
+      </div>
       </div>
     </aside>
   </div>
@@ -279,19 +283,31 @@ function formatIso(iso: string): string {
 
   /* ───── Asides ────────────────────────────────────────────── */
   .essay-aside {
-    padding: 24px 0;
-    overflow-y: auto;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  /* The aside spans the full grid row (keeping its column border);
+   * the inner wrapper is what pins to the viewport and scrolls if
+   * taller than the space between nav (40px) and status bar (28px). */
+  .essay-aside__inner {
+    position: sticky;
+    top: 40px;
+    max-height: calc(100vh - 68px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 24px 0;
   }
   .essay-aside--left  { border-right: 1px solid var(--c-border); }
   .essay-aside--right {
     border-left: 1px solid var(--c-border);
+    font-size: 12px;
+    color: var(--c-text-secondary);
+  }
+  .essay-aside--right .essay-aside__inner {
     padding: 24px 20px;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    font-size: 12px;
-    color: var(--c-text-secondary);
   }
 
   .essay-section-label {

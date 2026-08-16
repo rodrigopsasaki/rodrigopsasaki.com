@@ -334,6 +334,141 @@
 
 .workshop-prose strong { color: var(--c-text); font-weight: 600; }
 
+/* Essay-native chat. This is intentionally UI, not illustration: the bar-chart
+ * image later in the essay owns the comic register. */
+.workshop-prose .essay-chat {
+  margin: 1.5em 0;
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 10px;
+  background: var(--c-bg-card);
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--c-bg) 55%, transparent);
+  font-style: normal;
+}
+
+.workshop-prose .essay-chat__chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.workshop-prose .essay-chat__chrome span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-border-strong);
+}
+
+.workshop-prose .essay-chat__messages {
+  padding: 18px 20px 20px;
+}
+
+.workshop-prose .essay-chat__message {
+  display: flex;
+}
+
+.workshop-prose .essay-chat__message + .essay-chat__message {
+  margin-top: 12px;
+}
+
+.workshop-prose .essay-chat__message--received {
+  justify-content: flex-start;
+}
+
+.workshop-prose .essay-chat__message--sent {
+  justify-content: flex-end;
+}
+
+.workshop-prose .essay-chat__text {
+  max-width: min(82%, 440px);
+  margin: 0;
+  padding: 10px 13px;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.workshop-prose .essay-chat__message--received .essay-chat__text {
+  border-radius: 4px 12px 12px 12px;
+  background: var(--c-bg-alt);
+}
+
+.workshop-prose .essay-chat__message--sent .essay-chat__text {
+  border-color: color-mix(in oklab, var(--c-accent-blue) 34%, var(--c-border));
+  border-radius: 12px 4px 12px 12px;
+  background: color-mix(in oklab, var(--c-accent-blue) 16%, var(--c-bg-card));
+  color: var(--c-text);
+}
+
+.workshop-prose .essay-chat__text strong {
+  color: var(--c-accent-red);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.93em;
+  letter-spacing: 0.015em;
+}
+
+/* These remain semantic blockquotes, but their visible grammar is quotation
+ * marks rather than the default Workshop rule. */
+.workshop-prose .essay-prompt-quotes {
+  display: grid;
+  gap: 10px;
+  margin: 1.5em 0;
+}
+
+.workshop-prose .essay-prompt-quote {
+  position: relative;
+  margin: 0;
+  padding: 5px 34px;
+  border: 0;
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.94em;
+  font-style: normal;
+  line-height: 1.55;
+  quotes: '“' '”';
+}
+
+.workshop-prose .essay-prompt-quote::before,
+.workshop-prose .essay-prompt-quote::after {
+  position: absolute;
+  color: var(--c-accent-amber);
+  font-family: Georgia, serif;
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.workshop-prose .essay-prompt-quote::before {
+  top: -2px;
+  left: 3px;
+  content: open-quote;
+}
+
+.workshop-prose .essay-prompt-quote::after {
+  right: 3px;
+  bottom: -10px;
+  content: close-quote;
+}
+
+.workshop-prose .essay-prompt-quote p {
+  margin: 0;
+  color: inherit;
+}
+
+@media (max-width: 520px) {
+  .workshop-prose .essay-chat__messages {
+    padding: 16px;
+  }
+
+  .workshop-prose .essay-prompt-quote {
+    padding-inline: 28px;
+  }
+}
+
 /* Honor reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .workshop-prose a { transition: none; }

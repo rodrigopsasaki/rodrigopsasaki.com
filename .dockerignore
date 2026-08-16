@@ -39,3 +39,8 @@ Dockerfile
 Thumbs.db
 README.md
 MISSION.md
+
+# Local image-generation sources; the article ships the optimized WebP only.
+public/images/have-you-tried-increasing-the-font-bars.png
+public/images/have-you-tried-increasing-the-font-chat.png
+public/images/have-you-tried-increasing-the-font-prompts.png

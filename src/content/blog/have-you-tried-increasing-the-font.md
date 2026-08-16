@@ -59,7 +59,7 @@ What would be the biggest?
 
 Security? Perhaps maintainability? Maybe both? Or runtime aliveness instead? If security and aliveness are in direct conflict, if push comes to shove and the safe move is to take the system down, which would be its own catastrophe, which font size wins? Also, can two smaller ones gang up? Does maintainability *plus* aliveness sum to outweigh security, the way weights do?
 
-![A SECURITY bar dressed as a guard challenges a taller bar made from MAINTAINABILITY and ALIVENESS stacked together, saying "FITE ME."](/images/have-you-tried-increasing-the-font-bars.webp)
+![A SECURITY bar dressed as a guard challenges a taller bar made from MAINTAINABILITY and ALIVENESS stacked together, saying "FITE ME."](/images/have-you-tried-increasing-the-font-bars-v2.webp)
 
 The question is absurd the moment you ask it out loud, and it's absurd for a precise reason: **the structure isn't a scalar.** You can't project it onto one axis without losing meaningful information that would help the agent understand what you actually wanted to express when you selected those values.
 

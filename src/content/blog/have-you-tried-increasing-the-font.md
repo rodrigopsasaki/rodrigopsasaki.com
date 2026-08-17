@@ -1,5 +1,5 @@
 ---
-title: "Have you tried increasing the font?"
+title: "Prompts Are Flat. Intent Has Geometry."
 description: "Caps lock is a volume knob that doesn't exist, and a persona is a label that doesn't unpack. Both are compressions of a structure we never had a way to write down."
 date: "2026-08-16"
 tags: ["ai", "prompting", "context", "agents", "preston"]

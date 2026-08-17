@@ -49,8 +49,12 @@ const structuredData = {
   timeRequired: `PT${readingTime}M`,
 };
 
-// Build an outline from H2s (numbered 01..N) for the TOC.
-const h2s = headings.filter(h => h.depth === 2);
+/* Build an outline from H2s (numbered 01..N) for the TOC.
+ * `footnote-label` is remark-gfm's own screen-reader-only heading for the
+ * generated footnotes list. It is redundant next to the essay's own
+ * "Notes and further reading" H2, and because it never renders it also
+ * poisons the active-section math (offsetTop 0 wins every comparison). */
+const h2s = headings.filter(h => h.depth === 2 && h.slug !== "footnote-label");
 const outline = h2s.map((h, i) => ({ n: String(i + 1).padStart(2, '0'), text: h.text, slug: h.slug }));
 
 function formatIso(iso: string): string {
@@ -205,9 +209,12 @@ function formatIso(iso: string): string {
     const meta = document.getElementById('reading-meta') as HTMLElement | null;
     const article = document.querySelector<HTMLElement>('.essay-body');
     const outlineLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.essay-outline__row'));
-    const headings = outlineLinks
-      .map(a => document.getElementById(a.hash.slice(1)))
-      .filter((el): el is HTMLElement => !!el);
+    /* Keep each link paired with its heading. Mapping to a filtered heading
+     * array and then indexing `outlineLinks` by that array's index silently
+     * highlights the wrong row as soon as one target fails to resolve. */
+    const sections = outlineLinks
+      .map(a => ({ link: a, heading: document.getElementById(a.hash.slice(1)) }))
+      .filter((s): s is { link: HTMLAnchorElement; heading: HTMLElement } => !!s.heading);
 
     function update() {
       if (!article) return;
@@ -218,14 +225,17 @@ function formatIso(iso: string): string {
       if (fill) fill.style.width = `${Math.round(pct * 100)}%`;
       if (meta) meta.textContent = `${Math.round(pct * 100)}% read`;
 
-      // Active outline
+      // Active outline: the last heading whose top has passed the read line.
       const y = window.scrollY + 140;
-      let activeIdx = -1;
-      for (let i = 0; i < headings.length; i++) {
-        if (headings[i].offsetTop <= y) activeIdx = i;
+      let active: HTMLAnchorElement | null = null;
+      for (const { link, heading } of sections) {
+        // An unrendered heading (offsetParent null) reports top 0, which would
+        // satisfy every comparison and pin the highlight to the last entry.
+        if (heading.offsetParent === null) continue;
+        if (heading.getBoundingClientRect().top + window.scrollY <= y) active = link;
       }
-      outlineLinks.forEach((a, i) => {
-        a.dataset.active = i === activeIdx ? 'true' : 'false';
+      outlineLinks.forEach(a => {
+        a.dataset.active = a === active ? 'true' : 'false';
       });
     }
 

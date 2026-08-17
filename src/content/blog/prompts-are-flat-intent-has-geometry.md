@@ -61,7 +61,7 @@ Security? Perhaps maintainability? Maybe both? Or runtime aliveness instead? If 
 
 ![A SECURITY bar dressed as a guard challenges a taller bar made from MAINTAINABILITY and ALIVENESS stacked together, saying "FITE ME."](/images/have-you-tried-increasing-the-font-bars-v2.webp)
 
-The question is absurd the moment you ask it out loud, and it's absurd for a precise reason: **the structure isn't a scalar.** You can't project it onto one axis without losing meaningful information that would help the agent understand what you actually wanted to express when you selected those values.
+The question is absurd the moment you ask it out loud, and it's absurd for a precise reason: **the structure isn't a scalar.**[^incommensurable] You can't project it onto one axis without losing meaningful information that would help the agent understand what you actually wanted to express when you selected those values.
 
 Preston holds what I called an "override axiom" that says: *if the system is not running, nothing else matters until it is.* I don't express it as font size 999. If it were a number, some sufficiently large pile of other concerns could out-vote it, and that's exactly the outcome that rule exists to prevent. It isn't a weight at all. It's an **interrupt**. It doesn't queue behind the other principles waiting its turn. It pre-empts them.
 
@@ -170,3 +170,7 @@ The generative part still matters. We are not trying to specify the body down to
 I've written before that a belief is [something you are presently willing to reason *from*](/blog/a-document-cannot-be-the-belief/). That's the shape of what's missing here, arriving from the other direction. Prompts state conclusions. The thing we keep failing to transmit is the structure underneath them: what supports what, what outranks what, what invalidates what, and what is allowed to interrupt everything else.
 
 Caps lock is what that looks like when you have no other way to say it.
+
+## Notes and further reading
+
+[^incommensurable]: [*Incommensurable Values*, Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/value-incommensurable/). Two things are incommensurable when there is no single unit that measures both. That is the precise version of what goes wrong with font size: security and uptime are not small and large amounts of one substance, so any number you assign is inventing a common currency that doesn't exist. The entry is also careful about something I am not claiming — incommensurable is not the same as incomparable. You can still decide. What you cannot do is decide it with arithmetic.

@@ -322,14 +322,20 @@
   overflow-x: auto;
 }
 .workshop-prose pre code { color: inherit; }
-/* Force dark Shiki tokens regardless of site theme */
+/* Force dark Shiki tokens regardless of site theme. Keep the code block itself
+ * dark; only token spans should be transparent. */
+.workshop-prose .astro-code {
+  background-color: var(--c-code-bg) !important;
+}
 .workshop-prose .astro-code,
 .workshop-prose .astro-code span {
   color: var(--shiki-dark) !important;
-  background-color: transparent !important;
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;
   text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+.workshop-prose .astro-code span {
+  background-color: transparent !important;
 }
 
 .workshop-prose strong { color: var(--c-text); font-weight: 600; }

@@ -9,7 +9,7 @@ visibility: 'published'
 
 A couple of days ago a friend sent me the news about the release of a new model. Jev by TypeSafe AI. I read up on it, and it seemed to be exactly what I needed in something I was working on. I requested an early access key and they gave me one. I've spent the last day putting Jev into [Preston](https://preston.bot/), the aforementioned AI system I've been building to review changes to software, this post is a collection of notes I made when working with it, and a mental model I created that even helped me decide where and how to use it.
 
-Think of Jev as a judge. Like those monarchs of old that had a list of people coming to them to decide on something. People state their cases, both sides can speak, and a verdict is given. Judge Jev sort of works like that, but with a twist. You bring it a case, give it the facts, tell it what question is being decided, and define the verdicts it is allowed to return. Then it rules. When I mean the actual tool rather than judges in general.
+Think of Jev as a judge. Like those monarchs of old that had a list of people coming to them to decide on something. People state their cases, both sides can speak, and a verdict is given. Judge Jev sort of works like that, but with a twist. You bring it a case, give it the facts, tell it what question is being decided, and define the verdicts it is allowed to return. Then it rules.
 
 The big difference here being that Jev needs to know what verdicts are possible. It can't invent a "better" one on the spot.
 

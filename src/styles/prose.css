@@ -334,6 +334,117 @@
 
 .workshop-prose strong { color: var(--c-text); font-weight: 600; }
 
+/* The three Jev answer primitives, kept deliberately small so the reader can
+ * compare their shapes before the essay discusses the underlying numbers. */
+.workshop-prose .jev-primitives {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 1.6em 0;
+  font-style: normal;
+}
+
+.workshop-prose .jev-primitive {
+  display: flex;
+  min-width: 0;
+  min-height: 282px;
+  flex-direction: column;
+  padding: 14px;
+  border: 1px solid var(--c-border-strong);
+  border-top: 2px solid var(--c-accent);
+  background: var(--c-bg-card);
+}
+
+.workshop-prose .jev-primitive--choice {
+  border-top-color: var(--c-accent-blue);
+}
+
+.workshop-prose .jev-primitive--score {
+  border-top-color: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-primitive__head {
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-primitive__head strong,
+.workshop-prose .jev-primitive__head span {
+  display: block;
+}
+
+.workshop-prose .jev-primitive__head strong {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.workshop-prose .jev-primitive--noul .jev-primitive__head strong {
+  color: var(--c-accent);
+}
+
+.workshop-prose .jev-primitive--choice .jev-primitive__head strong {
+  color: var(--c-accent-blue);
+}
+
+.workshop-prose .jev-primitive--score .jev-primitive__head strong {
+  color: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-primitive__head span {
+  margin-top: 3px;
+  color: var(--c-text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.workshop-prose .jev-primitive__question {
+  min-height: 62px;
+  margin: 13px 0 14px;
+  color: var(--c-text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-primitives .jev-verdict-row {
+  grid-template-columns: 58px minmax(24px, 1fr) 26px;
+  gap: 6px;
+  font-size: 9px;
+}
+
+.workshop-prose .jev-primitive--score .jev-verdict-row {
+  grid-template-columns: 72px minmax(20px, 1fr) 26px;
+}
+
+.workshop-prose .jev-primitive--choice .jev-verdict-fill--winner {
+  background: var(--c-accent-blue);
+}
+
+.workshop-prose .jev-primitive--score .jev-verdict-fill--winner {
+  background: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-primitive__foot {
+  margin-top: auto;
+  padding-top: 12px;
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-primitives > figcaption {
+  grid-column: 1 / -1;
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
 /* Essay-native chat. This is intentionally UI, not illustration: the bar-chart
  * image later in the essay owns the comic register. */
 .workshop-prose .essay-chat {
@@ -472,4 +583,771 @@
 /* Honor reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .workshop-prose a { transition: none; }
+}
+
+/* Jev essay: typed rulings rendered as compact, article-native instruments.
+ * These are data views rather than illustrations, so they inherit the site's
+ * mono-forward Workshop grammar and remain legible in both themes. */
+.workshop-prose .jev-distributions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 1.75em 0;
+}
+
+.workshop-prose .jev-distribution,
+.workshop-prose .jev-noul {
+  margin: 0;
+  padding: 15px;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-style: normal;
+}
+
+.workshop-prose .jev-distribution__head,
+.workshop-prose .jev-noul__head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-distribution__head > span,
+.workshop-prose .jev-noul__head > span {
+  color: var(--c-accent-amber);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-distribution__head strong,
+.workshop-prose .jev-noul__head strong {
+  color: var(--c-text);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-verdict-row {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(54px, 1fr) 30px;
+  align-items: center;
+  gap: 8px;
+  color: var(--c-text-secondary);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.workshop-prose .jev-verdict-row + .jev-verdict-row {
+  margin-top: 8px;
+}
+
+.workshop-prose .jev-verdict-row > :last-child {
+  color: var(--c-text-muted);
+  text-align: right;
+}
+
+.workshop-prose .jev-verdict-track {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  background: var(--c-border);
+}
+
+.workshop-prose .jev-verdict-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  min-width: 2px;
+  background: var(--c-text-muted);
+}
+
+.workshop-prose .jev-verdict-fill--zero {
+  min-width: 0;
+}
+
+.workshop-prose .jev-verdict-fill--winner {
+  background: var(--c-accent);
+}
+
+.workshop-prose .jev-verdict-fill--dissent {
+  background: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-jury-questions {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2px;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+}
+
+.workshop-prose .jev-jury-questions > div {
+  padding: 13px 15px 15px;
+  border-left: 2px solid var(--c-accent);
+}
+
+.workshop-prose .jev-jury-questions > div + div {
+  border-left: 1px solid var(--c-border);
+  box-shadow: inset 2px 0 var(--c-accent-amber);
+}
+
+.workshop-prose .jev-jury-questions span,
+.workshop-prose .jev-jury-questions strong {
+  display: block;
+}
+
+.workshop-prose .jev-jury-questions span {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-jury-questions strong {
+  margin-top: 5px;
+  color: var(--c-text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.workshop-prose .jev-distributions > figcaption,
+.workshop-prose .jev-noul > figcaption {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.workshop-prose .jev-distributions > figcaption {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+.workshop-prose .jev-noul {
+  max-width: 520px;
+  margin: 1.5em 0;
+}
+
+.workshop-prose .jev-noul .jev-verdict-row {
+  grid-template-columns: 34px minmax(100px, 1fr) 34px;
+  font-size: 11px;
+}
+
+.workshop-prose .jev-noul > figcaption {
+  margin-top: 13px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-thesis {
+  margin: 1.6em 0;
+  padding: 17px 20px;
+  border: 1px solid color-mix(in oklab, var(--c-accent) 45%, var(--c-border));
+  border-left: 3px solid var(--c-accent);
+  background: color-mix(in oklab, var(--c-accent) 7%, var(--c-bg-card));
+  color: var(--c-text);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: clamp(16px, 2.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.workshop-prose .jev-thesis--amber {
+  border-color: color-mix(in oklab, var(--c-accent-amber) 45%, var(--c-border));
+  border-left-color: var(--c-accent-amber);
+  background: color-mix(in oklab, var(--c-accent-amber) 7%, var(--c-bg-card));
+}
+
+/* One question under two standards of proof. */
+.workshop-prose .jev-proof {
+  margin: 1.8em 0;
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+  font-style: normal;
+}
+
+.workshop-prose .jev-proof__question {
+  padding: 16px 18px 18px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.workshop-prose .jev-proof__question span,
+.workshop-prose .jev-proof__context {
+  display: block;
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-proof__question strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--c-text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.workshop-prose .jev-proof__cases {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.workshop-prose .jev-proof__case {
+  padding: 18px;
+}
+
+.workshop-prose .jev-proof__case + .jev-proof__case {
+  border-left: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-proof__case--casual {
+  box-shadow: inset 0 2px var(--c-accent-blue);
+}
+
+.workshop-prose .jev-proof__case--clinical {
+  box-shadow: inset 0 2px var(--c-accent-red);
+}
+
+.workshop-prose .jev-proof__case > strong {
+  display: block;
+  min-height: 48px;
+  margin-top: 8px;
+  color: var(--c-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.workshop-prose .jev-proof__case dl {
+  margin: 14px 0 0;
+}
+
+.workshop-prose .jev-proof__case dl > div {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 9px;
+  padding: 8px 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-proof__case dt,
+.workshop-prose .jev-proof__case dd {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-proof__case dt {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-proof__case dd {
+  color: var(--c-text-secondary);
+  font-size: 12px;
+}
+
+.workshop-prose .jev-proof > figcaption,
+.workshop-prose .jev-overlap > figcaption,
+.workshop-prose .jev-claim-map > figcaption {
+  padding: 12px 18px;
+  border-top: 1px solid var(--c-border);
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* A category-overlap diagnostic: one forced Choice becomes two independent
+ * yes/no questions, revealing that both definitions can fit the same pair. */
+.workshop-prose .jev-overlap {
+  margin: 1.8em 0;
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+  font-style: normal;
+}
+
+.workshop-prose .jev-overlap__sheet {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.75fr) minmax(0, 1.6fr);
+  gap: 18px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.workshop-prose .jev-overlap__sheet span,
+.workshop-prose .jev-overlap__pair > span,
+.workshop-prose .jev-overlap__check > span,
+.workshop-prose .jev-overlap__finding > span {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-overlap__sheet strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--c-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-overlap__labels {
+  display: grid;
+  gap: 8px;
+}
+
+.workshop-prose .jev-overlap__primary-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.workshop-prose .jev-overlap__primary-labels > span,
+.workshop-prose .jev-overlap__fallback b {
+  padding: 5px 7px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg-card);
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.workshop-prose .jev-overlap__primary-labels > .jev-overlap__label--converge {
+  border-color: color-mix(in oklab, var(--c-accent) 55%, var(--c-border));
+  color: var(--c-accent);
+}
+
+.workshop-prose .jev-overlap__primary-labels > .jev-overlap__label--restrain {
+  border-color: color-mix(in oklab, var(--c-accent-amber) 55%, var(--c-border));
+  color: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-overlap__fallback {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-overlap__fallback span {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-overlap__fallback b {
+  color: var(--c-text-muted);
+  font-weight: 400;
+}
+
+.workshop-prose .jev-overlap__pair {
+  padding: 17px 18px 18px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-overlap__pair > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.workshop-prose .jev-overlap__pair p {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+  color: var(--c-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.workshop-prose .jev-overlap__pair b {
+  margin-right: 6px;
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+}
+
+.workshop-prose .jev-overlap__checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.workshop-prose .jev-overlap__check {
+  min-width: 0;
+  padding: 17px 18px 18px;
+}
+
+.workshop-prose .jev-overlap__check + .jev-overlap__check {
+  border-left: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-overlap__check--converge {
+  box-shadow: inset 0 2px var(--c-accent);
+}
+
+.workshop-prose .jev-overlap__check--restrain {
+  box-shadow: inset 0 2px var(--c-accent-amber);
+}
+
+.workshop-prose .jev-overlap__check strong,
+.workshop-prose .jev-overlap__check b {
+  display: block;
+}
+
+.workshop-prose .jev-overlap__check strong {
+  min-height: 44px;
+  margin-top: 7px;
+  color: var(--c-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-overlap__check b {
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.workshop-prose .jev-overlap__check--converge b {
+  color: var(--c-accent);
+}
+
+.workshop-prose .jev-overlap__check--restrain b {
+  color: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-overlap__finding {
+  padding: 15px 18px 17px;
+  border-top: 1px solid var(--c-border);
+  background: color-mix(in oklab, var(--c-accent-amber) 6%, var(--c-bg-alt));
+}
+
+.workshop-prose .jev-overlap__finding strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--c-text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.workshop-prose .jev-overlap__finding p {
+  margin: 4px 0 0;
+  color: var(--c-text-secondary);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* A small claim-composition map: one base proposition, three possible
+ * relationships to a second proposition. */
+.workshop-prose .jev-claim-map {
+  margin: 1.8em 0;
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+  font-style: normal;
+}
+
+.workshop-prose .jev-claim-map__base {
+  padding: 17px 18px 19px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+  text-align: center;
+}
+
+.workshop-prose .jev-claim-map__base span,
+.workshop-prose .jev-claim-map__base strong {
+  display: block;
+}
+
+.workshop-prose .jev-claim-map__base span,
+.workshop-prose .jev-claim-map__relation > span {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-claim-map__base strong {
+  margin-top: 6px;
+  color: var(--c-text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.workshop-prose .jev-claim-map__relations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.workshop-prose .jev-claim-map__relation {
+  min-width: 0;
+  padding: 18px 15px 20px;
+  border-top: 2px solid var(--c-border-strong);
+}
+
+.workshop-prose .jev-claim-map__relation + .jev-claim-map__relation {
+  border-left: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-claim-map__relation--corroborates {
+  border-top-color: var(--c-accent);
+}
+
+.workshop-prose .jev-claim-map__relation--refines {
+  border-top-color: var(--c-accent-blue);
+}
+
+.workshop-prose .jev-claim-map__relation--contradicts {
+  border-top-color: var(--c-accent-red);
+}
+
+.workshop-prose .jev-claim-map__relation--corroborates > span {
+  color: var(--c-accent);
+}
+
+.workshop-prose .jev-claim-map__relation--refines > span {
+  color: var(--c-accent-blue);
+}
+
+.workshop-prose .jev-claim-map__relation--contradicts > span {
+  color: var(--c-accent-red);
+}
+
+.workshop-prose .jev-claim-map__relation strong {
+  display: block;
+  min-height: 66px;
+  margin-top: 9px;
+  color: var(--c-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.workshop-prose .jev-claim-map__relation p {
+  margin: 12px 0 0;
+  color: var(--c-text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* A paired decision-shape test. The matching rows keep the subject matter
+ * stable while the question changes from a closed ruling to open discovery. */
+.workshop-prose .jev-shapes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 1.75em 0;
+  font-style: normal;
+}
+
+.workshop-prose .jev-shapes__panel {
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-bg-card);
+}
+
+.workshop-prose .jev-shapes__panel--ruling {
+  border-top: 2px solid var(--c-accent);
+}
+
+.workshop-prose .jev-shapes__panel--open {
+  border-top: 2px solid var(--c-accent-amber);
+}
+
+.workshop-prose .jev-shapes__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  min-height: 72px;
+  padding: 14px 15px;
+  background: var(--c-bg-alt);
+}
+
+.workshop-prose .jev-shapes__mark {
+  display: grid;
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--c-accent);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.workshop-prose .jev-shapes__panel--open .jev-shapes__mark {
+  color: var(--c-accent-amber);
+}
+
+.workshop-prose .jev-shapes__head strong,
+.workshop-prose .jev-shapes__head span:not(.jev-shapes__mark) {
+  display: block;
+}
+
+.workshop-prose .jev-shapes__head strong {
+  color: var(--c-text);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.workshop-prose .jev-shapes__head span:not(.jev-shapes__mark) {
+  margin-top: 4px;
+  color: var(--c-text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.workshop-prose .jev-shapes__item {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 132px;
+  padding: 14px 15px 15px;
+  border-top: 1px solid var(--c-border);
+}
+
+.workshop-prose .jev-shapes__item > span {
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .jev-shapes__item p {
+  margin: 7px 0 13px;
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.workshop-prose .jev-shapes__item code:not(pre code) {
+  justify-self: start;
+  color: var(--c-text-secondary);
+  font-size: 10px;
+}
+
+.workshop-prose .jev-shapes__panel--ruling .jev-shapes__item code:not(pre code) {
+  color: var(--c-accent);
+}
+
+.workshop-prose .jev-shapes > figcaption {
+  grid-column: 1 / -1;
+  color: var(--c-text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .workshop-prose .jev-distributions {
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-prose .jev-jury-questions {
+    grid-column: 1;
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-prose .jev-jury-questions > div + div {
+    border-top: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-accent-amber);
+    box-shadow: none;
+  }
+
+  .workshop-prose .jev-primitives {
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-prose .jev-primitives > figcaption {
+    grid-column: 1;
+  }
+
+  .workshop-prose .jev-primitive {
+    min-height: 0;
+  }
+
+  .workshop-prose .jev-primitive__question {
+    min-height: 0;
+  }
+
+  .workshop-prose .jev-shapes {
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-prose .jev-proof__cases,
+  .workshop-prose .jev-overlap__sheet,
+  .workshop-prose .jev-overlap__pair > div,
+  .workshop-prose .jev-overlap__checks,
+  .workshop-prose .jev-claim-map__relations {
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-prose .jev-proof__case + .jev-proof__case,
+  .workshop-prose .jev-claim-map__relation + .jev-claim-map__relation {
+    border-left: 0;
+  }
+
+  .workshop-prose .jev-proof__case + .jev-proof__case {
+    border-top: 1px solid var(--c-border);
+  }
+
+  .workshop-prose .jev-overlap__check + .jev-overlap__check {
+    border-top: 1px solid var(--c-border);
+    border-left: 0;
+  }
+
+  .workshop-prose .jev-overlap__check strong {
+    min-height: 0;
+  }
+
+  .workshop-prose .jev-claim-map__relation strong {
+    min-height: 0;
+  }
+
+  .workshop-prose .jev-distributions > figcaption,
+  .workshop-prose .jev-shapes > figcaption {
+    grid-column: 1;
+  }
+
+  .workshop-prose .jev-verdict-row {
+    grid-template-columns: 92px minmax(80px, 1fr) 32px;
+    font-size: 11px;
+  }
 }

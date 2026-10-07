@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-labelledby="title description">
+  <title id="title">The evolving terrain cycle</title>
+  <desc id="description">A five-step cycle: discover a candidate relation, ratify it, make it deterministic, reach new semantic terrain, and ask the next bounded question. The cycle repeats, creating another deterministic foothold.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 16 16" refX="13" refY="8" markerWidth="14" markerHeight="14" orient="auto-start-reverse">
+      <path d="M 2 2 L 14 8 L 2 14 Z" fill="#1a8917"/>
+    </marker>
+    <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1600" fill="#ffffff"/>
+  <path d="M 90 88 H 1510" stroke="#1a8917" stroke-width="5"/>
+
+  <text x="90" y="154" fill="#1a8917" font-family="Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing="5">THE EVOLVING TERRAIN</text>
+  <text x="90" y="207" fill="#6b6b6b" font-family="Menlo, Monaco, Consolas, monospace" font-size="25">semantic inference expands the map · deterministic software makes it stable</text>
+
+  <circle cx="800" cy="830" r="366" fill="none" stroke="#e5e5e2" stroke-width="2"/>
+  <circle cx="800" cy="830" r="255" fill="#fafaf8" stroke="#c8c8c4" stroke-width="2"/>
+  <circle cx="800" cy="830" r="233" fill="none" stroke="#ececea" stroke-width="1"/>
+
+  <path d="M 972 505 C 1105 532 1198 613 1238 731" fill="none" stroke="#1a8917" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M 1262 870 C 1247 1014 1165 1115 1047 1182" fill="none" stroke="#1a8917" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M 927 1255 C 790 1306 638 1287 519 1217" fill="none" stroke="#1a8917" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M 392 1072 C 319 947 315 800 365 682" fill="none" stroke="#1a8917" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M 447 547 C 542 447 664 410 779 421" fill="none" stroke="#1a8917" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g font-family="Menlo, Monaco, Consolas, monospace">
+    <g transform="translate(800 390)">
+      <rect x="-222" y="-88" width="444" height="176" fill="#fbfbfa" stroke="#d2d2ce" stroke-width="2"/>
+      <path d="M -222 -88 H 222" stroke="#1a8917" stroke-width="5"/>
+      <text x="-180" y="-34" fill="#1a8917" font-size="22" font-weight="700" letter-spacing="3">01 · DISCOVER</text>
+      <text x="-180" y="25" fill="#242424" font-size="35">a candidate</text>
+      <text x="-180" y="65" fill="#6b6b6b" font-size="23">relation</text>
+    </g>
+
+    <g transform="translate(1260 770)">
+      <rect x="-180" y="-86" width="360" height="172" fill="#fbfbfa" stroke="#d2d2ce" stroke-width="2"/>
+      <path d="M -180 -86 H 180" stroke="#1a8917" stroke-width="5"/>
+      <text x="-140" y="-31" fill="#1a8917" font-size="22" font-weight="700" letter-spacing="3">02 · RATIFY</text>
+      <text x="-140" y="31" fill="#242424" font-size="35">give it</text>
+      <text x="-140" y="70" fill="#6b6b6b" font-size="23">standing</text>
+    </g>
+
+    <g transform="translate(1080 1258)">
+      <rect x="-218" y="-88" width="436" height="176" fill="#fbfbfa" stroke="#d2d2ce" stroke-width="2"/>
+      <path d="M -218 -88 H 218" stroke="#1a8917" stroke-width="5"/>
+      <text x="-176" y="-34" fill="#1a8917" font-size="22" font-weight="700" letter-spacing="3">03 · MATERIALIZE</text>
+      <text x="-176" y="25" fill="#242424" font-size="35">make it</text>
+      <text x="-176" y="66" fill="#6b6b6b" font-size="23">deterministic</text>
+    </g>
+
+    <g transform="translate(500 1258)">
+      <rect x="-230" y="-88" width="460" height="176" fill="#fbfbfa" stroke="#d2d2ce" stroke-width="2"/>
+      <path d="M -230 -88 H 230" stroke="#1a8917" stroke-width="5"/>
+      <text x="-188" y="-34" fill="#1a8917" font-size="22" font-weight="700" letter-spacing="3">04 · REACH</text>
+      <text x="-188" y="25" fill="#242424" font-size="35">new semantic</text>
+      <text x="-188" y="66" fill="#6b6b6b" font-size="23">terrain</text>
+    </g>
+
+    <g transform="translate(340 770)">
+      <rect x="-230" y="-102" width="460" height="204" fill="#fbfbfa" stroke="#d2d2ce" stroke-width="2"/>
+      <path d="M -230 -102 H 230" stroke="#1a8917" stroke-width="5"/>
+      <text x="-188" y="-47" fill="#1a8917" font-size="22" font-weight="700" letter-spacing="3">05 · ASK</text>
+      <text x="-188" y="12" fill="#242424" font-size="35">the next</text>
+      <text x="-188" y="54" fill="#242424" font-size="35">bounded question</text>
+    </g>
+
+    <g text-anchor="middle">
+      <circle cx="800" cy="830" r="13" fill="#1a8917" filter="url(#soft-glow)"/>
+      <text x="800" y="744" fill="#6b6b6b" font-size="21" font-weight="700" letter-spacing="4">EACH LOOP ADDS</text>
+      <text x="800" y="819" fill="#242424" font-size="47">a deterministic</text>
+      <text x="800" y="875" fill="#242424" font-size="47">foothold</text>
+      <text x="800" y="929" fill="#1a8917" font-size="23">from which the next question</text>
+      <text x="800" y="966" fill="#1a8917" font-size="23">becomes possible</text>
+    </g>
+  </g>
+
+  <text x="90" y="1512" fill="#8a8a87" font-family="Menlo, Monaco, Consolas, monospace" font-size="21">candidate → standing → structure → new terrain → next question</text>
+</svg>

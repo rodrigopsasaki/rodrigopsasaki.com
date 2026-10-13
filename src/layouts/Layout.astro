@@ -29,7 +29,7 @@ export interface Props {
 
 const {
   title,
-  description = 'Senior Software Engineer specializing in TypeScript, Node.js, and cloud architecture.',
+  description = 'AI Tech Lead at Deel. I work on developer workflows for the AI era: searchable engineering context and lighter code review. Writing on AI and how software gets built.',
   image = '/og-image.png',
   article,
   noindex = false,
@@ -41,7 +41,7 @@ const {
 } = Astro.props;
 
 const fullTitle = title === 'Home'
-  ? 'Rodrigo Sasaki - Software Engineer'
+  ? 'Rodrigo Sasaki - AI Tech Lead'
   : `${title} | Rodrigo Sasaki`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);

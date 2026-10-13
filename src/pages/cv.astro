@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { personalInfo, summary, experience, education, skillCategories, calculateYearsOfExperience } from '../data/cv-data';
+import { personalInfo, summary, experience, earlierExperience, education, skillCategories, careerStartDate, calculateYearsOfExperience } from '../data/cv-data';
 
 function ym(iso: string): string {
   const d = new Date(iso);
@@ -8,12 +8,12 @@ function ym(iso: string): string {
 }
 
 // Group achievements as arrow-bulleted, mono-styled list
-const yearsExp = calculateYearsOfExperience(experience[experience.length - 1].startDate);
+const yearsExp = calculateYearsOfExperience(careerStartDate);
 ---
 
 <Layout
   title="CV"
-  description="Senior Software Engineer, 15 years of experience."
+  description={`AI Tech Lead at Deel. ${yearsExp} years building backend systems; now working on developer workflows for AI-assisted engineering.`}
   active="cv"
   statusLeft="cv/rodrigo-sasaki.yaml"
   statusCenter="YAML · UTF-8"
@@ -32,7 +32,7 @@ const yearsExp = calculateYearsOfExperience(experience[experience.length - 1].st
       <span class="cv-header__key">name:</span> {personalInfo.name}
     </h1>
     <div class="cv-header__yaml">
-      <div><span class="cv-header__key">role:</span>       Senior Software Engineer</div>
+      <div><span class="cv-header__key">role:</span>       AI Tech Lead · Deel</div>
       <div><span class="cv-header__key">years:</span>      <span class="cv-header__accent">{yearsExp}</span></div>
       <div><span class="cv-header__key">location:</span>   {personalInfo.location} · Remote-friendly</div>
       <div>
@@ -67,6 +67,7 @@ const yearsExp = calculateYearsOfExperience(experience[experience.length - 1].st
           </ul>
         </div>
       ))}
+      <p class="cv-earlier"><span class="cv-header__key">earlier:</span> {earlierExperience}</p>
     </div>
 
     <div class="cv-side">
@@ -221,6 +222,11 @@ const yearsExp = calculateYearsOfExperience(experience[experience.length - 1].st
     color: var(--c-text-muted);
     margin-top: 2px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .cv-earlier {
+    font-size: 13px;
+    color: var(--c-text-muted);
+    margin: 24px 0 0;
   }
   .cv-job__list {
     margin: 10px 0 0;

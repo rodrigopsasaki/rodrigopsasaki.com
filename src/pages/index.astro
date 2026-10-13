@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { snap } from '../data/now';
 import { isBlogVisible } from '../utils/blog-visibility';
+import { personalInfo, headline, experience } from '../data/cv-data';
 
 // Real content
 const allPosts = await getCollection('blog', ({ data }) => isBlogVisible(data, import.meta.env.DEV));
@@ -15,6 +16,22 @@ const essayCount = allPosts.length;
 const allProjects = await getCollection('projects', ({ data }) => data.visible === true);
 const topLevelProjects = allProjects.filter(p => !p.data.parent);
 const projectCount = topLevelProjects.length;
+
+// Person entity for search engines and AI crawlers; sameAs ties the
+// site, LinkedIn and GitHub to one identity. Derived from cv-data.
+const currentRole = experience[0];
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: personalInfo.name,
+  url: 'https://rodrigopsasaki.com',
+  description: headline,
+  jobTitle: currentRole.role,
+  worksFor: { '@type': 'Organization', name: currentRole.company },
+  address: { '@type': 'PostalAddress', addressLocality: 'São Paulo', addressCountry: 'BR' },
+  knowsAbout: ['AI-assisted software development', 'LLM agents', 'Developer productivity', 'Code review', 'TypeScript', 'Distributed systems', 'Observability'],
+  sameAs: [personalInfo.linkedin, personalInfo.github],
+};
 
 // Condensed "Now · live" sidebar: one line per populated block. Derives from
 // the same snap data as the /now page, so nothing can drift. We skip the
@@ -77,6 +94,7 @@ const LATEST_DATE = latestPost ? new Date(latestPost.data.date).toLocaleDateStri
   statusLeft="readme · 1:1"
   statusCenter="✓ 0 errors"
 >
+  <script type="application/ld+json" set:html={JSON.stringify(person)} is:inline />
   <div class="home-grid">
     <!-- Left sidebar: file tree + now -->
     <aside class="home-sidebar">
@@ -117,7 +135,7 @@ const LATEST_DATE = latestPost ? new Date(latestPost.data.date).toLocaleDateStri
 
       <pre class="home-frontmatter">---
 name:    Rodrigo Sasaki
-role:    Senior Software Engineer
+role:    AI Tech Lead · Deel
 since:   2009
 tz:      America/Sao_Paulo  // UTC-3
 ---</pre>

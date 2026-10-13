@@ -9,70 +9,89 @@ export const personalInfo = {
   preston: "https://preston.bot/",
 };
 
-export const summary = `Senior Software Engineer with 15 years of experience delivering scalable systems, improving software performance, and contributing across product, infrastructure, and CI/CD pipelines. Experienced in early-stage environments, end-to-end architecture, and production ownership. Pragmatic, fast-moving, and focused on product impact.`;
+// Career start; drives every "N years" figure on the site
+export const careerStartDate = "2009-12-01";
+
+export const headline = "AI Tech Lead at Deel. Developer workflows for the AI era: searchable engineering context, less PR overhead.";
+
+export const summary = `Engineer with ${calculateYearsOfExperience(careerStartDate)} years building backend systems, from high-throughput dispatch at 99 to marketplace infrastructure at Clipboard Health. I now work on how engineering teams build with AI. Agents made code cheap to write, so the cost moved to finding the right context and reviewing what gets produced. At Deel I lead work on making engineering context searchable for people and agents. I write about how AI is changing the way software gets built.`;
 
 export const experience = [
+  {
+    company: "Deel",
+    role: "AI Tech Lead",
+    startDate: "2026-09-01",
+    endDate: null, // null means current
+    location: "São Paulo, Brazil",
+    achievements: [
+      "Leading work on engineering context for AI-assisted development: making what the organization knows findable by both engineers and AI agents",
+      "Building a knowledge layer that captures what is learned during everyday work and keeps it current as things change, so people and agents start from context that is still true"
+    ]
+  },
+  {
+    company: "SFR3",
+    role: "Senior Software Engineer",
+    startDate: "2026-04-01",
+    endDate: "2026-06-30",
+    location: "Remote",
+    achievements: [
+      "Made production agent harnesses deterministic: replayable runs, narrow typed LLM calls, and input-hash caching to keep model spend predictable",
+      "Designed evaluation and observability for live agents, with audit envelopes that line up with existing ops logs and tunables that change behavior without re-prompting"
+    ]
+  },
   {
     company: "Clipboard Health",
     role: "Senior Software Engineer",
     startDate: "2022-06-01",
-    endDate: null, // null means current
+    endDate: "2026-04-01",
     location: "Remote",
     achievements: [
-      "Introduced the use of structured canonical logs, authoring one of the company's first open-source library and redefining how engineers think about observability",
-      "Refactored key components of the marketplace to allow other teams to quickly build experiments, greatly reducing the time needed to vet a new idea",
-      "Took ownership of production services, optimizing reliability, security, and developer experience",
-      "Led internal efforts on CI/CD practices and operational monitoring"
+      "Introduced structured canonical logging and wrote one of the company's first open-source libraries, changing how engineers approached observability",
+      "Refactored core marketplace components so other teams could ship experiments quickly, cutting the time to test a new idea",
+      "Owned production services end to end: reliability, security, and developer experience",
+      "Led internal work on CI/CD practices and operational monitoring"
     ]
   },
   {
     company: "Caura",
-    role: "Senior Software Engineer", 
+    role: "Senior Software Engineer",
     startDate: "2019-07-01",
     endDate: "2022-06-01",
     location: "Remote",
     achievements: [
-      "Helped build the product from the ground up, participating in every major architectural decision",
-      "Contributed to infrastructure, security, API design, and backend product development",
-      "Collaborated closely with cross-functional teams in a fully remote, startup environment",
-      "Collaborated with insurance providers to create a seamless integration based on a composable rules engine"
+      "Built the product from the ground up and took part in every major architecture decision",
+      "Designed a composable rules engine for integrating with insurance providers",
+      "Worked across infrastructure, security, API design, and backend product development"
     ]
   },
   {
     company: "OWLR Technologies",
     role: "Lead Server Engineer",
-    startDate: "2017-06-01", 
+    startDate: "2017-06-01",
     endDate: "2020-02-01",
     location: "Remote",
     achievements: [
-      "Rebuilt the server-side architecture from the ground up to modernize and improve system maintainability and reduced the server costs by 82%",
-      "Authored the company's best practices and rehauled the hiring and onboarding process for new engineers"
+      "Rebuilt the server architecture, moving from Java to Node.js and a hybrid container and serverless setup, and cut server costs by 82%",
+      "Owned uptime and the full path from code to deploy, including a new CI/CD workflow",
+      "Wrote the engineering best practices and reworked hiring and onboarding",
+      "Kept the servers running part-time through the company's wind-down, after moving to Caura"
     ]
   },
   {
     company: "99",
     role: "Software Developer",
     startDate: "2016-07-01",
-    endDate: "2017-06-01", 
+    endDate: "2017-06-01",
     location: "São Paulo, Brazil",
     achievements: [
-      "Improved real-time location tracking with a new data pipeline using Elasticsearch",
-      "Refactored sections of the matching system to improve performance, increase observability and enable future experimentation"
-    ]
-  },
-  {
-    company: "iCarros", 
-    role: "Programmer Analyst",
-    startDate: "2013-01-01",
-    endDate: "2015-12-31",
-    location: "São Paulo, Brazil", 
-    achievements: [
-      "Introduced early adoption of AWS, using Lambda functions to pre-render images in multiple resolutions",
-      "Contributed to platform modernization efforts and internal security practices",
-      "Developed foundational backend components for ad platform features"
+      "Worked on dispatch at Brazil's largest ride-hailing platform: matching each passenger to the best driver, fast and safely, at millions of requests",
+      "Built a new Elasticsearch pipeline for real-time location tracking and made the matching system faster and easier to observe"
     ]
   }
 ];
+
+// Roles before 99, summarized rather than listed
+export const earlierExperience = "2009 – 2016: backend engineering at WalletHub, iCarros, VEMAC IT Consultants and CPM Braxis Capgemini.";
 
 export const education = [
   {
@@ -122,11 +141,11 @@ export const techExperience = {
 
 // Skill categories for organization
 export const skillCategories = {
-  "Languages & Runtime": ["JavaScript", "TypeScript", "Node.js", "Java", "Python"],
-  "Databases": ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
-  "Infrastructure & Cloud": ["AWS", "Docker", "Terraform", "Kubernetes"],
-  "Architecture & Practices": ["REST APIs", "Event-driven architectures", "Microservices", "OAuth"],
-  "DevOps & Tools": ["CI/CD", "GitHub Actions", "Observability"]
+  "AI Systems": ["LLM agents", "Developer workflows", "Code review", "Evaluation", "MCP"],
+  "Languages & Runtime": ["TypeScript", "Node.js", "Java", "Scala", "Python"],
+  "Data": ["PostgreSQL", "Redis", "Elasticsearch"],
+  "Infrastructure & Cloud": ["AWS", "Docker", "Kubernetes", "Terraform"],
+  "Architecture & Practices": ["Distributed systems", "Event-driven architectures", "Observability", "CI/CD"]
 };
 
 // Helper function to calculate years of experience

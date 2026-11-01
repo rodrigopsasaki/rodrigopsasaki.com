@@ -10,7 +10,9 @@
     "clean": "rm -rf dist .astro",
     "deploy": "fly deploy",
     "logs": "fly logs",
-    "status": "fly status"
+    "status": "fly status",
+    "figures:embedding": "node scripts/embedding-figures.ts",
+    "train:embedding-toy": "node scripts/embedding-toy-train.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

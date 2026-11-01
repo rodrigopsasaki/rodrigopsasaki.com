@@ -255,6 +255,14 @@ function formatIso(iso: string): string {
 
   document.addEventListener('DOMContentLoaded', initEssayReading);
   document.addEventListener('astro:page-load', initEssayReading);
+
+  // Interactive figures load lazily, so other essays pay only for this query.
+  // If the chunk fails to load, each figure keeps its static plate.
+  function mountInteractiveFigures() {
+    if (!document.querySelector('.workshop-prose [data-ew]')) return;
+    import('../../scripts/embedding-walkthrough').then(({ mountEmbeddingWalkthrough }) => mountEmbeddingWalkthrough());
+  }
+  document.addEventListener('astro:page-load', mountInteractiveFigures);
 </script>
 
 <style>

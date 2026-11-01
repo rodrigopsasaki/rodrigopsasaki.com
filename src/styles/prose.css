@@ -872,9 +872,9 @@
 .workshop-prose .jev-claim-map > figcaption {
   padding: 12px 18px;
   border-top: 1px solid var(--c-border);
-  color: var(--c-text-muted);
+  color: var(--c-text-secondary);
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -1355,5 +1355,550 @@
   .workshop-prose .jev-verdict-row {
     grid-template-columns: 92px minmax(80px, 1fr) 32px;
     font-size: 11px;
+  }
+}
+
+/* "From a line to an embedding": the interactive figures.
+ * Each figure is a .ew-piece. A static plate (.ew-fallback) is the whole figure
+ * until src/scripts/embedding-walkthrough.ts builds the live stage and sets
+ * data-live. Every color and stroke width comes from here, bound to the theme
+ * variables, so toggling .dark restyles the inline SVG with no script. var()
+ * does not work in SVG presentation attributes, which is why none are used.
+ * Strokes and labels scale with --ew-u (user units per CSS px, set by the
+ * script), so 12px labels and 1px lines stay that size at any stage width. */
+.workshop-prose .ew-piece {
+  margin: 1.8em 0;
+  border: 1px solid var(--c-border-strong);
+  background: transparent;
+  font-style: normal;
+}
+
+.workshop-prose .ew-piece > .ew-fallback img,
+.workshop-prose .ew-plate img {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* Every plate is written twice: NAME.svg for the light page and NAME-dark.svg for
+ * the dark one, each in its own link so a click opens the plate that is showing.
+ * Exactly one shows per theme. The link that holds the plate carries the class. */
+.workshop-prose a.ew-plate--light,
+.workshop-prose a.ew-plate--dark {
+  display: block;
+}
+
+.workshop-prose a.ew-plate--dark {
+  display: none;
+}
+
+html.dark .workshop-prose a.ew-plate--light {
+  display: none;
+}
+
+html.dark .workshop-prose a.ew-plate--dark {
+  display: block;
+}
+
+/* A static plate (02, 03, 05) is framed like a live piece, so all the figures in
+ * the article share one frame and one caption voice. */
+.workshop-prose .ew-plate {
+  margin: 1.8em 0;
+  border: 1px solid var(--c-border-strong);
+  background: transparent;
+  font-style: normal;
+}
+
+.workshop-prose .ew-plate > a:not([class]) {
+  display: block;
+}
+
+/* The café counter (01) is a single webp with no theme pair. */
+.workshop-prose .ew-plate img:not([class]) {
+  display: block;
+}
+
+.workshop-prose .ew-piece[data-live] > .ew-fallback {
+  display: none;
+}
+
+.workshop-prose .ew-piece > figcaption,
+.workshop-prose .ew-plate > figcaption {
+  padding: 12px 18px;
+  border-top: 1px solid var(--c-border);
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.workshop-prose .ew-stage {
+  min-width: 0;
+}
+
+/* The script hides and shows rows with the hidden attribute; a class that sets
+ * display must not win over it. */
+.workshop-prose .ew-piece [hidden] {
+  display: none;
+}
+
+.workshop-prose .ew-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Text: 12 CSS px at any scale, with a thin halo so a label stays readable where
+ * a grid line or a dashed drop line passes under it. A drag that slips off a hit
+ * circle must not select it. */
+.workshop-prose .ew-svg text {
+  user-select: none;
+  -webkit-user-select: none;
+  fill: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: calc(12px * var(--ew-u, 1));
+  stroke: var(--c-bg);
+  stroke-width: calc(3px * var(--ew-u, 1));
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+
+.workshop-prose .ew-svg .ew-name {
+  fill: var(--c-text);
+}
+
+/* Text that sits on a card carries no halo: the card is already its backdrop. */
+.workshop-prose .ew-svg .ew-card-text {
+  fill: var(--c-text);
+  stroke: none;
+}
+
+.workshop-prose .ew-svg .ew-tag-muted { fill: var(--c-text-secondary); }
+.workshop-prose .ew-svg .ew-tag-amber { fill: var(--c-accent-amber); }
+.workshop-prose .ew-svg .ew-tag-red { fill: var(--c-accent-red); }
+.workshop-prose .ew-svg .ew-tag-blue { fill: var(--c-accent-blue); }
+
+/* Lines and paths never fill; shapes that need a fill say so below. */
+.workshop-prose .ew-svg :where(line, path, polyline) {
+  fill: none;
+}
+
+.workshop-prose .ew-grid {
+  stroke: var(--c-border);
+  stroke-width: calc(1px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-axis {
+  stroke: var(--c-text-secondary);
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-axis--citrus {
+  stroke: var(--c-accent-amber);
+}
+
+.workshop-prose .ew-drop {
+  stroke: var(--c-border-strong);
+  stroke-width: calc(1px * var(--ew-u, 1));
+  stroke-dasharray: calc(4px * var(--ew-u, 1)) calc(4px * var(--ew-u, 1));
+}
+
+/* Drop lines prove a drink rose and did not slide, so the room's are heavier. */
+.workshop-prose .ew-drop--strong {
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-shadow {
+  fill: var(--c-border);
+  stroke: none;
+}
+
+.workshop-prose .ew-bracket {
+  stroke: var(--c-accent-red);
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-hint {
+  stroke: var(--c-accent-amber);
+  stroke-width: calc(2px * var(--ew-u, 1));
+  stroke-dasharray: calc(6px * var(--ew-u, 1)) calc(4px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-ring {
+  fill: none;
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-ring--amber { stroke: var(--c-accent-amber); }
+.workshop-prose .ew-ring--red { stroke: var(--c-accent-red); }
+
+.workshop-prose .ew-arrow {
+  stroke: var(--c-accent-blue);
+  stroke-width: calc(2.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-arrow--amber {
+  stroke: var(--c-accent-amber);
+}
+
+.workshop-prose .ew-head {
+  fill: var(--c-accent-blue);
+  stroke: none;
+}
+
+.workshop-prose .ew-head--amber {
+  fill: var(--c-accent-amber);
+}
+
+.workshop-prose .ew-head--axis {
+  fill: var(--c-text-secondary);
+}
+
+.workshop-prose .ew-beam {
+  stroke: var(--c-accent-blue);
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+  stroke-dasharray: calc(5px * var(--ew-u, 1)) calc(4px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-arc {
+  stroke: var(--c-accent-amber);
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-ruler {
+  stroke: var(--c-text-secondary);
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-dotted {
+  stroke: var(--c-text-muted);
+  stroke-width: calc(1px * var(--ew-u, 1));
+  stroke-dasharray: calc(1px * var(--ew-u, 1)) calc(4px * var(--ew-u, 1));
+  stroke-linecap: round;
+}
+
+.workshop-prose .ew-dot {
+  fill: var(--c-text);
+}
+
+.workshop-prose .ew-dot--amber {
+  fill: var(--c-accent-amber);
+}
+
+/* Piece 4 cards. The outline classes below come after .ew-card so a wanted or
+ * unwanted card overrides its resting stroke. */
+.workshop-prose .ew-card {
+  fill: var(--c-bg-card);
+  stroke: var(--c-border);
+  stroke-width: calc(1px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-card-hit {
+  cursor: pointer;
+}
+
+/* Piece 4's role outline sits over a card and never fills it. */
+.workshop-prose .ew-outline {
+  fill: none;
+}
+
+.workshop-prose .ew-card--request {
+  stroke: var(--c-accent-amber);
+}
+
+.workshop-prose .ew-card--unseen {
+  stroke-dasharray: calc(4px * var(--ew-u, 1)) calc(3px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-pair {
+  stroke: var(--c-accent);
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-unwanted {
+  stroke: var(--c-accent-red);
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-pulse {
+  stroke: var(--c-text-muted);
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+/* Sprites stand on a disc in dark mode only, so the dark coffees do not sink into
+ * the near-black page. The card color is too close to that page to help, so the
+ * disc is a lighter wash of the text color with a hairline edge. */
+.workshop-prose .ew-disc {
+  display: none;
+  fill: color-mix(in oklab, var(--c-text) 22%, transparent);
+  stroke: var(--c-border-strong);
+  stroke-width: calc(1px * var(--ew-u, 1));
+}
+
+.dark .workshop-prose .ew-disc {
+  display: inline;
+}
+
+/* Input. The hit circle claims the finger and nothing else does. */
+.workshop-prose .ew-hit {
+  fill: transparent;
+  touch-action: none;
+  cursor: grab;
+}
+
+.workshop-prose .ew-hit:active {
+  cursor: grabbing;
+}
+
+.workshop-prose .ew-turnable {
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.workshop-prose .ew-turnable:active {
+  cursor: grabbing;
+}
+
+/* SVG focusables draw their own ring as a child shape. */
+.workshop-prose .ew-svg [tabindex],
+.workshop-prose .ew-svg:focus {
+  outline: none;
+}
+
+.workshop-prose .ew-focus {
+  display: none;
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose :focus-visible > .ew-focus {
+  display: inline;
+}
+
+/* The panel under the stage: readouts and controls in HTML. */
+.workshop-prose .ew-panel {
+  padding: 14px 18px;
+  border-top: 1px solid var(--c-border);
+}
+
+.workshop-prose .ew-readout {
+  color: var(--c-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.workshop-prose .ew-readout p {
+  margin: 0;
+}
+
+.workshop-prose .ew-readout p + p {
+  margin-top: 0.6em;
+}
+
+.workshop-prose .ew-readout:empty {
+  display: none;
+}
+
+/* The line that states what the figure showed, set apart from the running
+ * readout. */
+.workshop-prose .ew-conclusion {
+  font-weight: 600;
+}
+
+/* A readout or a checklist that follows a range sits clear of it. */
+.workshop-prose .ew-field + .ew-readout {
+  margin-top: 12px;
+}
+
+.workshop-prose .ew-field + .ew-checklist {
+  margin-top: 16px;
+}
+
+/* A muted line: hints, the first-move prompt, the tapped card's full text. */
+.workshop-prose .ew-note {
+  margin: 0.6em 0 0;
+  color: var(--c-text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* A labeled line of the readout: "The ruler says", "Your tongue says". */
+.workshop-prose .ew-row + .ew-row {
+  margin-top: 0.6em;
+}
+
+.workshop-prose .ew-row__label {
+  display: block;
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.workshop-prose .ew-checklist {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.workshop-prose .ew-checklist li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  color: var(--c-text-secondary);
+}
+
+.workshop-prose .ew-kept { color: var(--c-accent); }
+.workshop-prose .ew-broken { color: var(--c-accent-red); }
+.workshop-prose .ew-unasked { color: var(--c-text-secondary); }
+
+.workshop-prose .ew-controls,
+.workshop-prose .ew-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.workshop-prose .ew-btn {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 3px;
+  background: var(--c-bg-card);
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.workshop-prose .ew-btn:hover,
+.workshop-prose .ew-btn:focus-visible {
+  border-color: var(--c-accent);
+  color: var(--c-text);
+}
+
+.workshop-prose .ew-btn[aria-pressed="true"] {
+  border-color: var(--c-accent-amber);
+  color: var(--c-text);
+}
+
+/* Native range inputs with a visible label. */
+.workshop-prose .ew-field {
+  margin-top: 12px;
+}
+
+.workshop-prose .ew-field__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.workshop-prose .ew-field__value {
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.workshop-prose .ew-range {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  accent-color: var(--c-accent);
+}
+
+.workshop-prose .ew-field__ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -6px;
+  color: var(--c-text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+}
+
+/* Piece 3's tracks: thin bars with a number beside them. */
+.workshop-prose .ew-track {
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.workshop-prose .ew-track__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--c-text-secondary);
+  line-height: 1.5;
+}
+
+.workshop-prose .ew-track__value {
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.workshop-prose .ew-track__bar {
+  height: 6px;
+  margin-top: 4px;
+  overflow: hidden;
+  background: var(--c-border);
+}
+
+.workshop-prose .ew-track__fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--c-accent-blue);
+}
+
+.workshop-prose .ew-track__fill--amber {
+  background: var(--c-accent-amber);
+}
+
+.workshop-prose .ew-track__ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  color: var(--c-text-secondary);
+  font-size: 10px;
+}
+
+/* All real motion goes through the script's tween, which honors the setting. This
+ * only stops the hover color fades. */
+@media (prefers-reduced-motion: reduce) {
+  .workshop-prose .ew-piece * {
+    transition: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .workshop-prose .ew-btn {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 520px) {
+  .workshop-prose .ew-panel {
+    padding: 12px 14px;
   }
 }

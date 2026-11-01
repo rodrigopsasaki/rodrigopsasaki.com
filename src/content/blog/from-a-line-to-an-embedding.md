@@ -123,7 +123,19 @@ The sweetness line was already one.
 
 Written down, an address is a short list of numbers, one per direction. In the order sweetness, nuttiness, citrus brightness, the first coffee is 0.1, 0.6, 0.1, and the new one is 0.1, 0.6, 0.6. Ask about creaminess or smokiness too, and every address grows a number.
 
-We stop being able to draw after three directions. We don't need to. A fourth number is no harder to store than a third, and neither is the 384th. All we need are the numbers, and a way to compare them.
+We stop being able to draw a room after three directions. We don't need to. A fourth number is no harder to store than a third, and neither is the 384th. All we need are the numbers, and a way to compare them.
+
+One picture does survive the jump. Lay the questions out as spokes from a center, one spoke per question, mark each score along its spoke, and join the marks. The drink becomes a shape. The shape depends on the order we give the spokes, which is only a convention, but a drink's shape next to another drink's shape compares the same way in any order.
+
+<figure class="ew-plate">
+  <a class="ew-plate--light" href="/images/embedding-walkthrough/04b-taste-shape.svg" aria-label="Open the taste shapes at full size">
+    <img src="/images/embedding-walkthrough/04b-taste-shape.svg" alt="The new coffee drawn twice as a taste shape. Left, three spokes for sweetness, nuttiness, and citrus brightness, scored 0.1, 0.6 and 0.6, joined into a triangle. Right, the same coffee with twelve spokes, the first three unchanged and nine more imagined questions, joined into an irregular blob." width="740" height="520" loading="lazy" />
+  </a>
+  <a class="ew-plate--dark" href="/images/embedding-walkthrough/04b-taste-shape-dark.svg" aria-label="Open the taste shapes at full size">
+    <img src="/images/embedding-walkthrough/04b-taste-shape-dark.svg" alt="The new coffee drawn twice as a taste shape. Left, three spokes for sweetness, nuttiness, and citrus brightness, scored 0.1, 0.6 and 0.6, joined into a triangle. Right, the same coffee with twelve spokes, the first three unchanged and nine more imagined questions, joined into an irregular blob." width="740" height="520" loading="lazy" />
+  </a>
+  <figcaption>The same coffee with three questions and with twelve. More questions change the outline, not the idea.</figcaption>
+</figure>
 
 ## The same balance, at a different intensity
 
@@ -133,12 +145,12 @@ Here is that gentle cup beside two other black coffees, all poured the same size
 
 <figure class="ew-plate">
   <a class="ew-plate--light" href="/images/embedding-walkthrough/05-taste-profiles.svg" aria-label="Open the three coffee taste profiles at full size">
-    <img src="/images/embedding-walkthrough/05-taste-profiles.svg" alt="Three black coffees in cups of the same size, each with three bars for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6." width="740" height="540" loading="lazy" />
+    <img src="/images/embedding-walkthrough/05-taste-profiles.svg" alt="Three black coffees drawn as taste shapes on one set of three spokes for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6. The pronounced outline is the gentle outline at twice the size; the citrus-led outline reaches farther along the citrus spoke." width="740" height="520" loading="lazy" />
   </a>
   <a class="ew-plate--dark" href="/images/embedding-walkthrough/05-taste-profiles-dark.svg" aria-label="Open the three coffee taste profiles at full size">
-    <img src="/images/embedding-walkthrough/05-taste-profiles-dark.svg" alt="Three black coffees in cups of the same size, each with three bars for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6." width="740" height="540" loading="lazy" />
+    <img src="/images/embedding-walkthrough/05-taste-profiles-dark.svg" alt="Three black coffees drawn as taste shapes on one set of three spokes for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6. The pronounced outline is the gentle outline at twice the size; the citrus-led outline reaches farther along the citrus spoke." width="740" height="520" loading="lazy" />
   </a>
-  <figcaption>Three black coffees, each scored for sweetness, nuttiness, and citrus brightness.</figcaption>
+  <figcaption>Three black coffees drawn as shapes, laid over one another. Where two outlines run close on a spoke, the drinks taste close on that question.</figcaption>
 </figure>
 
 Which of the other two tastes most like the gentle one?

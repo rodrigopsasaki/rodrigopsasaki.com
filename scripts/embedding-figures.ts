@@ -331,8 +331,10 @@ const ALT = {
     "A trial on the existing sweetness-and-nuttiness map. The original coffee stays at its nutty address. The new coffee's previous position is ghosted there. A guide arrow moves the new coffee toward lemon juice by lowering its nuttiness score, keeping sweetness unchanged. It is closer to lemon juice, but the map now calls it less nutty even though tasting says the coffees are equally nutty.",
   '04-citrus-space':
     "The taste map as a room. The sweetness-and-nuttiness page has become the floor. Every drink stands on its old spot and rises by how citrusy it tastes. The two black coffees share one spot on the floor, but the new coffee rises much higher, nearer the lemon juice.",
+  '04b-taste-shape':
+    "The new coffee drawn twice as a taste shape. Left, three spokes for sweetness, nuttiness, and citrus brightness, scored 0.1, 0.6 and 0.6, joined into a triangle. Right, the same coffee with twelve spokes, the first three unchanged and nine more imagined questions, joined into an irregular blob.",
   '05-taste-profiles':
-    "Three black coffees in cups of the same size, each with three bars for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6.",
+    "Three black coffees drawn as taste shapes on one set of three spokes for sweetness, nuttiness, and citrus brightness. Gentle: 0.1, 0.3 and 0.3. Pronounced: 0.2, 0.6 and 0.6. Citrus-led: 0.1, 0.2 and 0.6. The pronounced outline is the gentle outline at twice the size; the citrus-led outline reaches farther along the citrus spoke.",
   '06-taste-directions':
     "A view of three-part taste addresses with arrows from one start. The gentle and pronounced coffee profiles point in exactly the same direction, with the pronounced profile's arrow twice as long. The citrus-led profile points in a different direction. Small equal-sized coffee cups identify the destinations. Measured by straight-line nearness, the citrus-led cup is closer to the gentle one.",
 } as const;
@@ -986,74 +988,204 @@ function citrusSpace(ink: Ink): Plate {
 }
 
 // ---------------------------------------------------------------------------
-// 05: the three bar profiles, each headed by the black coffee at the same size
+// Taste shapes: one spoke per question, a mark along each spoke at its score,
+// the marks joined into an outline. Spokes turn counterclockwise from straight
+// up, so three questions put sweetness on top, nuttiness lower left and citrus
+// brightness lower right. The order of the spokes is a convention; the
+// comparison of two shapes does not depend on it.
 
-function tasteProfiles(ink: Ink): Plate {
-  const width = 740;
-  const height = 540;
-  const spriteSize = 150;
-  const cups: readonly { id: CupId; title: string }[] = [
-    { id: 'gentle', title: 'Gentle' },
-    { id: 'pronounced', title: 'Pronounced' },
-    { id: 'citrus-led', title: 'Citrus-led' },
-  ];
-  const rows: readonly { key: 's' | 'n' | 'c'; label: string; fill: string }[] = [
-    { key: 's', label: 'Sweetness', fill: ink.blue },
-    { key: 'n', label: 'Nuttiness', fill: ink.secondary },
-    { key: 'c', label: 'Citrus', fill: ink.amber },
-  ];
-  const SEGMENTS = 10;
-  const SEGMENT_W = 16;
-  const GAP = 4;
-  const barWidth = SEGMENTS * SEGMENT_W + (SEGMENTS - 1) * GAP;
+type Radar = { center: Point; radius: number; count: number };
+type Spoke = { name: string; score: number };
 
-  const body: string[] = [
-    text({ x: 24, y: 84 }, 'Three black coffees, poured the same size', {
-      size: 26,
-      fill: ink.text,
-      weight: 700,
+const RING_LEVELS = [0.2, 0.4, 0.6, 0.8, 1] as const;
+const SPOKE_NAME_GAP = 12;
+
+const threeSpokes = (t: Taste): Spoke[] => [
+  { name: 'sweetness', score: t.s },
+  { name: 'nuttiness', score: t.n },
+  { name: 'citrus brightness', score: t.c },
+];
+
+// Nine more questions for the new coffee, imagined: plausible for a nutty coffee with
+// a citrus finish, each score between 0 and 1.
+const IMAGINED_SPOKES: readonly Spoke[] = [
+  { name: 'body', score: 0.5 },
+  { name: 'bitterness', score: 0.5 },
+  { name: 'roast', score: 0.5 },
+  { name: 'creaminess', score: 0.1 },
+  { name: 'smokiness', score: 0.2 },
+  { name: 'chocolate', score: 0.4 },
+  { name: 'floral', score: 0.2 },
+  { name: 'acidity', score: 0.5 },
+  { name: 'aftertaste', score: 0.5 },
+];
+
+// `reach` is in plate units along the spoke from the center.
+function spokeAt(r: Radar, index: number, reach: number): Point {
+  const angle = -Math.PI / 2 - (index * 2 * Math.PI) / r.count;
+  return { x: r.center.x + reach * Math.cos(angle), y: r.center.y + reach * Math.sin(angle) };
+}
+
+const spokeIndexes = (r: Radar): number[] => Array.from({ length: r.count }, (_, i) => i);
+
+// The rings and the spokes, in the muted grid colors.
+function radarGrid(r: Radar, ink: Ink): string[] {
+  const rings = RING_LEVELS.map((level) =>
+    circle(r.center, level * r.radius, {
+      fill: 'none',
+      stroke: level === 1 ? ink.borderStrong : ink.border,
+      'stroke-width': 1.2,
+    })
+  );
+  const spokes = spokeIndexes(r).map((i) =>
+    line(r.center, spokeAt(r, i, r.radius), { stroke: ink.borderStrong, 'stroke-width': 1.2 })
+  );
+  return [...rings, ...spokes];
+}
+
+// The outline joining the marks, filled thinly, with a dot on each score.
+function radarShape(
+  r: Radar,
+  scores: readonly number[],
+  color: string,
+  o: { paper: string; fillOpacity: number; dot: number }
+): string[] {
+  const marks = scores.map((score, i) => spokeAt(r, i, score * r.radius));
+  return [
+    el('polygon', {
+      points: marks.map((m) => `${num(m.x)},${num(m.y)}`).join(' '),
+      fill: color,
+      'fill-opacity': o.fillOpacity,
+      stroke: color,
+      'stroke-width': 2.5,
+      'stroke-linejoin': 'round',
     }),
+    ...marks.map((m) => circle(m, o.dot, { fill: color, stroke: o.paper, 'stroke-width': 1.5 })),
   ];
-  cups.forEach((cup, col) => {
-    const cx = 130 + col * 240;
-    body.push(
-      text({ x: cx, y: 148 }, cup.title, {
+}
+
+// Each name stands outside the outer ring on its spoke's line. Spokes on the right half of
+// the circle anchor the name at its start, on the left half at its end, and the ones near
+// the top and bottom center it, so a name always grows away from the circle. Its baseline
+// drops with the spoke's height: a name above the center sits on its point, one below hangs from it.
+function spokeNames(r: Radar, names: readonly string[], fill: string, size: number): string[] {
+  return names.map((name, i) => {
+    const p = spokeAt(r, i, r.radius + SPOKE_NAME_GAP);
+    const side = (p.x - r.center.x) / (r.radius + SPOKE_NAME_GAP);
+    const rise = (p.y - r.center.y) / (r.radius + SPOKE_NAME_GAP);
+    const anchor = side > 0.3 ? 'start' : side < -0.3 ? 'end' : 'middle';
+    return text({ x: p.x, y: p.y + size * 0.35 + size * 0.45 * rise }, name, { size, fill, anchor });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 04b: the same coffee as a triangle and as a blob
+
+const SHAPE_RADIUS = 100;
+const SHAPE_NAME_SIZE = 11;
+const SHAPE_CENTER_Y = 310;
+
+function tasteShape(ink: Ink): Plate {
+  const width = 740;
+  const height = 520;
+  const spriteSize = 72;
+  const coffee = DRINKS['new-coffee'];
+  const panels: readonly { title: string; x: number; spokes: readonly Spoke[]; dot: number }[] = [
+    { title: 'Three questions', x: 175, spokes: threeSpokes(coffee), dot: 4.5 },
+    {
+      title: 'Twelve questions',
+      x: 565,
+      spokes: [...threeSpokes(coffee), ...IMAGINED_SPOKES],
+      dot: 3.5,
+    },
+  ];
+
+  const body = panels.flatMap((panel) => {
+    const radar: Radar = {
+      center: { x: panel.x, y: SHAPE_CENTER_Y },
+      radius: SHAPE_RADIUS,
+      count: panel.spokes.length,
+    };
+    return [
+      text({ x: panel.x, y: 76 }, panel.title, {
         size: 20,
         fill: ink.text,
         anchor: 'middle',
         weight: 700,
-      })
-    );
-    body.push(use('black-coffee', { x: cx, y: 272 }));
-    rows.forEach((row, i) => {
-      const labelY = 322 + i * 62;
-      const barY = labelY + 12;
-      const lit = Math.round(CUPS[cup.id][row.key] * SEGMENTS);
-      body.push(
-        text({ x: cx, y: labelY }, row.label, { size: 16, fill: ink.secondary, anchor: 'middle' })
-      );
-      for (let k = 0; k < SEGMENTS; k += 1) {
-        body.push(
-          el('rect', {
-            x: cx - barWidth / 2 + k * (SEGMENT_W + GAP),
-            y: barY,
-            width: SEGMENT_W,
-            height: 20,
-            rx: 3,
-            fill: k < lit ? row.fill : ink.text,
-            'fill-opacity': k < lit ? undefined : 0.12,
-          })
-        );
-      }
-    });
+      }),
+      use('black-coffee', { x: panel.x, y: 156 }),
+      ...radarGrid(radar, ink),
+      ...radarShape(
+        radar,
+        panel.spokes.map((spoke) => spoke.score),
+        ink.amber,
+        { paper: ink.paper, fillOpacity: 0.18, dot: panel.dot }
+      ),
+      ...spokeNames(
+        radar,
+        panel.spokes.map((spoke) => spoke.name),
+        ink.secondary,
+        SHAPE_NAME_SIZE
+      ),
+    ];
   });
   body.push(
-    text({ x: 370, y: 514 }, 'Imagined taste ratings.', {
+    text({ x: 370, y: 494 }, 'Imagined taste ratings.', {
       size: 14,
       fill: ink.secondary,
       anchor: 'middle',
     })
   );
+
+  return {
+    file: '04b-taste-shape',
+    header: '04b / THE SAME DRINK, DRAWN AS A SHAPE',
+    title: 'The new coffee drawn as a taste shape',
+    desc: ALT['04b-taste-shape'],
+    width,
+    height,
+    sprites: ['black-coffee'],
+    spriteSize,
+    body,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 05: the three cups laid over one another on one radar
+
+function tasteProfiles(ink: Ink): Plate {
+  const width = 740;
+  const height = 520;
+  const spriteSize = 80;
+  const radar: Radar = { center: { x: 230, y: 300 }, radius: 125, count: 3 };
+  const legendX = 520;
+  // The smallest outline is painted last, so it stays visible over the larger ones.
+  const cups: readonly { id: CupId; title: string; color: string }[] = [
+    { id: 'gentle', title: 'Gentle', color: ink.blue },
+    { id: 'pronounced', title: 'Pronounced', color: ink.secondary },
+    { id: 'citrus-led', title: 'Citrus-led', color: ink.amber },
+  ];
+
+  const shapes = [...cups].reverse().flatMap((cup) => {
+    const taste = CUPS[cup.id];
+    return radarShape(radar, [taste.s, taste.n, taste.c], cup.color, {
+      paper: ink.paper,
+      fillOpacity: 0.14,
+      dot: 4.5,
+    });
+  });
+  const legend = cups.flatMap((cup, i) => {
+    const y = 262 + i * 52;
+    const taste = CUPS[cup.id];
+    return [
+      el('rect', { x: legendX, y: y - 12, width: 14, height: 14, rx: 3, fill: cup.color }),
+      text({ x: legendX + 24, y }, cup.title, { size: 16, fill: ink.text, weight: 700 }),
+      text({ x: legendX + 24, y: y + 20 }, `${taste.s}, ${taste.n}, ${taste.c}`, {
+        size: 13,
+        fill: ink.secondary,
+      }),
+    ];
+  });
 
   return {
     file: '05-taste-profiles',
@@ -1064,7 +1196,24 @@ function tasteProfiles(ink: Ink): Plate {
     height,
     sprites: ['black-coffee'],
     spriteSize,
-    body,
+    body: [
+      text({ x: 24, y: 84 }, 'Three black coffees, poured the same size', {
+        size: 26,
+        fill: ink.text,
+        weight: 700,
+      }),
+      ...radarGrid(radar, ink),
+      ...shapes,
+      ...spokeNames(radar, threeSpokes(CUPS.gentle).map((spoke) => spoke.name), ink.secondary, 14),
+      use('black-coffee', { x: legendX + 40, y: 190 }),
+      text({ x: legendX, y: 226 }, 'sweetness, nuttiness, citrus', { size: 12, fill: ink.secondary }),
+      ...legend,
+      text({ x: 370, y: 494 }, 'Imagined taste ratings.', {
+        size: 14,
+        fill: ink.secondary,
+        anchor: 'middle',
+      }),
+    ],
   };
 }
 
@@ -1299,6 +1448,7 @@ const PLATES: readonly { id: string; plate: (ink: Ink) => Plate }[] = [
   { id: '03', plate: nuttinessMap },
   { id: '03b', plate: placementExperiment },
   { id: '04', plate: citrusSpace },
+  { id: '04b', plate: tasteShape },
   { id: '05', plate: tasteProfiles },
   { id: '06', plate: tasteDirections },
 ];

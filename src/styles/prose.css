@@ -1627,6 +1627,41 @@ html.dark .workshop-prose a.ew-plate--dark {
   stroke-width: calc(2px * var(--ew-u, 1));
 }
 
+/* Where a card stood one step ago: a faint dashed dot and an arrow to its dot now.
+ * The role picks the color, as the outlines do. */
+.workshop-prose .ew-ghost {
+  --ew-ghost: var(--c-text-secondary);
+}
+
+.workshop-prose .ew-ghost--pair {
+  --ew-ghost: var(--c-accent);
+}
+
+.workshop-prose .ew-ghost--unwanted {
+  --ew-ghost: var(--c-accent-red);
+}
+
+.workshop-prose .ew-ghost--pulse {
+  --ew-ghost: var(--c-text-muted);
+}
+
+.workshop-prose .ew-ghost circle {
+  fill: color-mix(in oklab, var(--ew-ghost) 35%, transparent);
+  stroke: var(--ew-ghost);
+  stroke-width: calc(1px * var(--ew-u, 1));
+  stroke-dasharray: calc(2px * var(--ew-u, 1)) calc(2px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-ghost line {
+  stroke: var(--ew-ghost);
+  stroke-width: calc(1.5px * var(--ew-u, 1));
+}
+
+.workshop-prose .ew-ghost polygon {
+  fill: var(--ew-ghost);
+  stroke: none;
+}
+
 /* Sprites stand on a disc in dark mode only, so the dark coffees do not sink into
  * the near-black page. The card color is too close to that page to help, so the
  * disc is a lighter wash of the text color with a hairline edge. */

@@ -10,7 +10,7 @@
 
 import toyJson from '../../data/embedding-toy.json';
 import { layoutWidth } from './model';
-import type { Layout, ToyData, ToyPoint } from './model';
+import type { Layout, ToyData, ToyFit, ToyPoint } from './model';
 import {
   applyFrame,
   button,
@@ -19,6 +19,7 @@ import {
   focusFrame,
   h,
   isReducedMotion,
+  labeler,
   observeLayout,
   panel,
   range,
@@ -55,6 +56,14 @@ const STEPS = toy.steps.length - 1;
 const REQUEST_ID = 'request';
 
 const cardById = new Map(toy.cards.map((card) => [card.id, card]));
+
+// The data names no kind for a card, so the scoreboard keeps its own list of the
+// coffee notes. A mistyped id fails here, at load, not as a silent "no".
+const COFFEE_NOTES: ReadonlySet<string> = new Set(['hazelnut', 'almond', 'toasted']);
+for (const id of COFFEE_NOTES) {
+  if (!cardById.has(id)) throw new Error(`COFFEE_NOTES names a card that does not exist: ${id}`);
+}
+
 const unseenById = new Map(toy.unseen.map((card) => [card.id, card]));
 
 // The whole trajectory, one map per step.
@@ -96,7 +105,27 @@ const SETTLE_MS = 70;
 
 const TAP_HINT = 'Tap a card to read it in full.';
 
+// A card that moved less than this on the stage (stage units) leaves no ghost.
+const MOVED_MIN = 1;
+const GHOST_RADIUS = 5;
+// An arrow shorter than this (stage units, beyond the dot's edge) is left to the ghost.
+const ARROW_MIN = 2;
+const ARROW_HEAD_PX = 7;
+// The nearest ring is piece 3's (radius 9, tagged "nearest"), in the request's amber: red here means pushed away.
+const RING_RADIUS = 9;
+const NEAREST_TAG = 'nearest';
+const ORIGIN: ToyPoint = { x: 0, y: 0 };
+
 type Role = 'pair' | 'unwanted' | 'pulse';
+type GhostRole = Role | 'muted';
+
+// Where a card stood before this step: a faint dot, and an arrow to where it is now.
+type Ghost = {
+  g: SVGGElement;
+  dot: SVGCircleElement;
+  shaft: SVGLineElement;
+  head: SVGPolygonElement;
+};
 
 type CardNode = {
   id: string;
@@ -129,7 +158,24 @@ export const mount: MountPiece = (figure, stage, signal) => {
     height: toy.views[initial.layout].height,
   });
   const linkLayer = svg('g', { 'aria-hidden': 'true' }, svgEl);
+  // Decoration under the cards, so no ghost or ring ever covers a label.
+  const ghostLayer = svg('g', { 'aria-hidden': 'true', 'pointer-events': 'none' }, svgEl);
+  const ghosts = new Map<string, Ghost>();
+  for (const card of toy.cards) {
+    const g = svg('g', { visibility: 'hidden' }, ghostLayer);
+    ghosts.set(card.id, {
+      g,
+      dot: svg('circle', { r: GHOST_RADIUS }, g),
+      shaft: svg('line', {}, g),
+      head: svg('polygon', {}, g),
+    });
+  }
   const cardLayer = svg('g', {}, svgEl);
+  // The ring and its tag go over the cards: a ring is a thin line, and the tag is
+  // placed clear of every card.
+  const markLayer = svg('g', { 'aria-hidden': 'true', 'pointer-events': 'none' }, svgEl);
+  const nearestRing = svg('circle', { class: 'ew-ring ew-ring--amber', r: RING_RADIUS }, markLayer);
+  const nearestTag = svgText(markLayer, 'ew-tag-amber', NEAREST_TAG);
   const pairLine = svg('line', { class: 'ew-pair' }, linkLayer);
   const unwantedLine = svg('line', { class: 'ew-unwanted' }, linkLayer);
   const unseenLinks = new Map<string, SVGLineElement>();
@@ -170,6 +216,11 @@ export const mount: MountPiece = (figure, stage, signal) => {
   // Where each trained card is drawn right now, in toy coordinates.
   const shown = new Map<string, ToyPoint>(stepStates.at(0));
   let roles = new Map<string, Role>();
+  // The ring sits on the nearest card's dot. When the nearest card changes it
+  // slides over from where it was, as far as ringMix (0 to 1) says.
+  let nearest = neighborAt(0);
+  let ringFrom: ToyPoint | null = null;
+  let ringMix = 1;
   let pulseOpacity = 0;
   const fade = new Map<string, number>();
   const chipOn = new Map<string, boolean>();
@@ -207,6 +258,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
     signal
   );
   const read = readout(body);
+  const score = h('p', 'ew-note', undefined, body);
   const unseenRow = h('div', '', undefined, body);
   unseenRow.hidden = true;
   h('p', 'ew-note', 'Descriptions the examples never showed:', unseenRow);
@@ -262,6 +314,57 @@ export const mount: MountPiece = (figure, stage, signal) => {
     render();
   }
 
+  // ─── Movement and the nearest card ───
+  function ringCenter(): ToyPoint {
+    const to = shown.get(nearest) ?? ORIGIN;
+    if (!ringFrom) return to;
+    return {
+      x: ringFrom.x + (to.x - ringFrom.x) * ringMix,
+      y: ringFrom.y + (to.y - ringFrom.y) * ringMix,
+    };
+  }
+
+  // Where a card stood one step ago on the stage, when this step moved it.
+  function movedFrom(id: string, view: ToyFit): ToyPoint | null {
+    const before = stepStates.at(step - 1)?.get(id);
+    const after = stepStates.at(step)?.get(id);
+    if (step < 1 || !before || !after) return null;
+    const was = viewPoint(view, before);
+    const now = viewPoint(view, after);
+    return Math.hypot(now.x - was.x, now.y - was.y) > MOVED_MIN ? was : null;
+  }
+
+  function ghostRole(n: number, id: string): GhostRole {
+    const along = toy.steps.at(n)?.movedAlong?.card === id ? 'pulse' : 'muted';
+    return rolesFor(n).get(id) ?? along;
+  }
+
+  // From the ghost to the edge of the dot it became, the head sized to what shows.
+  function drawGhostArrow(ghost: Ghost, from: ToyPoint, to: ToyPoint, u: number): void {
+    const length = Math.hypot(to.x - from.x, to.y - from.y);
+    const reach = length - DOT_RADIUS - 1;
+    const show = reach > ARROW_MIN;
+    ghost.shaft.setAttribute('visibility', show ? 'visible' : 'hidden');
+    ghost.head.setAttribute('visibility', show ? 'visible' : 'hidden');
+    if (!show) return;
+    const ux = (to.x - from.x) / length;
+    const uy = (to.y - from.y) / length;
+    const tip = { x: from.x + ux * reach, y: from.y + uy * reach };
+    const size = Math.min(ARROW_HEAD_PX * u, reach * 0.7);
+    const back = { x: tip.x - ux * size, y: tip.y - uy * size };
+    const wing = size * 0.4;
+    setAttrs(ghost.shaft, { x1: from.x, y1: from.y, x2: back.x, y2: back.y });
+    const corners = [
+      tip,
+      { x: back.x + uy * wing, y: back.y - ux * wing },
+      { x: back.x - uy * wing, y: back.y + ux * wing },
+    ];
+    ghost.head.setAttribute(
+      'points',
+      corners.map((p) => `${Math.round(p.x * 100) / 100},${Math.round(p.y * 100) / 100}`).join(' ')
+    );
+  }
+
   // ─── Drawing ───
   const render = scheduler(draw, signal);
 
@@ -309,6 +412,9 @@ export const mount: MountPiece = (figure, stage, signal) => {
     lastDraw = now;
     let settling = false;
     const height = CARD_PX * u;
+    // Every card claims its box, then the tag takes a clear spot beside the ring.
+    const book = labeler(measured.size, u, options.edge);
+    let nearestMid: number | null = null;
 
     for (const node of nodes) {
       const at = positions.get(node.id);
@@ -346,6 +452,8 @@ export const mount: MountPiece = (figure, stage, signal) => {
         Math.max(options.edge + height, dot.y + current.dy)
       );
       const spot: Place = { left, bottom };
+      book.avoid({ x0: left, x1: left + w, y0: bottom - height, y1: bottom });
+      if (node.id === nearest) nearestMid = left + w / 2;
       setAttrs(node.rect, { x: left, y: bottom - height, width: w, height, rx: 3 * u });
       setAttrs(node.dot, { cx: dot.x, cy: dot.y });
       setAttrs(node.text, { x: left + w / 2, y: bottom - height / 2 + BASELINE_PX * u });
@@ -375,7 +483,45 @@ export const mount: MountPiece = (figure, stage, signal) => {
         node.outline.style.opacity = role === 'pulse' ? String(pulseOpacity) : '1';
       }
     }
+
+    // The ring on the nearest card's dot, and its tag beside it, clear of the
+    // cards and dots, on the side of the ring away from the card's own label.
+    const ring = viewPoint(view, ringCenter());
+    setAttrs(nearestRing, { cx: ring.x, cy: ring.y });
+    for (const node of nodes) {
+      if (node.late && !visibleUnseen(node.id)) continue;
+      const at = dotAt(node.id);
+      const r = DOT_RADIUS;
+      book.avoid({ x0: at.x - r, x1: at.x + r, y0: at.y - r, y1: at.y + r });
+    }
+    for (const [from, to] of lines) book.avoidLine(from, to);
+    const labelOnLeft = nearestMid !== null && nearestMid < ring.x;
+    const side = labelOnLeft ? 1 : -1;
+    const reach = RING_RADIUS + 4 * u;
+    const under = ring.y + RING_RADIUS + 11 * u;
+    const away = labelOnLeft ? 'start' : 'end';
+    const toward = labelOnLeft ? 'end' : 'start';
+    book.put(nearestTag, ring.x + side * reach, ring.y + 4 * u, {
+      anchor: away,
+      stack: 1,
+      tries: [
+        { x: ring.x - side * reach, y: ring.y + 4 * u, anchor: toward },
+        { x: ring.x + side * 7 * u, y: under, anchor: away },
+        { x: ring.x - side * 7 * u, y: under, anchor: toward },
+        { x: ring.x, y: ring.y - RING_RADIUS - 4 * u, anchor: 'middle' },
+      ],
+    });
     snapOffsets = false;
+
+    // Where each card that moved this step stood before it, and the way it went.
+    for (const [id, ghost] of ghosts) {
+      const was = movedFrom(id, view);
+      ghost.g.setAttribute('visibility', was ? 'visible' : 'hidden');
+      if (!was) continue;
+      ghost.g.setAttribute('class', `ew-ghost ew-ghost--${ghostRole(step, id)}`);
+      setAttrs(ghost.dot, { cx: was.x, cy: was.y });
+      drawGhostArrow(ghost, was, dotAt(id), u);
+    }
 
     // Lines run between the dots, which are the true addresses.
     if (pair && unwanted && exampleOpacity > 0) {
@@ -409,32 +555,26 @@ export const mount: MountPiece = (figure, stage, signal) => {
   }
 
   function stepParagraphs(n: number): HTMLParagraphElement[] {
+    const nearestText = textOf(neighborAt(n));
     const current = toy.steps.at(n);
     if (!current?.pair || current.unwanted === null) {
       return [
         paragraph(
-          `Before training, the rule is a guess, so the addresses are scattered. Nearest to the request: '${textOf(neighborAt(n))}'. A poor answer.`
+          `Before training the addresses are a guess. Nearest to the request: '${nearestText}'.`
         ),
       ];
     }
     const { a, b } = current.pair;
     const along = current.movedAlong;
     const alongText = along
-      ? ` '${textOf(along.card)}' moved too, though it was not in this example. It shares the word '${along.word}' with '${textOf(along.sharedWith)}'.`
+      ? ` '${textOf(along.card)}' moved too: it shares the word '${along.word}' with '${textOf(along.sharedWith)}'.`
       : '';
-    const lines = [
+    return [
       paragraph(
-        `Example ${n} of ${STEPS}. Wanted together: '${textOf(a)}' and '${textOf(b)}'. They moved closer. Not wanted: '${textOf(current.unwanted)}'. It moved away.${alongText} Nearest to the request: '${textOf(neighborAt(n))}'.`
+        `Pulled together: '${textOf(a)}' and '${textOf(b)}'. Pushed away: '${textOf(current.unwanted)}'.${alongText}`
       ),
+      paragraph(`Nearest to the request now: '${nearestText}'.`),
     ];
-    if (n === STEPS) {
-      lines.push(
-        paragraph(
-          'Nobody placed these cards. The coffee notes gathered near the request because the examples kept saying they belong together, and the opening hours drifted away.'
-        )
-      );
-    }
-    return lines;
   }
 
   function unseenParagraph(id: string): HTMLParagraphElement {
@@ -453,6 +593,10 @@ export const mount: MountPiece = (figure, stage, signal) => {
     } else {
       read.set(`step-${step}${salt}`, stepParagraphs(step));
     }
+  }
+
+  function syncScore(): void {
+    score.textContent = `Nearest is a coffee note: ${COFFEE_NOTES.has(nearest) ? 'yes' : 'no'}`;
   }
 
   function syncNote(): void {
@@ -511,7 +655,12 @@ export const mount: MountPiece = (figure, stage, signal) => {
     roles = rolesFor(n);
     const target = stepStates.at(n) ?? shown;
     const from = new Map(shown);
+    const next = neighborAt(n);
+    ringFrom = next === nearest ? null : ringCenter();
+    ringMix = 0;
+    nearest = next;
     const place = (p: number): void => {
+      ringMix = p;
       for (const [id, to] of target) {
         const start = from.get(id) ?? to;
         shown.set(id, { x: start.x + (to.x - start.x) * p, y: start.y + (to.y - start.y) * p });
@@ -544,6 +693,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
     stepRange.setValue(n);
     unseenRow.hidden = n !== STEPS;
     syncReadout(false);
+    syncScore();
     render();
   }
 
@@ -612,6 +762,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
   applyFrame(svgEl, measured.size, initial.u);
   roles = rolesFor(0);
   syncReadout(false);
+  syncScore();
   syncNote();
   render();
 };

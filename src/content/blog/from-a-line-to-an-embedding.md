@@ -1,11 +1,11 @@
 ---
 title: "From a line to an embedding"
 description: "Give coffee a taste address, one dimension at a time, and discover what an embedding is for."
-date: "2026-10-30"
+date: "2026-11-04"
 tags: ["ai", "embeddings", "geometry", "learning"]
 author: "Rodrigo Sasaki"
 lang: "en"
-visibility: "draft"
+visibility: "published"
 ---
 
 Imagine a café counter. There is orange juice, lemon juice, a black coffee, a latte, and a hazelnut latte.

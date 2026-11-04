@@ -61,7 +61,7 @@ server {
         }
         
         # Force HTTPS redirect for paths without trailing slash that need it
-        if (\$uri !~ /\$) {
+        if (\$uri !~ "(/|\.[A-Za-z0-9]+)\$") {
             return 301 \$proto://\$host\$uri/;
         }
         # First try the exact file, then try as directory with index.html

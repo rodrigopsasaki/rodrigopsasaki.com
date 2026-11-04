@@ -27,6 +27,7 @@ import {
   claimAir,
   claimArrow,
   createStageSvg,
+  cuts,
   drawArrow,
   drawAxes,
   drawGrid,
@@ -54,8 +55,7 @@ import {
   tween,
   turnGesture,
 } from './stage';
-import type { Arrow, LayoutInfo, MountPiece, Point, Sprite, Tween } from './stage';
-import { cuts } from './toy-layout';
+import type { Arrow, LayoutInfo, Line, MountPiece, Point, Sprite, Tween } from './stage';
 
 // ───── Data ────────────────────────────────────────────────────────────────
 
@@ -172,6 +172,12 @@ const YOURS_APPEARS_AFTER_MS = 300;
 // and how far out from it, in CSS px, on either side.
 const RULER_TAG_ALONG: readonly number[] = [0.5, 0.4, 0.6, 0.3, 0.7, 0.85];
 const RULER_TAG_OFFSETS: readonly number[] = [14, 26, 40, 56];
+// The same, for the "same direction" tag. It stays within SAME_TAG_NEAR of the dotted
+// ray, along any stretch of it; only when every such spot is taken may it stand up to
+// SAME_TAG_FAR out, beside the stretch between the gentle and pronounced cups.
+const SAME_TAG_ALONG: readonly number[] = [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9];
+const SAME_TAG_NEAR: readonly number[] = [10, 13, 16];
+const SAME_TAG_FAR: readonly number[] = [24, 34, 48];
 // The citrus axis name stands this far (CSS px) above its arrowhead.
 const CITRUS_NAME_PX = 8;
 
@@ -196,11 +202,9 @@ function fitOf(layout: Layout): Fit {
 
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 
-type Segment = readonly [Point, Point];
-
 // Whether two segments cross somewhere strictly inside both, so a segment that
 // only touches another at an end does not count.
-function crosses([a, b]: Segment, [c, d]: Segment): boolean {
+function crosses([a, b]: Line, [c, d]: Line): boolean {
   const side = (p: Point, q: Point, r: Point): number =>
     (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
   const denominator = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
@@ -249,6 +253,10 @@ export const mount: MountPiece = (figure, stage, signal) => {
   const grid = gridLines(floor);
   const axisLayer = svg('g', { 'aria-hidden': 'true' }, svgEl);
   const drops = svg('g', { 'aria-hidden': 'true' }, svgEl);
+
+  // The ray the gentle and pronounced cups share, dotted from the start to the edge
+  // of the cube. It stands under the rulers, the arrows and the cups.
+  const sameLine = svg('line', { class: 'ew-same', opacity: 0, 'aria-hidden': 'true' }, svgEl);
 
   // Ruler lines draw with stroke-dashoffset over a normalized path length.
   const rulers = svg('g', { 'aria-hidden': 'true' }, svgEl);
@@ -313,6 +321,8 @@ export const mount: MountPiece = (figure, stage, signal) => {
   const rulerTagCitrus = svgText(labels, 'ew-tag-muted', `${RULER_CITRUS.toFixed(2)} apart`);
   const nearestTag = svgText(labels, 'ew-tag-red', 'nearest');
   const beamTag = svgText(labels, 'ew-tag-blue', 'one direction');
+  const sameTag = svgText(labels, 'ew-tag-muted', 'same direction');
+  sameTag.setAttribute('aria-hidden', 'true');
   const spotTag = svgText(labels, 'ew-tag-muted', 'two cups, one spot');
 
   // ── Panel: story, step button, hint, then your cup's controls ──
@@ -407,7 +417,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
     // Every line that has a length to read (an axis, a ruler, an arrow, the beam)
     // drawn this frame, so a ruler number can tell when one of them stands between
     // it and its own ruler. Drop lines and the arc are claimed but not listed.
-    const lines: Segment[] = [];
+    const lines: Line[] = [];
     const claim = (a: Point, b: Point): void => {
       book.avoidLine(a, b);
       lines.push([a, b]);
@@ -466,9 +476,31 @@ export const mount: MountPiece = (figure, stage, signal) => {
       setAttrs(cup.shadow, { cx: foot.x, cy: foot.y, rx, ry: rx * Math.sin(cam.pitch) });
     }
 
+    // The shared ray, continued to the edge of the cube from a point on it, or as far
+    // as the frame allows when turning carries that edge out of it.
+    const far = at(RAY_EXIT);
+    const limit = fit.top + 30 * u;
+    const rayFrom = (from: Point): Point => {
+      const share = far.y < limit ? clamp01((from.y - limit) / (from.y - far.y)) : 1;
+      return { x: lerp(from.x, far.x, share), y: lerp(from.y, far.y, share) };
+    };
+
+    // The "same direction" line shows with the rulers and fades with them over the
+    // same time, but all the way out: the beam says the same thing with arrows.
+    const rulerFade = clamp01((state.arrowP * ARROWS_MS) / RULER_FADE_MS);
+    const sameOpacity = state.rulerP * (1 - rulerFade);
+    const sameEnd = rayFrom(origin);
+    setAttrs(sameLine, {
+      x1: origin.x,
+      y1: origin.y,
+      x2: sameEnd.x,
+      y2: sameEnd.y,
+      opacity: sameOpacity,
+    });
+    if (sameOpacity > 0) book.avoidLine(origin, sameEnd);
+
     // Rulers: gentle to each of the other two cups.
-    const rulerOpacity =
-      1 - (1 - RULER_FADED) * clamp01((state.arrowP * ARROWS_MS) / RULER_FADE_MS);
+    const rulerOpacity = 1 - (1 - RULER_FADED) * rulerFade;
     rulers.setAttribute('opacity', String(rulerOpacity));
     const lineTo = (line: SVGLineElement, from: Projected, to: Projected): void =>
       setAttrs(line, { x1: from.x, y1: from.y, x2: to.x, y2: to.y });
@@ -498,14 +530,10 @@ export const mount: MountPiece = (figure, stage, signal) => {
     }
     drawCupArrow(yoursArrow, points.yours, state.yoursOn ? 1 : 0);
 
-    // The shared line, continued to the edge of the cube, or as far as the frame
-    // allows when turning carries that edge out of it.
+    // The shared line, continued from the pronounced cup to the edge of the cube.
     const beamOpacity = BEAM_OPACITY * clamp01((clock - BEAM_AT) / BEAM_FADE_MS);
     const from = points.pronounced;
-    const far = at(RAY_EXIT);
-    const limit = fit.top + 30 * u;
-    const share = far.y < limit ? clamp01((from.y - limit) / (from.y - far.y)) : 1;
-    const exit = { x: lerp(from.x, far.x, share), y: lerp(from.y, far.y, share) };
+    const exit = rayFrom(from);
     setAttrs(beam, { x1: from.x, y1: from.y, x2: exit.x, y2: exit.y, opacity: beamOpacity });
     if (beamOpacity > 0) claim(from, exit);
 
@@ -655,7 +683,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
             : spot.x - length / 2;
       const y1 = spot.y + 2 * u;
       return (
-        cuts([origin, tip], { left: x0, bottom: y1, w: length, h: 13 * u }) ||
+        cuts([origin, tip], { x0, x1: x0 + length, y0: y1 - 13 * u, y1 }) ||
         (x0 < head.x1 && head.x0 < x0 + length && y1 - 13 * u < head.y1 && head.y0 < y1)
       );
     };
@@ -684,7 +712,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
       // A spot with another line between it and its ruler would read as that
       // line's length, so it is no spot at all. Nor is a spot on the citrus axis
       // or its head: it loses even to a spot on the number's own ruler.
-      const own: Segment = [points.gentle, to];
+      const own: Line = [points.gentle, to];
       const length = text.getComputedTextLength();
       const seen = (spot: Spot): boolean => {
         if (onAxis(spot, length)) return false;
@@ -774,6 +802,35 @@ export const mount: MountPiece = (figure, stage, signal) => {
     // Air around every cup name and the nearest tag, so the axis name never
     // stacks on one and reads as its second line, or runs on from it.
     for (const box of names) claimAir(book, box, 6 * u, 6 * u);
+
+    // The "same direction" tag stands right beside the dotted ray, on whichever side
+    // is free: first along the stretch between the gentle and pronounced dots, then
+    // beyond the pronounced dot, then below the gentle dot, nearest offsets first. It
+    // goes down after the names and the ruler numbers, so it keeps off them, and
+    // never on the citrus axis or its head.
+    sameTag.setAttribute('opacity', String(sameOpacity));
+    const sameSpots: Spot[] = [];
+    if (sameOpacity > 0) {
+      const length = sameTag.getComputedTextLength();
+      const side = points['citrus-led'];
+      const between: Line = [points.gentle, points.pronounced];
+      const stretches: readonly Line[] = [
+        between,
+        [points.pronounced, sameEnd],
+        [origin, points.gentle],
+      ];
+      sameSpots.push(
+        ...[
+          ...stretches.flatMap(([a, b]) => lineSpots(a, b, side, u, SAME_TAG_NEAR, SAME_TAG_ALONG)),
+          ...lineSpots(between[0], between[1], side, u, SAME_TAG_FAR, SAME_TAG_ALONG),
+        ].filter((spot) => !onAxis(spot, length))
+      );
+    }
+    const [sameFirst, ...sameRest] = sameSpots;
+    sameTag.setAttribute('display', sameFirst ? 'inline' : 'none');
+    if (sameFirst) {
+      book.put(sameTag, sameFirst.x, sameFirst.y, { anchor: sameFirst.anchor, tries: sameRest });
+    }
     placeCitrusName();
 
     book.put(beamTag, exit.x, exit.y - 8 * u, {

@@ -373,37 +373,3 @@ export function cosine(a: readonly number[], b: readonly number[]): number {
   const nb = normalize(b);
   return na.reduce((sum, x, i) => sum + x * nb[i], 0);
 }
-
-// Piece 4: the shape of src/data/embedding-toy.json, objects only (JSON arrays
-// of numbers are inferred as number[], never as tuples). Groups and the words of
-// each card are not stored; the file holds what the page replays.
-export type ToyPoint = { x: number; y: number };
-
-export type ToyCard = { id: string; text: string; short: string };
-
-// One card's address over the whole run: entry n is its address after n examples.
-export type ToyTrack = { id: string; xs: number[]; ys: number[] };
-
-// Example n (1 to 36): the wanted pair, the unwanted card, and the card that
-// moved although it was not in the example. Step 0 has none of them.
-export type ToyStep = {
-  pair: { a: string; b: string } | null;
-  unwanted: string | null;
-  movedAlong: { card: string; word: string; sharedWith: string } | null;
-};
-
-export type ToyUnseen = ToyCard & { at: ToyPoint };
-
-// The fit of the cloud to a frame: user units per toy unit, and the offset.
-export type ToyFit = { scale: number; ox: number; oy: number };
-
-// The fit of the cloud to one layout, and the height of the stage it is fitted to.
-export type ToyView = ToyFit & { height: number };
-
-export type ToyData = {
-  cards: ToyCard[];
-  tracks: ToyTrack[];
-  steps: ToyStep[];
-  unseen: ToyUnseen[];
-  views: Record<Layout, ToyView>;
-};

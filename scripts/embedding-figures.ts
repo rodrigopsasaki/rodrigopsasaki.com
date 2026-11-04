@@ -321,7 +321,7 @@ type Plate = {
 };
 
 // The alt text of every plate in the markdown, verbatim: each plate's <desc> is the same string
-// (the light and dark files share it). 07 belongs to embedding-toy-train.ts.
+// (the light and dark files share it).
 const ALT = {
   '02-sweetness-line':
     "How sweet is it? A horizontal line labeled sweetness, running from less at 0 to more at 1, with an arrow pointing toward more. Tick marks sit at 0, 0.1, 0.4, 0.6, 0.8 and 1. Illustrated drinks stand above the line, each with a short stem running down to its tick. Lemon juice and black coffee stand side by side at 0.1, their stems meeting at one point. The latte stands at 0.4, the hazelnut latte at 0.6 and the orange juice at 0.8.",

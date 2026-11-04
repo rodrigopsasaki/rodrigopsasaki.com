@@ -24,7 +24,7 @@
 import { CAST, layoutWidth } from './model';
 import type { Anchor, Layout, SpriteId, Taste } from './model';
 
-export type PieceName = 'coffee-placement' | 'page-to-room' | 'ruler-or-arrows' | 'map-learns';
+export type PieceName = 'coffee-placement' | 'page-to-room' | 'ruler-or-arrows';
 
 export type MountPiece = (figure: HTMLElement, stage: HTMLDivElement, signal: AbortSignal) => void;
 
@@ -1055,6 +1055,31 @@ export function headBox(from: Point, tip: Point, u: number): Box {
 export function claimArrow(book: Labeler, from: Point, tip: Point, u: number): void {
   book.avoidLine(from, tip);
   book.avoid(headBox(from, tip, u), SPRITE_WEIGHT);
+}
+
+// A straight line from one point to another.
+export type Line = readonly [Point, Point];
+
+// Whether the line passes through the box (Liang and Barsky's clipping test).
+export function cuts([a, b]: Line, box: Box): boolean {
+  const edges = [
+    [a.x - b.x, a.x - box.x0],
+    [b.x - a.x, box.x1 - a.x],
+    [a.y - b.y, a.y - box.y0],
+    [b.y - a.y, box.y1 - a.y],
+  ];
+  let near = 0;
+  let far = 1;
+  for (const [p, q] of edges) {
+    if (p === 0) {
+      if (q < 0) return false;
+    } else if (p < 0) {
+      near = Math.max(near, q / p);
+    } else {
+      far = Math.min(far, q / p);
+    }
+  }
+  return near <= far;
 }
 
 // ───── The floor and its axes ──────────────────────────────────────────────

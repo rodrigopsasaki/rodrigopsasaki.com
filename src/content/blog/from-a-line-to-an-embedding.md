@@ -186,28 +186,15 @@ Words alone make a poor map. Say a customer types "a nutty coffee with a little 
 
 So the job goes to a program that reads a piece of text and writes down its address. That program is the model. It learns from examples: two texts that should sit together, such as a request for a bright nutty coffee and the note "toasted nuts, bright and clean," and one that should not.[^ranking] Real models compare only direction, like the arrows at the counter, so a stronger and a milder note of the same balance are neighbors.
 
-Here is a toy model before and after training. Eight short texts sit on cards, the customer's request among them. All it knows is an address for each word. A card's address is the average of its words' addresses, and training moves word addresses, never a card's directly. To keep the picture simple, the toy measures plain nearness on its page; real models compare direction.
+Each example says only: these two, not that one. Before training, the addresses are a guess, and the nearest note to a request might be the opening hours. Every example nudges the addresses so the wanted pair sits a little closer and the unwanted note a little farther. A map is the sum of those small corrections.
 
-<figure class="ew-piece" data-ew="map-learns">
-  <a class="ew-fallback ew-plate--light" href="/images/embedding-walkthrough/07-learning-the-map.svg" aria-label="Open the training toy at full size">
-    <img src="/images/embedding-walkthrough/07-learning-the-map.svg" alt="Eight text cards scattered at random before training, with the opening hours nearest the request. After training, the coffee notes gather near the request, the lattes and the visit information form their own groups, and three descriptions never used in training land among their neighbors." width="740" height="1120" loading="lazy" />
-  </a>
-  <a class="ew-fallback ew-plate--dark" href="/images/embedding-walkthrough/07-learning-the-map-dark.svg" aria-label="Open the training toy at full size">
-    <img src="/images/embedding-walkthrough/07-learning-the-map-dark.svg" alt="Eight text cards scattered at random before training, with the opening hours nearest the request. After training, the coffee notes gather near the request, the lattes and the visit information form their own groups, and three descriptions never used in training land among their neighbors." width="740" height="1120" loading="lazy" />
-  </a>
-  <div class="ew-stage"></div>
-  <figcaption id="ew-cap-map-learns">A toy: each address has two numbers, and the rule is a table of word addresses. Its directions have no names. Real models use hundreds of numbers and read whole sentences, but they also learn by small corrections toward the matches we wanted.</figcaption>
-</figure>
-
-Each example said only: these two, not that one. Every neighborhood on that map is the sum of those small corrections. The three cards it never trained on still land beside their neighbors, because their words already have addresses.
-
-Training is the same nudge that made the map lie twice at the counter. Here no direction has a name, so no single score can be wrong, only neighbors. Each nudge moves word addresses, and every text built from those words moves with them, including texts it never saw. A real model has millions of adjustable settings beyond a word table, and a sentence's address is computed from all of them.
+It is the same nudge that made the map lie twice at the counter, with no direction named, so no single score can be wrong, only neighbors. A nudge never moves one text alone. It moves the settings that write every address, so texts that share words, or share a meaning, move together, including texts the model never saw. A real model has millions of those settings, and a sentence's address is computed from all of them.
 
 At this point the model parts ways with what we did at the counter. A real model never adds a direction. Before training starts, its builders decide how many numbers every address gets: hundreds, or a few thousand.[^training] Hundreds of directions leave a lot of room, and where they run out, the map gets some neighbors wrong, in ways no single number will show you.
 
 No single number means nutty. A likeness is spread across many of them, and nobody chose what number 412 is for.[^learned] Nobody told the model about sweetness or citrus. The examples asked for certain texts to sit together, and the directions became whatever that took.
 
-That evening, the customer who loved the black coffee opens the café's site and types what they want: "a nutty coffee with a little brightness." On the toy's map it gets an address like everything else. The nearest address belongs to the menu note for the second bag of beans, "almond notes, citrus finish," a note that sat in its training examples. And "almond roast, lemony and bright," a card the model never trained on, lands right beside "toasted nuts, bright and clean," among the coffee notes.
+That evening, the customer who loved the black coffee opens the café's site and types what they want: "a nutty coffee with a little brightness." The model writes it an address like any other text. The nearest address belongs to the menu note for the second bag of beans, "almond notes, citrus finish." A note the model never saw, "almond roast, lemony and bright," lands beside it, among the coffee notes and far from the opening hours.
 
 Next morning, you pour them a cup of the second bag of beans. Not one word in common with their request, and the nearest address on the map.
 

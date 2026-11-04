@@ -1469,12 +1469,6 @@ html.dark .workshop-prose a.ew-plate--dark {
   fill: var(--c-text);
 }
 
-/* Text that sits on a card carries no halo: the card is already its backdrop. */
-.workshop-prose .ew-svg .ew-card-text {
-  fill: var(--c-text);
-  stroke: none;
-}
-
 .workshop-prose .ew-svg .ew-tag-muted { fill: var(--c-text-secondary); }
 .workshop-prose .ew-svg .ew-tag-amber { fill: var(--c-accent-amber); }
 .workshop-prose .ew-svg .ew-tag-red { fill: var(--c-accent-red); }
@@ -1579,87 +1573,20 @@ html.dark .workshop-prose a.ew-plate--dark {
   stroke-linecap: round;
 }
 
+/* The ray two cups share, dotted so it reads as a guide and not a length. */
+.workshop-prose .ew-same {
+  stroke: var(--c-text-secondary);
+  stroke-width: calc(2px * var(--ew-u, 1));
+  stroke-dasharray: 0 calc(6px * var(--ew-u, 1));
+  stroke-linecap: round;
+}
+
 .workshop-prose .ew-dot {
   fill: var(--c-text);
 }
 
 .workshop-prose .ew-dot--amber {
   fill: var(--c-accent-amber);
-}
-
-/* Piece 4 cards. The outline classes below come after .ew-card so a wanted or
- * unwanted card overrides its resting stroke. */
-.workshop-prose .ew-card {
-  fill: var(--c-bg-card);
-  stroke: var(--c-border);
-  stroke-width: calc(1px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-card-hit {
-  cursor: pointer;
-}
-
-/* Piece 4's role outline sits over a card and never fills it. */
-.workshop-prose .ew-outline {
-  fill: none;
-}
-
-.workshop-prose .ew-card--request {
-  stroke: var(--c-accent-amber);
-}
-
-.workshop-prose .ew-card--unseen {
-  stroke-dasharray: calc(4px * var(--ew-u, 1)) calc(3px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-pair {
-  stroke: var(--c-accent);
-  stroke-width: calc(2px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-unwanted {
-  stroke: var(--c-accent-red);
-  stroke-width: calc(2px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-pulse {
-  stroke: var(--c-text-muted);
-  stroke-width: calc(2px * var(--ew-u, 1));
-}
-
-/* Where a card stood one step ago: a faint dashed dot and an arrow to its dot now.
- * The role picks the color, as the outlines do. */
-.workshop-prose .ew-ghost {
-  --ew-ghost: var(--c-text-secondary);
-}
-
-.workshop-prose .ew-ghost--pair {
-  --ew-ghost: var(--c-accent);
-}
-
-.workshop-prose .ew-ghost--unwanted {
-  --ew-ghost: var(--c-accent-red);
-}
-
-.workshop-prose .ew-ghost--pulse {
-  --ew-ghost: var(--c-text-muted);
-}
-
-.workshop-prose .ew-ghost circle {
-  fill: color-mix(in oklab, var(--ew-ghost) 35%, transparent);
-  stroke: var(--ew-ghost);
-  stroke-width: calc(1px * var(--ew-u, 1));
-  stroke-dasharray: calc(2px * var(--ew-u, 1)) calc(2px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-ghost line {
-  stroke: var(--ew-ghost);
-  stroke-width: calc(1.5px * var(--ew-u, 1));
-}
-
-.workshop-prose .ew-ghost polygon {
-  fill: var(--ew-ghost);
-  stroke: none;
 }
 
 /* Sprites stand on a disc in dark mode only, so the dark coffees do not sink into
@@ -1755,7 +1682,7 @@ html.dark .workshop-prose a.ew-plate--dark {
   margin-top: 16px;
 }
 
-/* A muted line: hints, the first-move prompt, the tapped card's full text. */
+/* A muted line: hints and the first-move prompt. */
 .workshop-prose .ew-note {
   margin: 0.6em 0 0;
   color: var(--c-text-secondary);
@@ -1801,8 +1728,7 @@ html.dark .workshop-prose a.ew-plate--dark {
 .workshop-prose .ew-broken { color: var(--c-accent-red); }
 .workshop-prose .ew-unasked { color: var(--c-text-secondary); }
 
-.workshop-prose .ew-controls,
-.workshop-prose .ew-chips {
+.workshop-prose .ew-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

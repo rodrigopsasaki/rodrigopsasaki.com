@@ -5,13 +5,11 @@ import type { MountPiece, PieceName } from './embedding-walkthrough/stage';
 import { mount as coffeePlacement } from './embedding-walkthrough/coffee-placement';
 import { mount as pageToRoom } from './embedding-walkthrough/page-to-room';
 import { mount as rulerOrArrows } from './embedding-walkthrough/ruler-or-arrows';
-import { mount as mapLearns } from './embedding-walkthrough/map-learns';
 
 const PIECES: Record<PieceName, MountPiece> = {
   'coffee-placement': coffeePlacement,
   'page-to-room': pageToRoom,
   'ruler-or-arrows': rulerOrArrows,
-  'map-learns': mapLearns,
 };
 
 function isPieceName(value: string | undefined): value is PieceName {

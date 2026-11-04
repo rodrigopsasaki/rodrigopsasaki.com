@@ -232,6 +232,18 @@ const CITRUS_TIP: Taste = { s: 0, n: 0, c: 1 };
 // A row of labels, in user units per CSS px.
 const ROW_UNITS = 14;
 
+// The most rows of names that hang under the line: three drinks that share a
+// spot, then their tag.
+const LINE_ROWS = 4;
+
+// How far the drawing stands higher at t = 0 than at the page, so that the line,
+// its sprites above and its names below, sit in the middle of the journey's window.
+function lineRaise(fit: Fit, u: number, spriteH: number): number {
+  const line = project({ s: 0.5, n: 0, c: 0 }, cameraAt(legsAt(0), 0), fit).y;
+  const content = line + (LINE_ROWS * ROW_UNITS * u - spriteH) / 2;
+  return Math.max(0, content - (fit.top + fit.height / 2));
+}
+
 type Floor = {
   drop: SVGLineElement;
   dot: SVGCircleElement;
@@ -258,7 +270,8 @@ export const mount: MountPiece = (figure, stage, signal) => {
   };
 
   // ── State: everything a frame needs, and nothing else ──
-  let t = 1;
+  // The journey opens on the line, so one press of Build the room runs all of it.
+  let t = 0;
   let turnExtra = 0;
   let turned = false;
   let turning = false;
@@ -482,8 +495,15 @@ export const mount: MountPiece = (figure, stage, signal) => {
     // The window is tall enough for the page and the room both; as the page lies
     // back, the drawing moves down so the room sits in the middle of it, not
     // under its top with an empty band beneath the floor.
+    // The line, before the page grows, stands in the middle of that window and not
+    // at its foot under an empty band: the drawing starts raised, and settles
+    // while the nuttiness axis grows, before any drink has risen.
     const rest = fits[layout];
-    const fit: Fit = { ...rest, cy: rest.cy + legs.tilt * drops[layout] };
+    const settled: Fit = { ...rest, cy: rest.cy + legs.tilt * drops[layout] };
+    const fit: Fit = {
+      ...settled,
+      cy: settled.cy - (1 - legs.axisN) * lineRaise(settled, u, spriteH),
+    };
     // Axes keep their full length through the journey: the axis stands before
     // the drinks rise along it. Only the grid and the drinks follow the camera.
     const axisCam: Camera = { ...cam, kN: 1, kC: 1 };

@@ -1473,6 +1473,10 @@ html.dark .workshop-prose a.ew-plate--dark {
 .workshop-prose .ew-svg .ew-tag-amber { fill: var(--c-accent-amber); }
 .workshop-prose .ew-svg .ew-tag-red { fill: var(--c-accent-red); }
 .workshop-prose .ew-svg .ew-tag-blue { fill: var(--c-accent-blue); }
+.workshop-prose .ew-svg .ew-tag-same {
+  fill: var(--c-text);
+  font-weight: 600;
+}
 
 /* Lines and paths never fill; shapes that need a fill say so below. */
 .workshop-prose .ew-svg :where(line, path, polyline) {
@@ -1573,11 +1577,14 @@ html.dark .workshop-prose a.ew-plate--dark {
   stroke-linecap: round;
 }
 
-/* The ray two cups share, dotted so it reads as a guide and not a length. */
+/* The ray two cups share carries piece 3's point: same direction, different
+ * distance. It is the heaviest line in the ruler frame (rulers are 1.5 px, drop
+ * lines 1 px), in the full text color, dashed so it still reads as a guide. */
 .workshop-prose .ew-same {
-  stroke: var(--c-text-secondary);
-  stroke-width: calc(2px * var(--ew-u, 1));
-  stroke-dasharray: 0 calc(6px * var(--ew-u, 1));
+  stroke: var(--c-text);
+  stroke-opacity: 0.9;
+  stroke-width: calc(2.5px * var(--ew-u, 1));
+  stroke-dasharray: calc(8px * var(--ew-u, 1)) calc(5px * var(--ew-u, 1));
   stroke-linecap: round;
 }
 

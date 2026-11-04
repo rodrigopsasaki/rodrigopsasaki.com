@@ -112,7 +112,7 @@ So let the page become a room, with a third direction for citrus brightness.
     <img src="/images/embedding-walkthrough/04-citrus-space-dark.svg" alt="The taste map as a room. The sweetness-and-nuttiness page has become the floor. Every drink stands on its old spot and rises by how citrusy it tastes. The two black coffees share one spot on the floor, but the new coffee rises much higher, nearer the lemon juice." width="740" height="571" loading="lazy" />
   </a>
   <div class="ew-stage"></div>
-  <figcaption id="ew-cap-page-to-room">Follow the two black coffees as the page becomes a room.</figcaption>
+  <figcaption id="ew-cap-page-to-room">Follow the two black coffees from the line to the room.</figcaption>
 </figure>
 
 A line, a page, a room: each is a space, a place to give addresses.

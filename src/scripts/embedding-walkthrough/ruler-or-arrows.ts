@@ -254,7 +254,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
   const axisLayer = svg('g', { 'aria-hidden': 'true' }, svgEl);
   const drops = svg('g', { 'aria-hidden': 'true' }, svgEl);
 
-  // The ray the gentle and pronounced cups share, dotted from the start to the edge
+  // The ray the gentle and pronounced cups share, dashed from the start to the edge
   // of the cube. It stands under the rulers, the arrows and the cups.
   const sameLine = svg('line', { class: 'ew-same', opacity: 0, 'aria-hidden': 'true' }, svgEl);
 
@@ -321,7 +321,7 @@ export const mount: MountPiece = (figure, stage, signal) => {
   const rulerTagCitrus = svgText(labels, 'ew-tag-muted', `${RULER_CITRUS.toFixed(2)} apart`);
   const nearestTag = svgText(labels, 'ew-tag-red', 'nearest');
   const beamTag = svgText(labels, 'ew-tag-blue', 'one direction');
-  const sameTag = svgText(labels, 'ew-tag-muted', 'same direction');
+  const sameTag = svgText(labels, 'ew-tag-same', 'same direction');
   sameTag.setAttribute('aria-hidden', 'true');
   const spotTag = svgText(labels, 'ew-tag-muted', 'two cups, one spot');
 
@@ -485,10 +485,11 @@ export const mount: MountPiece = (figure, stage, signal) => {
       return { x: lerp(from.x, far.x, share), y: lerp(from.y, far.y, share) };
     };
 
-    // The "same direction" line shows with the rulers and fades with them over the
-    // same time, but all the way out: the beam says the same thing with arrows.
+    // The "same direction" line carries the point, so it stands from the first
+    // paint, and it fades with the rulers over the same time, but all the way
+    // out: the beam says the same thing with arrows.
     const rulerFade = clamp01((state.arrowP * ARROWS_MS) / RULER_FADE_MS);
-    const sameOpacity = state.rulerP * (1 - rulerFade);
+    const sameOpacity = 1 - rulerFade;
     const sameEnd = rayFrom(origin);
     setAttrs(sameLine, {
       x1: origin.x,
